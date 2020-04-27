@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\FerumChecker.DataAccess\FerumChecker.DataAccess.csproj" />
+    <ProjectReference Include="..\FerumChecker.Repository\FerumChecker.Repository.csproj" />
+  </ItemGroup>
+
+</Project>
