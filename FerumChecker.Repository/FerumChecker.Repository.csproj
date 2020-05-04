@@ -5,6 +5,33 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Migrations\20200503203129_manufacturer.cs" />
+    <Compile Remove="Migrations\20200503203129_manufacturer.Designer.cs" />
+    <Compile Remove="Migrations\20200503203228_manufacturer.cs" />
+    <Compile Remove="Migrations\20200503203228_manufacturer.Designer.cs" />
+    <Compile Remove="Migrations\20200503203311_manufacturer.cs" />
+    <Compile Remove="Migrations\20200503203311_manufacturer.Designer.cs" />
+    <Compile Remove="Migrations\20200503205352_cpu.cs" />
+    <Compile Remove="Migrations\20200503205352_cpu.Designer.cs" />
+    <Compile Remove="Migrations\20200503205442_cpu.cs" />
+    <Compile Remove="Migrations\20200503205442_cpu.Designer.cs" />
+    <Compile Remove="Migrations\20200503205521_cpu.cs" />
+    <Compile Remove="Migrations\20200503205521_cpu.Designer.cs" />
+    <Compile Remove="Migrations\20200503213517_ram.cs" />
+    <Compile Remove="Migrations\20200503213517_ram.Designer.cs" />
+    <Compile Remove="Migrations\20200503230646_mothebrboard.cs" />
+    <Compile Remove="Migrations\20200503230646_mothebrboard.Designer.cs" />
+    <Compile Remove="Migrations\20200503233939_final-assembly.cs" />
+    <Compile Remove="Migrations\20200503233939_final-assembly.Designer.cs" />
+    <Compile Remove="Migrations\20200503234619_final-assembly.cs" />
+    <Compile Remove="Migrations\20200503234619_final-assembly.Designer.cs" />
+    <Compile Remove="Migrations\20200503234936_final-assembly.cs" />
+    <Compile Remove="Migrations\20200503234936_final-assembly.Designer.cs" />
+    <Compile Remove="Migrations\20200503235138_final-assembly.cs" />
+    <Compile Remove="Migrations\20200503235138_final-assembly.Designer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.3" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="3.1.3" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.3" />

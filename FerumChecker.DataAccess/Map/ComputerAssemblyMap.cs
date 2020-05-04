@@ -10,7 +10,7 @@ namespace FerumChecker.DataAccess.Map
     {
         public ComputerAssemblyMap(EntityTypeBuilder<ComputerAssembly> entityBuilder)
         {
-            entityBuilder.HasKey(p => p.ComputerAssemblyId);
+           // entityBuilder.HasKey(p => p.ComputerAssemblyId);
         }
     }
 }

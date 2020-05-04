@@ -28,14 +28,14 @@ namespace FerumChecker.Repository.Repositories
             return db.ComputerAssemblies.Find(id);
         }
 
-        public void Create(ComputerAssembly order)
+        public void Create(ComputerAssembly computerAssembly)
         {
-            db.ComputerAssemblies.Add(order);
+            db.ComputerAssemblies.Add(computerAssembly);
         }
 
-        public void Update(ComputerAssembly order)
+        public void Update(ComputerAssembly computerAssembly)
         {
-            db.Entry(order).State = EntityState.Modified;
+            db.Entry(computerAssembly).State = EntityState.Modified;
         }
         public IEnumerable<ComputerAssembly> Find(Func<ComputerAssembly, Boolean> predicate)
         {
@@ -43,9 +43,9 @@ namespace FerumChecker.Repository.Repositories
         }
         public void Delete(int id)
         {
-            ComputerAssembly order = db.ComputerAssemblies.Find(id);
-            if (order != null)
-                db.ComputerAssemblies.Remove(order);
+            ComputerAssembly computerAssembly = db.ComputerAssemblies.Find(id);
+            if (computerAssembly != null)
+                db.ComputerAssemblies.Remove(computerAssembly);
         }
     }
 }
