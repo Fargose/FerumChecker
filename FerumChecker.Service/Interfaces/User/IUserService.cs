@@ -6,7 +6,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FerumChecker.Service.Interfaces
+namespace FerumChecker.Service.Interfaces.User
 {
     public interface IUserService : IDisposable
     {

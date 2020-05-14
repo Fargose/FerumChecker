@@ -3,6 +3,7 @@ using FerumChecker.Repository.Interfaces;
 using FerumChecker.Service.DTO;
 using FerumChecker.Service.Infrastructure;
 using FerumChecker.Service.Interfaces;
+using FerumChecker.Service.Interfaces.User;
 using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
@@ -11,7 +12,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FerumChecker.Service.Services
+namespace FerumChecker.Service.Services.user
 {
     public class UserService : IUserService
     {

@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace FerumChecker.Service.Interfaces
+namespace FerumChecker.Service.Interfaces.Infrastructure
 {
     public interface IComputerAssemblyService
     {

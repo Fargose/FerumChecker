@@ -19,6 +19,12 @@ using FerumChecker.DataAccess.Entities.User;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using FerumChecker.Repository.Repositories.UnitOfWork;
+using FerumChecker.Service.Interfaces.Infrastructure;
+using FerumChecker.Service.Interfaces.User;
+using FerumChecker.Service.Services.Infrastructure;
+using FerumChecker.Service.Services.user;
+using FerumChecker.Service.Services.Hardware;
+using FerumChecker.Service.Interfaces.Hardware;
 
 namespace FerumChecker.Web
 {
@@ -46,9 +52,19 @@ namespace FerumChecker.Web
             });
 
             services.AddDbContext<ApplicationContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+
             services.AddTransient<IUnitOfWork, EFUnitOfWork>();
             services.AddTransient<IComputerAssemblyService, ComputerAssemblyService>();
             services.AddTransient<IUserService, UserService>();
+            //Hardware services
+            services.AddTransient<ICPUService, CPUService>();
+            services.AddTransient<IHDDService, HDDService>();
+            services.AddTransient<ISSDService, SSDService>();
+            services.AddTransient<IMotherBoardService, MotherBoardService>();
+            services.AddTransient<IVideoCardService, VideoCardService>();
+            services.AddTransient<IPCCaseService, PCCaseService>();
+            services.AddTransient<IRAMService, RAMService>();
+            services.AddTransient<IPowerSupplyService, PowerSupplyService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

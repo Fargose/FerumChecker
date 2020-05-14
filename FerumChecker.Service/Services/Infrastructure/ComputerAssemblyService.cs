@@ -2,11 +2,12 @@
 using FerumChecker.DataAccess.Entities.Infrastructure;
 using FerumChecker.Repository.Interfaces;
 using FerumChecker.Service.Interfaces;
+using FerumChecker.Service.Interfaces.Infrastructure;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace FerumChecker.Service.Services
+namespace FerumChecker.Service.Services.Infrastructure
 {
     public class ComputerAssemblyService : IComputerAssemblyService
     {

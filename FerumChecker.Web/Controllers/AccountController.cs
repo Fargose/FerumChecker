@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using FerumChecker.DataAccess.Entities.User;
 using FerumChecker.Service.DTO;
 using FerumChecker.Service.Interfaces;
+using FerumChecker.Service.Interfaces.User;
 using FerumChecker.Web.ViewModel;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
