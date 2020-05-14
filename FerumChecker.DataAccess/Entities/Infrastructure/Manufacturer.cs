@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
 
-namespace FerumChecker.DataAccess.Entities
+namespace FerumChecker.DataAccess.Entities.Infrastructure
 {
     public class Manufacturer
     {

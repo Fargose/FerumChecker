@@ -1,4 +1,5 @@
-﻿using FerumChecker.DataAccess.Entities.Joins;
+﻿using FerumChecker.DataAccess.Entities.Infrastructure;
+using FerumChecker.DataAccess.Entities.Joins;
 using FerumChecker.DataAccess.Entities.Specification;
 using System;
 using System.Collections.Generic;
@@ -56,7 +57,7 @@ namespace FerumChecker.DataAccess.Entities.Hardware
 
         public ICollection<MotherBoardRAMSlot> PowerSupplyCPUInterfaces { get; } = new List<MotherBoardRAMSlot>();
 
-        public ICollection<MotherBoardSlotPowerSupply> PowerSupplyMotherBoardSlots { get; } = new List<MotherBoardSlotPowerSupply>();
+        public ICollection<MotherBoardPowerSupplySlot> PowerSupplyMotherBoardSlots { get; } = new List<MotherBoardPowerSupplySlot>();
 
         public ICollection<MotherBoardOuterMemorySlot> MotherBoardOuterMemorySlots { get; } = new List<MotherBoardOuterMemorySlot>();
 

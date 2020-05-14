@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace FerumChecker.Repository.Repositories
+namespace FerumChecker.Repository.Repositories.User
 {
     class UserProfileRepository: IRepository<UserProfile>
     {

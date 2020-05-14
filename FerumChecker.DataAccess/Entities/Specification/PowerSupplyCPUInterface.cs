@@ -8,10 +8,6 @@ namespace FerumChecker.DataAccess.Entities.Specification
 {
     public class PowerSupplyCPUInterface
     {
-        public PowerSupplyCPUInterface()
-        {
-            this.PowerSupplies = new List<PowerSupply>();
-        }
 
         [Key]
         public int Id { get; set; }
@@ -20,6 +16,5 @@ namespace FerumChecker.DataAccess.Entities.Specification
         [MaxLength(100)]
         public string Name { get; set; }
 
-        public ICollection<PowerSupply> PowerSupplies = new List<PowerSupply>();
     }
 }

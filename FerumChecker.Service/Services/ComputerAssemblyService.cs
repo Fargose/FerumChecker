@@ -1,4 +1,5 @@
 ﻿using FerumChecker.DataAccess.Entities;
+using FerumChecker.DataAccess.Entities.Infrastructure;
 using FerumChecker.Repository.Interfaces;
 using FerumChecker.Service.Interfaces;
 using System;

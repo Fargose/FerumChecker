@@ -1,12 +1,12 @@
-﻿using FerumChecker.DataAccess.Entities.Joins;
-using FerumChecker.DataAccess.Entities.Specification;
+﻿using FerumChecker.DataAccess.Entities.Infrastructure;
+using FerumChecker.DataAccess.Entities.Joins;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 
-namespace FerumChecker.DataAccess.Entities
+namespace FerumChecker.DataAccess.Entities.Infrastructure
 {
     public class Software
     {

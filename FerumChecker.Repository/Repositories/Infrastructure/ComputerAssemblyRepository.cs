@@ -1,4 +1,5 @@
 ﻿using FerumChecker.DataAccess.Entities;
+using FerumChecker.DataAccess.Entities.Infrastructure;
 using FerumChecker.Repository.EF;
 using FerumChecker.Repository.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -7,7 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace FerumChecker.Repository.Repositories
+namespace FerumChecker.Repository.Repositories.Infrastructure
 {
     class ComputerAssemblyRepository : IRepository<ComputerAssembly>
     {

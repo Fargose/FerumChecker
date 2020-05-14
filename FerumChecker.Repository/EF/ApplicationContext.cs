@@ -1,5 +1,6 @@
 ﻿using FerumChecker.DataAccess.Entities;
 using FerumChecker.DataAccess.Entities.Hardware;
+using FerumChecker.DataAccess.Entities.Infrastructure;
 using FerumChecker.DataAccess.Entities.Joins;
 using FerumChecker.DataAccess.Entities.Specification;
 using FerumChecker.DataAccess.Entities.User;
@@ -19,7 +20,7 @@ namespace FerumChecker.Repository.EF
         public DbSet<Manufacturer> Manufacturers { get; set; }
         public DbSet<CPUSocket> CPUSockets { get; set; }
         public DbSet<CPU> CPUs { get; set; }
-        public DbSet<GraphicMemoryType> GraphicMemoryType { get; set; }
+        public DbSet<GraphicMemoryType> GraphicMemoryTypes { get; set; }
         public DbSet<VideoCardInterface> VideoCardInterfaces { get; set; }
         public DbSet<GPU> GPUs { get; set; }
         public DbSet<VideoCard> VideoCards { get; set; }
@@ -36,7 +37,7 @@ namespace FerumChecker.Repository.EF
         public DbSet<MotherBoardNothernBridge> MotherBoardNothernBridges { get; set; }
         public DbSet<MotherBoardOuterMemorySlot> MotherBoardOuterMemorySlots { get; set; }
         public DbSet<MotherBoardRAMSlot> MotherBoardRAMSlots { get; set; }
-        public DbSet<MotherBoardSlotPowerSupply> MotherBoardSlotPowerSupplies { get; set; }
+        public DbSet<MotherBoardPowerSupplySlot> MotherBoardPowerSupplySlots { get; set; }
         public DbSet<MotherBoardVideoCardSlot> MotherBoardVideoCardSlots { get; set; }
         public DbSet<MotherBoard> MotherBoards { get; set; }
         public DbSet<PCCaseMotherBoardFormFactor> PCCaseMotherBoardFormFactors { get; set; }
@@ -48,7 +49,7 @@ namespace FerumChecker.Repository.EF
         public DbSet<ComputerAssemblyVideoCard> ComputerAssemblyVideoCards { get; set; }
         public DbSet<ComputerAssemblyRate> ComputerAssemblyRates { get; set; }
         public DbSet<Comment> Comments { get; set; }
-
+        public DbSet<PowerSupplyPowerSupplyCPUInterface> PowerSupplyPowerSupplyCPUInterfaces { get; set; }
         public DbSet<Publisher> Publishers { get; set; }
         public DbSet<Developer> Developers { get; set; }
         public DbSet<RequirementType> RequirementTypes { get; set; }

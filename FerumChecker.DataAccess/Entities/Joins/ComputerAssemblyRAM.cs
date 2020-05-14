@@ -1,4 +1,5 @@
 ﻿using FerumChecker.DataAccess.Entities.Hardware;
+using FerumChecker.DataAccess.Entities.Infrastructure;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;

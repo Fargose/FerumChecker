@@ -1,4 +1,5 @@
 ﻿using FerumChecker.DataAccess.Entities;
+using FerumChecker.DataAccess.Entities.Infrastructure;
 using System;
 using System.Collections.Generic;
 using System.Text;

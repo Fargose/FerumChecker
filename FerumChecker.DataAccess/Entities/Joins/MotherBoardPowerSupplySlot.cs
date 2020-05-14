@@ -8,7 +8,7 @@ using System.Text;
 
 namespace FerumChecker.DataAccess.Entities.Joins
 {
-    public class MotherBoardSlotPowerSupply
+    public class MotherBoardPowerSupplySlot
     {
         [Key]
         public int Id { get; set; }
@@ -23,6 +23,6 @@ namespace FerumChecker.DataAccess.Entities.Joins
         [Required]
         [ForeignKey("PowerSupplyMotherBoardInterface")]
         public int PowerSupplyMotherBoardInterfaceId { get; set; }
-        public RAMType PowerSupplyMotherBoardInterface { get; set; }
+        public PowerSupplyMotherBoardInterface PowerSupplyMotherBoardInterface { get; set; }
     }
 }

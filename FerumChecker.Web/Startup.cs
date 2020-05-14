@@ -18,6 +18,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using FerumChecker.DataAccess.Entities.User;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using FerumChecker.Repository.Repositories.UnitOfWork;
 
 namespace FerumChecker.Web
 {
