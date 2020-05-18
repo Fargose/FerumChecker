@@ -59,8 +59,8 @@ namespace FerumChecker.Repository.Repositories.UnitOfWork
             CPUSockets = new CPUSocketRepository(db);
             GPUs = new GPURepository(db);
             GraphicMemoryTypes = new GraphicMemoryTypeRepository(db);
-            MotherBoardFromFactors = new MotherBoardFormFactorRepository(db);
-            MotherBoardNothernBridges = new MotherBoardNothernBridgeRepository(db);
+            MotherBoardFormFactors = new MotherBoardFormFactorRepository(db);
+            MotherBoardNorthBridges = new MotherBoardNorthBridgeRepository(db);
             OuterMemoryFormFactors = new OuterMemoryFormFactorRepository(db);
             OuterMemoryInterfaces = new OuterMemoryInterfaceRepository(db);
             PowerSupplyCPUInterfaces = new PowerSupplyCPUInterfaceRepository(db);
@@ -124,8 +124,8 @@ namespace FerumChecker.Repository.Repositories.UnitOfWork
         public IRepository<CPUSocket> CPUSockets { get; }
         public IRepository<GPU> GPUs { get; }
         public IRepository<GraphicMemoryType> GraphicMemoryTypes { get; }
-        public IRepository<MotherBoardFormFactor> MotherBoardFromFactors { get; }
-        public IRepository<MotherBoardNothernBridge> MotherBoardNothernBridges { get; }
+        public IRepository<MotherBoardFormFactor> MotherBoardFormFactors { get; }
+        public IRepository<MotherBoardNorthBridge> MotherBoardNorthBridges { get; }
         public IRepository<OuterMemoryFormFactor> OuterMemoryFormFactors { get; }
         public IRepository<OuterMemoryInterface> OuterMemoryInterfaces { get; }
         public IRepository<PowerSupplyCPUInterface> PowerSupplyCPUInterfaces { get; }

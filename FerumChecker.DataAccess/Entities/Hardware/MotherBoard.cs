@@ -46,7 +46,7 @@ namespace FerumChecker.DataAccess.Entities.Hardware
         [Required]
         [ForeignKey("MotherBoardNothernBridge")]
         public int MotherBoardNothernBridgeId { get; set; }
-        public MotherBoardNothernBridge MotherBoardNothernBridge { get; set; }
+        public MotherBoardNorthBridge MotherBoardNothernBridge { get; set; }
 
 
 

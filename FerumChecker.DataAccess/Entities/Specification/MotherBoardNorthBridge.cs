@@ -5,7 +5,7 @@ using System.Text;
 
 namespace FerumChecker.DataAccess.Entities.Specification
 {
-    public class MotherBoardNothernBridge
+    public class MotherBoardNorthBridge
     {
         [Key]
         public int Id { get; set; }

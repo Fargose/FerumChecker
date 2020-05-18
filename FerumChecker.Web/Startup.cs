@@ -65,6 +65,19 @@ namespace FerumChecker.Web
             services.AddTransient<IPCCaseService, PCCaseService>();
             services.AddTransient<IRAMService, RAMService>();
             services.AddTransient<IPowerSupplyService, PowerSupplyService>();
+            //Specification services
+            services.AddTransient<ICPUSocketService, CPUSocketService>();
+            services.AddTransient<IGPUService, GPUService>();
+            services.AddTransient<IGraphicMemoryTypeService, GraphicMemoryTypeService>();
+            services.AddTransient<IMotherBoardFormFactorService, MotherBoardFormFactorService>();
+            services.AddTransient<IMotherBoardNorthBridgeService, MotherBoardNorthBridgeService>();
+            services.AddTransient<IOuterMemoryFormFactorService, OuterMemoryFormFactorService>();
+            services.AddTransient<IOuterMemoryInterfaceService, OuterMemoryInterfaceService>();
+            services.AddTransient<IPowerSupplyCPUInterfaceService, PowerSupplyCPUInterfaceService>();
+            services.AddTransient<IPowerSupplyMotherBoardInterfaceService, PowerSupplyMotherBoardInterfaceService>();
+            services.AddTransient<IRAMTypeService, RAMTypeService>();
+            services.AddTransient<IRequirementTypeService, RequirementTypeService>();
+            services.AddTransient<IVideoCardInterfaceService, VideoCardInterfaceService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

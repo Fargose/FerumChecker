@@ -37,8 +37,8 @@ namespace FerumChecker.Repository.Interfaces
         public IRepository<CPUSocket> CPUSockets { get; }
         public IRepository<GPU> GPUs { get; }
         public IRepository<GraphicMemoryType> GraphicMemoryTypes { get; }
-        public IRepository<MotherBoardFormFactor> MotherBoardFromFactors { get; }
-        public IRepository<MotherBoardNothernBridge> MotherBoardNothernBridges { get; }
+        public IRepository<MotherBoardFormFactor> MotherBoardFormFactors { get; }
+        public IRepository<MotherBoardNorthBridge> MotherBoardNorthBridges { get; }
         public IRepository<OuterMemoryFormFactor> OuterMemoryFormFactors { get; }
         public IRepository<OuterMemoryInterface> OuterMemoryInterfaces { get; }
         public IRepository<PowerSupplyCPUInterface> PowerSupplyCPUInterfaces { get; }

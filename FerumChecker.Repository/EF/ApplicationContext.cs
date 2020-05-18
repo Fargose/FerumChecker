@@ -34,7 +34,7 @@ namespace FerumChecker.Repository.EF
         public DbSet<PowerSupplyCPUInterface> PowerSupplyCPUInterfaces { get; set; }
         public DbSet<PowerSupplyMotherBoardInterface> PowerSupplyMotherBoardInterfaces { get; set; }
         public DbSet<MotherBoardFormFactor> MotherBoardFormFactors { get; set; }
-        public DbSet<MotherBoardNothernBridge> MotherBoardNothernBridges { get; set; }
+        public DbSet<MotherBoardNorthBridge> MotherBoardNorthBridges { get; set; }
         public DbSet<MotherBoardOuterMemorySlot> MotherBoardOuterMemorySlots { get; set; }
         public DbSet<MotherBoardRAMSlot> MotherBoardRAMSlots { get; set; }
         public DbSet<MotherBoardPowerSupplySlot> MotherBoardPowerSupplySlots { get; set; }
