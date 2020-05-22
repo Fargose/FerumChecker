@@ -1,4 +1,5 @@
 ﻿using FerumChecker.DataAccess.Entities.Infrastructure;
+using FerumChecker.DataAccess.Entities.Joins;
 using FerumChecker.DataAccess.Entities.Specification;
 using System;
 using System.Collections.Generic;
@@ -10,10 +11,6 @@ namespace FerumChecker.DataAccess.Entities.Hardware
 {
     public class PowerSupply
     {
-        public PowerSupply()
-        {
-            this.PowerSupplyCPUInterfaces = new List<PowerSupplyCPUInterface>();
-        }
 
         [Key]
         public int Id { get; set; }
@@ -40,8 +37,10 @@ namespace FerumChecker.DataAccess.Entities.Hardware
         [Column(TypeName = "money")]
         public decimal Price { get; set; }
 
+        public string Image { get; set; }
 
-        public ICollection<PowerSupplyCPUInterface> PowerSupplyCPUInterfaces { get; } = new List<PowerSupplyCPUInterface>();
+
+        public ICollection<PowerSupplyPowerSupplyCPUInterface> PowerSupplyPowerSupplyCPUInterfaces { get; } = new List<PowerSupplyPowerSupplyCPUInterface>();
 
         [Required]
         [ForeignKey("PowerSupplyMotherBoardInterface")]

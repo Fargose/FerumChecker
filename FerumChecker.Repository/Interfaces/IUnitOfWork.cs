@@ -29,6 +29,7 @@ namespace FerumChecker.Repository.Interfaces
         public IRepository<Software> Softwares { get; }
         public IRepository<Developer> Developers { get; }
         public IRepository<Publisher> Publishers { get; }
+        public IRepository<Country> Countries { get; }
 
         #endregion
 

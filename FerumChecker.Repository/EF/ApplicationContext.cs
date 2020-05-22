@@ -56,6 +56,7 @@ namespace FerumChecker.Repository.EF
         public DbSet<SoftwareCPURequirement> SoftwareCPURequirements { get; set; }
         public DbSet<SoftwareVideoCardRequirement> SoftwareVideoCardRequirements { get; set; }
         public DbSet<Software> Softwares { get; set; }
+        public DbSet<Country> Countries { get; set; }
 
 
 
@@ -65,8 +66,8 @@ namespace FerumChecker.Repository.EF
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-            modelBuilder.Entity<PowerSupplyPowerSupplyCPUInterface>()
-                .HasKey(t => new { t.PowerSupplyId, t.PowerSupplyCPUInterfaceId });
+            //modelBuilder.Entity<PowerSupplyPowerSupplyCPUInterface>()
+            //    .HasKey(t => new { t.PowerSupplyId, t.PowerSupplyCPUInterfaceId });
             modelBuilder.Entity<ComputerAssembly>()
              .HasOne(t => t.PCCase);
             modelBuilder.Entity<ComputerAssembly>()

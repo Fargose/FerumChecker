@@ -12,6 +12,6 @@ namespace FerumChecker.DataAccess.Entities.Specification
 
         [Required]
         [MaxLength]
-        public int Name { get; set; }
+        public string Name { get; set; }
     }
 }

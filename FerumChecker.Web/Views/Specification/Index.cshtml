@@ -1,0 +1,50 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+}
+
+<link href="~/css/catalog.css" rel="stylesheet" />
+<script src="~/js/catalog.js"></script>
+<script src="~/js/specificationtable.js?v=2"></script>
+<script src="~/js/editabledatatable.js"></script>
+
+<div class="container catalog-page">
+    <div class="row">
+        Каталог
+    </div>
+    <div class="row">
+        <div class="col-lg-3">
+            Категорія
+            <div class="sidenav">
+                <a href="#" class="category-link" data-link="CPUSocket">CPU Sockets</a>
+                <a href="#" class="category-link" data-link="GPU">Графічні чіпи</a>
+                <a href="#" class="category-link" data-link="GraphicMemoryType">Тип графічної памяті</a>
+                <a href="#" class="category-link" data-link="MotherBoardFormFactor">Форм-фактори материнської плати</a>
+                <a href="#" class="category-link" data-link="MotherBoardNorthBridge">Чіп сети материнської плати</a>
+                <a href="#" class="category-link" data-link="OuterMemoryFormFactor">Форм-фактори зовнішньої памяті</a>
+                <a href="#" class="category-link" data-link="OuterMemoryInterface">Інтерфейси зовнішньої памяті</a>
+                <a href="#" class="category-link" data-link="PowerSupplyCPUInterface">Розєм блоку живлення для процесора</a>
+                <a href="#" class="category-link" data-link="PowerSupplyMotherBoardInterface">Розєм блоку живлення для материнськоъ плати</a>
+                <a href="#" class="category-link" data-link="RAMType">Типи RAM</a>
+                <a href="#" class="category-link" data-link="RequirementType">Системні вимоги</a>
+                <a href="#" class="category-link" data-link="VideoCardInterface">Інтерфейс відеокарти</a>
+                <a href="#" class="category-link" data-link="Country">Країни</a>
+                <a href="#" class="category-link" data-link="Manufacturer">Виробники</a>
+            </div>
+        </div>
+        <div class="col-lg-9 please-scroll ">
+            <div><h2 class="сategory-name"></h2></div>
+            <div class="search-box" style="display: none">
+                <input id="search-input" class="form-control" type="text" placeholder="Search..." aria-label="Search" />
+            </div>
+            <div class="catalog-list-container main"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        var page = new CatalogPage();
+        page.init();
+    })
+</script>

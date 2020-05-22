@@ -54,7 +54,6 @@ namespace FerumChecker.Web
             services.AddDbContext<ApplicationContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
             services.AddTransient<IUnitOfWork, EFUnitOfWork>();
-            services.AddTransient<IComputerAssemblyService, ComputerAssemblyService>();
             services.AddTransient<IUserService, UserService>();
             //Hardware services
             services.AddTransient<ICPUService, CPUService>();
@@ -78,6 +77,10 @@ namespace FerumChecker.Web
             services.AddTransient<IRAMTypeService, RAMTypeService>();
             services.AddTransient<IRequirementTypeService, RequirementTypeService>();
             services.AddTransient<IVideoCardInterfaceService, VideoCardInterfaceService>();
+            //Infrasrtucture Services
+            services.AddTransient<IComputerAssemblyService, ComputerAssemblyService>();
+            services.AddTransient<ICountryService, CountryService>();
+            services.AddTransient<IManufacturerService, ManufacturerService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

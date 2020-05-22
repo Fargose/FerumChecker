@@ -33,18 +33,21 @@ namespace FerumChecker.Service.Services.Hardware
         {
             
             Database.PowerSupplyMotherBoardInterfaces.Update(powerSupplyMotherBoardInterface);
+            Database.Save();
             return new OperationDetails(true, "Ok", "");
         }
 
         public OperationDetails CreatePowerSupplyMotherBoardInterface(PowerSupplyMotherBoardInterface powerSupplyMotherBoardInterface)
         {
             Database.PowerSupplyMotherBoardInterfaces.Create(powerSupplyMotherBoardInterface);
+            Database.Save();
             return new OperationDetails(true, "Ok", "");
         }
 
         public OperationDetails DeletePowerSupplyMotherBoardInterface(int? id)
         {
             Database.PowerSupplyMotherBoardInterfaces.Delete(id.Value);
+            Database.Save();
             return new OperationDetails(true, "Ok", "");
         }
 

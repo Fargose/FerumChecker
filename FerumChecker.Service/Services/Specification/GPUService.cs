@@ -33,18 +33,21 @@ namespace FerumChecker.Service.Services.Hardware
         {
             
             Database.GPUs.Update(gpu);
+            Database.Save();
             return new OperationDetails(true, "Ok", "");
         }
 
         public OperationDetails CreateGPU(GPU gpu)
         {
             Database.GPUs.Create(gpu);
+            Database.Save();
             return new OperationDetails(true, "Ok", "");
         }
 
         public OperationDetails DeleteGPU(int? id)
         {
             Database.GPUs.Delete(id.Value);
+            Database.Save();
             return new OperationDetails(true, "Ok", "");
         }
 

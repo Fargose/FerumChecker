@@ -33,18 +33,21 @@ namespace FerumChecker.Service.Services.Hardware
         {
             
             Database.MotherBoardNorthBridges.Update(motherBoardNorthBridge);
+            Database.Save();
             return new OperationDetails(true, "Ok", "");
         }
 
         public OperationDetails CreateMotherBoardNorthBridge(MotherBoardNorthBridge motherBoardNorthBridge)
         {
             Database.MotherBoardNorthBridges.Create(motherBoardNorthBridge);
+            Database.Save();
             return new OperationDetails(true, "Ok", "");
         }
 
         public OperationDetails DeleteMotherBoardNorthBridge(int? id)
         {
             Database.MotherBoardNorthBridges.Delete(id.Value);
+            Database.Save();
             return new OperationDetails(true, "Ok", "");
         }
 

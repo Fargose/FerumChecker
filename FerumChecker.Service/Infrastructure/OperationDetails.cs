@@ -15,5 +15,6 @@ namespace FerumChecker.Service.Infrastructure
         public bool Succedeed { get; private set; }
         public string Message { get; private set; }
         public string Property { get; private set; }
+        public object Data { get; private set; }
     }
 }

@@ -33,18 +33,21 @@ namespace FerumChecker.Service.Services.Hardware
         {
             
             Database.GraphicMemoryTypes.Update(graphicMemoryType);
+            Database.Save();
             return new OperationDetails(true, "Ok", "");
         }
 
         public OperationDetails CreateGraphicMemoryType(GraphicMemoryType graphicMemoryType)
         {
             Database.GraphicMemoryTypes.Create(graphicMemoryType);
+            Database.Save();
             return new OperationDetails(true, "Ok", "");
         }
 
         public OperationDetails DeleteGraphicMemoryType(int? id)
         {
             Database.GraphicMemoryTypes.Delete(id.Value);
+            Database.Save();
             return new OperationDetails(true, "Ok", "");
         }
 

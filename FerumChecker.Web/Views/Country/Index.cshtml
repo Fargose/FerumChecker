@@ -1,0 +1,44 @@
+﻿@model IEnumerable<FerumChecker.Web.ViewModel.Specification.CountryViewModel>
+
+@{
+    ViewData["Title"] = "View";
+}
+
+
+<table class="table" id="country-table">
+    <thead>
+        <tr>
+            <th colspan="2">
+                <button class="create-link btn btn-success">Додати</button>
+            </th>
+        </tr>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.FullName)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr data-id="@item.Id">
+                <td  style="width: 70%">
+                    @Html.DisplayFor(modelItem => item.FullName)
+                </td>
+                <td  style="width: 30%">
+                    <a class='edit-link'><i class='fas fa-edit'></i></a>
+                    <a class='delete-link'><i class='fas fa-trash'></i></a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+
+<script>
+    $(document).ready(function () {
+        var table = new EditableDataTable();
+        table.init($("#country-table"), "country");
+    })
+</script>

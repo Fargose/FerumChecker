@@ -33,18 +33,21 @@ namespace FerumChecker.Service.Services.Hardware
         {
             
             Database.OuterMemoryInterfaces.Update(outerMemoryInterface);
+            Database.Save();
             return new OperationDetails(true, "Ok", "");
         }
 
         public OperationDetails CreateOuterMemoryInterface(OuterMemoryInterface outerMemoryInterface)
         {
             Database.OuterMemoryInterfaces.Create(outerMemoryInterface);
+            Database.Save();
             return new OperationDetails(true, "Ok", "");
         }
 
         public OperationDetails DeleteOuterMemoryInterface(int? id)
         {
             Database.OuterMemoryInterfaces.Delete(id.Value);
+            Database.Save();
             return new OperationDetails(true, "Ok", "");
         }
 

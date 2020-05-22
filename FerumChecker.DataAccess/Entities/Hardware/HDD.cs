@@ -29,6 +29,8 @@ namespace FerumChecker.DataAccess.Entities.Hardware
         [Column(TypeName = "money")]
         public decimal Price { get; set; }
 
+        public string Image { get; set; }
+
         [Required]
         [ForeignKey("Manufacturer")]
         public int ManufacturerId { get; set; }

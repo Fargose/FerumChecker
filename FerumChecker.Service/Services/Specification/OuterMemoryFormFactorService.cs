@@ -33,18 +33,21 @@ namespace FerumChecker.Service.Services.Hardware
         {
             
             Database.OuterMemoryFormFactors.Update(outerMemoryFormFactor);
+            Database.Save();
             return new OperationDetails(true, "Ok", "");
         }
 
         public OperationDetails CreateOuterMemoryFormFactor(OuterMemoryFormFactor outerMemoryFormFactor)
         {
             Database.OuterMemoryFormFactors.Create(outerMemoryFormFactor);
+            Database.Save();
             return new OperationDetails(true, "Ok", "");
         }
 
         public OperationDetails DeleteOuterMemoryFormFactor(int? id)
         {
             Database.OuterMemoryFormFactors.Delete(id.Value);
+            Database.Save();
             return new OperationDetails(true, "Ok", "");
         }
 

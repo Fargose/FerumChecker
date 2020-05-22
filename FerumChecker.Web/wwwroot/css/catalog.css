@@ -1,0 +1,46 @@
+﻿
+.sidenav a {
+    padding: 6px 8px 6px 16px;
+    text-decoration: none;
+    font-size: 25px;
+    color: #818181;
+    display: block;
+}
+
+    .sidenav a.selected {
+        color: white;
+        background-color: dodgerblue;
+    }
+
+.fas{
+    font-size : 24px;
+    text-align: center;
+    vertical-align: middle;
+    color: dodgerblue;
+    padding: 10px 10px 10px 10px;
+}
+
+.fas:hover{
+    cursor: pointer;
+}
+
+.table .form-control{
+    width: 60%;
+}
+
+.please-scroll {
+    height: calc(100vh - 180px);
+    overflow-y: scroll;
+}
+
+.catalog-page{
+    width: 90%;
+}
+
+.table-edit-container{
+    background-color : aliceblue;
+    padding : 25px;
+    border-radius: 10px;
+    border-style: solid;
+    border-color: darkgray;
+}

@@ -51,6 +51,7 @@ namespace FerumChecker.Repository.Repositories.UnitOfWork
             Softwares = new SoftwareRepository(db);
             Developers = new DeveloperRepository(db);
             Publishers = new PublisherRepository(db);
+            Countries = new CountryRepository(db);
 
             #endregion
 
@@ -116,6 +117,7 @@ namespace FerumChecker.Repository.Repositories.UnitOfWork
         public IRepository<Software> Softwares { get; } 
         public IRepository <Developer> Developers { get; }
         public IRepository<Publisher> Publishers { get; }
+        public IRepository<Country> Countries { get; }
 
         #endregion
 

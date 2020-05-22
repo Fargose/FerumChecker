@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 
 namespace FerumChecker.DataAccess.Entities.Infrastructure
@@ -16,5 +17,11 @@ namespace FerumChecker.DataAccess.Entities.Infrastructure
 
         [MaxLength(1000)]
         public string Description { get; set; }
+
+        [Required]
+        [ForeignKey("Country")]
+        public int CountryId { get; set; }
+
+        public Country Country { get; set; }
     }
 }

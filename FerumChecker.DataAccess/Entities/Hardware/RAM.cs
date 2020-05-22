@@ -36,6 +36,8 @@ namespace FerumChecker.DataAccess.Entities.Hardware
         public int RAMTypeId { get; set; }
         public RAMType RAMType { get; set; }
 
+        public string Image { get; set; }
+
         [Required]
         [ForeignKey("Manufacturer")]
         public int ManufacturerId { get; set; }

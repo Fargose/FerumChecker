@@ -33,18 +33,21 @@ namespace FerumChecker.Service.Services.Hardware
         {
             
             Database.CPUSockets.Update(cpuSocket);
+            Database.Save();
             return new OperationDetails(true, "Ok", "");
         }
 
         public OperationDetails CreateCPUSocket(CPUSocket cpuSocket)
         {
             Database.CPUSockets.Create(cpuSocket);
+            Database.Save();
             return new OperationDetails(true, "Ok", "");
         }
 
         public OperationDetails DeleteCPUSocket(int? id)
         {
             Database.CPUSockets.Delete(id.Value);
+            Database.Save();
             return new OperationDetails(true, "Ok", "");
         }
 

@@ -33,18 +33,21 @@ namespace FerumChecker.Service.Services.Hardware
         {
             
             Database.VideoCardInterfaces.Update(videoCardInterface);
+            Database.Save();
             return new OperationDetails(true, "Ok", "");
         }
 
         public OperationDetails CreateVideoCardInterface(VideoCardInterface videoCardInterface)
         {
             Database.VideoCardInterfaces.Create(videoCardInterface);
+            Database.Save();
             return new OperationDetails(true, "Ok", "");
         }
 
         public OperationDetails DeleteVideoCardInterface(int? id)
         {
             Database.VideoCardInterfaces.Delete(id.Value);
+            Database.Save();
             return new OperationDetails(true, "Ok", "");
         }
 

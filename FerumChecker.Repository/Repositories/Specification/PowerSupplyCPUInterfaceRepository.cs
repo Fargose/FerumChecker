@@ -22,6 +22,8 @@ namespace FerumChecker.Repository.Repositories.Specification
 
         public IEnumerable<PowerSupplyCPUInterface> GetAll()
         {
+
+
             return db.PowerSupplyCPUInterfaces;
         }
 
