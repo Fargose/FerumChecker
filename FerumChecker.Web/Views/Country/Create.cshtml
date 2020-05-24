@@ -1,21 +1,47 @@
 ﻿@model FerumChecker.Web.ViewModel.Specification.CountryViewModel
 
-<form asp-action="Create">
-    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-    <div class="form-group" hidden>
-        <label asp-for="Id" class="control-label"></label>
-        <input asp-for="Id" class="form-control" />
-        <span asp-validation-for="Id" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="Name" class="control-label"></label>
-        <input asp-for="Name" class="form-control" />
-        <span asp-validation-for="Name" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        Тут буде лоадер для картинки
-    </div>
-    <div class="form-group">
-        <input type="submit" value="Зберегти" class="btn btn-primary" />
-    </div>
-</form>
+    <form asp-action="Create">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="form-group" hidden>
+            <label asp-for="Id" class="control-label"></label>
+            <input asp-for="Id" class="form-control" />
+            <span asp-validation-for="Id" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="Name" class="control-label"></label>
+            <input asp-for="Name" class="form-control" />
+            <span asp-validation-for="Name" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="Image" class="control-label"></label>
+            <div class="custom-file">
+                <input asp-for="Image" class="custom-file-input" accept="image/*">
+                <label class="custom-file-label" asp-for="Image">Оберіть файл</label>
+                <span asp-validation-for="Image" class="text-danger"></span>
+            </div>
+        </div>
+        <img src="@(Model != null && Model.ImagePath !=null ? Model.ImagePath : "/Images//not-found.png" )" style="max-width:150px;margin-top: 20px; margin-bottom: 20px;" id="country-image"/>
+        <div class="form-group">
+            <input type="submit" value="Зберегти" class="btn btn-primary" />
+        </div>
+    </form>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        // Add the following code if you want the name of the file appear on select
+        $(".custom-file-input").on("change", function (data) {
+            var fileName = $(this).val().split("\\").pop();
+            console.log(data);
+            if (data.currentTarget.files && data.currentTarget.files[0]) {
+                var reader = new FileReader();
+
+                reader.onload = function (e) {
+                    $('#country-image').attr('src', e.target.result)
+                };
+
+                reader.readAsDataURL(data.currentTarget.files[0]);
+            }
+            $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
+        });
+    });
+</script>

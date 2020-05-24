@@ -56,13 +56,14 @@ namespace FerumChecker.DataAccess.Entities.Hardware
         public int CPUSocketId { get; set; }
         public CPUSocket CPUSocket { get; set; }
 
-        public ICollection<MotherBoardRAMSlot> PowerSupplyCPUInterfaces { get; } = new List<MotherBoardRAMSlot>();
+        public ICollection<MotherBoardRAMSlot> MotherBoardRAMSlots { get; set; } = new List<MotherBoardRAMSlot>();
 
-        public ICollection<MotherBoardPowerSupplySlot> PowerSupplyMotherBoardSlots { get; } = new List<MotherBoardPowerSupplySlot>();
+        public ICollection<MotherBoardPowerSupplySlot> PowerSupplyMotherBoardSlots { get; set; } = new List<MotherBoardPowerSupplySlot>();
 
-        public ICollection<MotherBoardOuterMemorySlot> MotherBoardOuterMemorySlots { get; } = new List<MotherBoardOuterMemorySlot>();
+        public ICollection<MotherBoardOuterMemorySlot> MotherBoardOuterMemorySlots { get; set; } = new List<MotherBoardOuterMemorySlot>();
 
-        public ICollection<MotherBoardVideoCardSlot> MotherBoardVideoCardSlots { get; } = new List<MotherBoardVideoCardSlot>();
-        public ICollection<ComputerAssembly> ComputerAssemblies { get; } = new List<ComputerAssembly>();
+        public ICollection<MotherBoardVideoCardSlot> MotherBoardVideoCardSlots { get; set; } = new List<MotherBoardVideoCardSlot>();
+
+        public ICollection<ComputerAssembly> ComputerAssemblies { get; set; } = new List<ComputerAssembly>();
     }
 }

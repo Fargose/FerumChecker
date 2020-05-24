@@ -23,12 +23,15 @@ namespace FerumChecker.Repository.Repositories.Hardware
 
         public IEnumerable<CPU> GetAll()
         {
-            return db.CPUs;
+            return db.CPUs.Include(m => m.CPUSocket).Include(m => m.Manufacturer);
         }
 
         public CPU Get(int id)
         {
-            return db.CPUs.Find(id);
+            var cpu  = db.CPUs.Find(id);
+            cpu.CPUSocket = db.CPUSockets.Find(cpu.CPUSocketId);
+            cpu.Manufacturer = db.Manufacturers.Find(cpu.ManufacturerId);
+            return cpu;
         }
 
         public void Create(CPU cpu)

@@ -76,6 +76,21 @@ namespace FerumChecker.Repository.EF
        .HasOne(t => t.MotherBoard);
             modelBuilder.Entity<ComputerAssembly>()
        .HasOne(t => t.CPU);
+            modelBuilder.Entity<Manufacturer>()
+            .HasOne(i => i.Country)
+            .WithMany(c => c.Manufacturers)
+            .IsRequired()
+            .OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<Publisher>()
+            .HasOne(i => i.Country)
+            .WithMany(c => c.Publishers)
+            .IsRequired()
+            .OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<Developer>()
+            .HasOne(i => i.Country)
+            .WithMany(c => c.Developers)
+            .IsRequired()
+            .OnDelete(DeleteBehavior.Cascade);
             // new ComputerAssemblyMap(modelBuilder.Entity<ComputerAssembly>());
         }
     }

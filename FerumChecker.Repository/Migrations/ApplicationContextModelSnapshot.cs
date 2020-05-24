@@ -1021,12 +1021,7 @@ namespace FerumChecker.Repository.Migrations
                         .HasColumnType("nvarchar(100)")
                         .HasMaxLength(100);
 
-                    b.Property<int?>("PowerSupplyId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("PowerSupplyId");
 
                     b.ToTable("PowerSupplyCPUInterfaces");
                 });
@@ -1554,7 +1549,7 @@ namespace FerumChecker.Repository.Migrations
             modelBuilder.Entity("FerumChecker.DataAccess.Entities.Infrastructure.Developer", b =>
                 {
                     b.HasOne("FerumChecker.DataAccess.Entities.Infrastructure.Country", "Country")
-                        .WithMany()
+                        .WithMany("Developers")
                         .HasForeignKey("CountryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1563,7 +1558,7 @@ namespace FerumChecker.Repository.Migrations
             modelBuilder.Entity("FerumChecker.DataAccess.Entities.Infrastructure.Manufacturer", b =>
                 {
                     b.HasOne("FerumChecker.DataAccess.Entities.Infrastructure.Country", "Country")
-                        .WithMany()
+                        .WithMany("Manufacturers")
                         .HasForeignKey("CountryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1572,7 +1567,7 @@ namespace FerumChecker.Repository.Migrations
             modelBuilder.Entity("FerumChecker.DataAccess.Entities.Infrastructure.Publisher", b =>
                 {
                     b.HasOne("FerumChecker.DataAccess.Entities.Infrastructure.Country", "Country")
-                        .WithMany()
+                        .WithMany("Publishers")
                         .HasForeignKey("CountryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1752,7 +1747,7 @@ namespace FerumChecker.Repository.Migrations
                         .IsRequired();
 
                     b.HasOne("FerumChecker.DataAccess.Entities.Hardware.PowerSupply", "PowerSupply")
-                        .WithMany()
+                        .WithMany("PowerSupplyPowerSupplyCPUInterfaces")
                         .HasForeignKey("PowerSupplyId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1798,13 +1793,6 @@ namespace FerumChecker.Repository.Migrations
                         .HasForeignKey("VideoCardId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("FerumChecker.DataAccess.Entities.Specification.PowerSupplyCPUInterface", b =>
-                {
-                    b.HasOne("FerumChecker.DataAccess.Entities.Hardware.PowerSupply", null)
-                        .WithMany("PowerSupplyCPUInterfaces")
-                        .HasForeignKey("PowerSupplyId");
                 });
 
             modelBuilder.Entity("FerumChecker.DataAccess.Entities.User.Comment", b =>

@@ -37,3 +37,20 @@ BasicWidgets.confirmWindow = function (message, header = "") {
 
     return dialog;
 }
+
+
+BasicWidgets.loading = function (elem, flag) {
+    if (flag) {
+        elem.addClass('disabledelement');
+        var height = elem.height();
+        var width = elem.width();
+        var loader = "<div class='loader'></div>";
+        loader = $(loader).appendTo(elem);
+        loader.css("position", "absolute");
+        loader.css("top", elem.position().top);
+        loader.css("left", elem.position().left);
+    } else {
+        elem.removeClass('disabledelement');
+        elem.find('.loader').remove();
+    }
+}

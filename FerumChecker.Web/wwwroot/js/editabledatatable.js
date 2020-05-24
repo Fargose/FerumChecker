@@ -56,17 +56,23 @@ EditableDataTable.prototype.createItem = function () {
 
     function saveItem(e) {
         e.preventDefault();
-        var formData = $(e.target).serialize();
+        BasicWidgets.loading($(".catalog-list-container"), true);
+        //var formData = $(e.target).serialize();
+        var formData = new FormData(e.target);
         $.ajax({
             url: "/" + self.Url + "/Create",
             type: "POST",
             data: formData,
-            success: function (data) {
+            processData: false,
+            contentType : false,
+            success: function (data, textStatus, jqXHR) {
                 if (data.id) {
+                    BasicWidgets.loading($(".catalog-list-container"), false);
                     $(insertedRow).remove();
                     self.TableContainer.find("tbody").prepend(self.getRowTemplate().format(data.id, data.fullName));
                 }
                 else {
+                    BasicWidgets.loading($(".catalog-list-container"), false);
                     $(insertedRow).find('.table-edit-container').html(data);
                     $(insertedRow).find("form").on("submit", function (e) {
                         saveItem(e)
@@ -85,10 +91,12 @@ EditableDataTable.prototype.deleteItem = function (e) {
     var confirm = BasicWidgets.confirmWindow("Ви дійсно хочете видалити цей елемент?");
     console.log(confirm);
     $(confirm).find(".confirm-btn").on("click", function () {
+        BasicWidgets.loading($(".catalog-list-container"), true);
         $.ajax({
             url: "/" + self.Url + "/Delete/" + $(e.target).closest("tr").attr("data-id") ,
             type: "POST",
             success: function (data) {
+                BasicWidgets.loading($(".catalog-list-container"), false);
                 $(row).remove();
                 $(confirm).modal("hide");
                 $(confirm).remove();
@@ -125,18 +133,23 @@ EditableDataTable.prototype.editItem = function (e) {
 
     function updateItem(e) {
         e.preventDefault();
-        var formData = $(e.target).serialize();
+        var formData = new FormData(e.target);
+        BasicWidgets.loading($(".catalog-list-container"), true);
         $.ajax({
             url: "/" + self.Url + "/Edit",
             type: "POST",
             data: formData,
+            processData: false,
+            contentType: false,
             success: function (data) {
                 if (data.id) {
+                    BasicWidgets.loading($(".catalog-list-container"), false);
                     $(row.find("td")[0]).html(data.fullName);
                     $(row).show();
                     $(insertedRow).remove();
                 }
                 else {
+                    BasicWidgets.loading($(".catalog-list-container"), false);
                     $(insertedRow).find('.table-edit-container').html(data);
                     $(insertedRow).find("form").on("submit", function (e) {
                         updateItem(e)

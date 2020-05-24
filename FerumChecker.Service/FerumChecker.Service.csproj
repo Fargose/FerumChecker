@@ -13,4 +13,8 @@
     <ProjectReference Include="..\FerumChecker.Repository\FerumChecker.Repository.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="DTO\Hardware\" />
+  </ItemGroup>
+
 </Project>

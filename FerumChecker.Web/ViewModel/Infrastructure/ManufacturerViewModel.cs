@@ -25,7 +25,7 @@ namespace FerumChecker.Web.ViewModel.Infrastructure
 
         [Required]
         public int CountryId { get; set; }
-
+        [Display(Name = "Назва")]
         public string FullName { get => Name; }
     }
 }

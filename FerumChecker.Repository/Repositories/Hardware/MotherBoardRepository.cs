@@ -23,12 +23,25 @@ namespace FerumChecker.Repository.Repositories.Hardware
 
         public IEnumerable<MotherBoard> GetAll()
         {
-            return db.MotherBoards;
+            return db.MotherBoards
+                .Include(m => m.CPUSocket)
+                .Include(m => m.Manufacturer)
+                .Include(m => m.MotherBoardFormFactor)
+                .Include(m => m.MotherBoardNothernBridge);
         }
 
         public MotherBoard Get(int id)
         {
-            return db.MotherBoards.Find(id);
+            return db.MotherBoards
+                .Include(m => m.CPUSocket)
+                .Include(m => m.Manufacturer)
+                .Include(m => m.MotherBoardFormFactor)
+                .Include(m => m.MotherBoardNothernBridge)
+                .Include(m => m.MotherBoardOuterMemorySlots).ThenInclude(m => m.OuterMemoryInterface)
+                .Include(m => m.MotherBoardVideoCardSlots).ThenInclude(m => m.VideoCardInterface)
+                .Include(m => m.MotherBoardRAMSlots).ThenInclude(m => m.RAMType)
+                .Include(m => m.PowerSupplyMotherBoardSlots).ThenInclude(m => m.PowerSupplyMotherBoardInterface)
+                .FirstOrDefault(m => m.Id == id);
         }
 
         public void Create(MotherBoard motherBoard)

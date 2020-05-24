@@ -1,0 +1,22 @@
+﻿@model CPUViewModel
+
+@{
+    ViewData["Title"] = "Details";
+}
+<link href="~/css/catalog.css" rel="stylesheet" />
+
+<h1>@Model.Name</h1>
+<a class='edit-link' asp-controller="CPU" asp-action="edit" asp-route-id="@Model.Id"><i class='fas fa-edit'></i></a>
+<div class="details-container">
+    <div class="item-description">@Model.Description</div>
+    <div class="item-prop"><span class="item-prop-name">@Html.DisplayNameFor(Model => Model.Manufacturer)</span> : <span class="item-prop-value">@Model.Manufacturer</span></div>
+    <div class="item-prop"><span class="item-prop-name">@Html.DisplayNameFor(Model => Model.FrequencyDisplay)</span> : <span class="item-prop-value">@Model.FrequencyDisplay</span></div>
+    <div class="item-prop"><span class="item-prop-name">@Html.DisplayNameFor(Model => Model.MaxFrequencyDisplay)</span> : <span class="item-prop-value">@Model.Manufacturer</span></div>
+    <div class="item-prop"><span class="item-prop-name">@Html.DisplayNameFor(Model => Model.CPUSocket)</span> : <span class="item-prop-value">@Model.CPUSocket</span></div>
+    <div class="item-prop"><span class="item-prop-name">@Html.DisplayNameFor(Model => Model.ThreadsNumber)</span> : <span class="item-prop-value">@Model.ThreadsNumber</span></div>
+    <div class="item-prop"><span class="item-prop-name">@Html.DisplayNameFor(Model => Model.CoresNumber)</span> : <span class="item-prop-value">@Model.CoresNumber</span></div>
+    <div class="item-prop"><span class="item-prop-name">@Html.DisplayNameFor(Model => Model.CoresName)</span> : <span class="item-prop-value">@Model.CoresName</span></div>
+    <div class="item-prop"><span class="item-prop-name">@Html.DisplayNameFor(Model => Model.Price)</span> : <span class="item-prop-value">@Model.Price</span></div>
+    <img src="@(Model != null && Model.ImagePath !=null ? Model.ImagePath : "/Images//not-found.png" )" style="max-width:300px;margin-top: 20px; margin-bottom: 20px;" id="country-image" />
+</div>
+

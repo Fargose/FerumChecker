@@ -16,7 +16,8 @@ namespace FerumChecker.DataAccess.Entities.Infrastructure
 
         public string Image { get; set; }
 
-
-        public string FullName { get => Name + ""; }
+        public IEnumerable<Manufacturer> Manufacturers { get; set; }
+        public IEnumerable<Publisher> Publishers { get; set; }
+        public IEnumerable<Developer> Developers { get; set; }
     }
 }

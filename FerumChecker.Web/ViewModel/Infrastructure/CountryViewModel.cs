@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -17,7 +18,10 @@ namespace FerumChecker.Web.ViewModel.Specification
         public string Name { get; set; }
 
         [Display(Name = "Зображення")]
-        public string Image { get; set; }
+        public string ImagePath { get; set; }
+
+        [Display(Name = "Зображення")]
+        public IFormFile Image { get; set; }
 
 
         [Display(Name = "Назва")]

@@ -29,6 +29,10 @@
     <Compile Remove="Migrations\20200503234936_final-assembly.Designer.cs" />
     <Compile Remove="Migrations\20200503235138_final-assembly.cs" />
     <Compile Remove="Migrations\20200503235138_final-assembly.Designer.cs" />
+    <Compile Remove="Migrations\20200523170826_country-cahnge.cs" />
+    <Compile Remove="Migrations\20200523170826_country-cahnge.Designer.cs" />
+    <Compile Remove="Migrations\20200523171038_country-cahnge.cs" />
+    <Compile Remove="Migrations\20200523171038_country-cahnge.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

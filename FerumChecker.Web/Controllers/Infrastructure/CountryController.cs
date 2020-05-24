@@ -5,7 +5,9 @@ using System.Threading.Tasks;
 using FerumChecker.DataAccess.Entities.Infrastructure;
 using FerumChecker.DataAccess.Entities.Specification;
 using FerumChecker.Service.Interfaces.Hardware;
+using FerumChecker.Web.Code;
 using FerumChecker.Web.ViewModel.Specification;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,9 +18,11 @@ namespace FerumChecker.Web.Controllers
     {
 
         private readonly ICountryService _countryService;
-        public CountryController(ICountryService countryService)
+        private readonly IWebHostEnvironment _webHostEnvironment;
+        public CountryController(ICountryService countryService, IWebHostEnvironment hostEnvironment)
         {
             _countryService = countryService;
+            _webHostEnvironment = hostEnvironment;
         }
         // GET: Country
         public ActionResult Index()
@@ -67,14 +71,18 @@ namespace FerumChecker.Web.Controllers
         {
             if (ModelState.IsValid)
             {
+                var helper = new ImageHelper(_webHostEnvironment);
+                var image = helper.GetUploadedFile(model.Image, "Countries");
                 var country = new Country()
                 {
-                    Name = model.Name
+                    Name = model.Name,
+                    Image = image
                 };
 
                 var result = _countryService.CreateCountry(country);
 
                 model.Id = country.Id;
+                model.Image = null;
 
                 if (result.Succedeed)
                 {
@@ -99,7 +107,8 @@ namespace FerumChecker.Web.Controllers
 
             var model = new CountryViewModel()
             {
-                Name = country.Name
+                Name = country.Name,
+                ImagePath = "/Images/Countries/" + country.Image
             };
 
             return PartialView("Create", model);
@@ -119,11 +128,17 @@ namespace FerumChecker.Web.Controllers
             if (ModelState.IsValid)
             {
                 country.Name = model.Name;
-
+                if (model.Image != null)
+                {
+                    var helper = new ImageHelper(_webHostEnvironment);
+                    var image = helper.GetUploadedFile(model.Image, "Countries");
+                    country.Image = image;
+                }
 
                 var result = _countryService.UpdateCountry(country);
 
                 model.Id = country.Id;
+                model.Image = null;
 
                 if (result.Succedeed)
                 {
@@ -152,7 +167,7 @@ namespace FerumChecker.Web.Controllers
                 var result = _countryService.DeleteCountry(id);
                 return Json(result);
             }
-            catch
+            catch (Exception e)
             {
                 return View();
             }

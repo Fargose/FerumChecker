@@ -16,6 +16,7 @@ namespace FerumChecker.Service.Interfaces.Hardware
         OperationDetails UpdateMotherBoard(MotherBoard motherBoard);
 
         OperationDetails DeleteMotherBoard(int? id);
+
         void Dispose();
     }
 }

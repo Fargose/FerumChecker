@@ -1,0 +1,38 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+}
+
+<link href="~/css/catalog.css" rel="stylesheet" />
+<script src="~/js/specifications.js"></script>
+<script src="~/js/catalogtable.js?v=2"></script>
+@*<script src="~/js/editabledatatable.js"></script>*@
+
+<div class="container catalog-page">
+    <div class="row">
+        Каталог
+    </div>
+    <div class="row">
+        <div class="col-lg-3">
+            Категорія
+            <div class="sidenav">
+                <a href="#" class="category-link" data-link="CPU">Процесори</a>
+                <a href="#" class="category-link" data-link="MotherBoard">Материнські плати</a>
+            </div>
+        </div>
+        <div class="col-lg-9 please-scroll ">
+            <div><h2 class="сategory-name"></h2></div>
+            <div class="search-box" style="display: none">
+                <input id="search-input" class="form-control" type="text" placeholder="Search..." aria-label="Search" />
+            </div>
+            <div class="catalog-list-container main"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        var page = new CatalogPage();
+        page.init("@ViewBag.StartView");
+    })
+</script>

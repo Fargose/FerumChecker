@@ -32,18 +32,21 @@ namespace FerumChecker.Service.Services.Hardware
         {
             
             Database.CPUs.Update(cpu);
+            Database.Save();
             return new OperationDetails(true, "Ok", "");
         }
 
         public OperationDetails CreateCPU(CPU cpu)
         {
             Database.CPUs.Create(cpu);
+            Database.Save();
             return new OperationDetails(true, "Ok", "");
         }
 
         public OperationDetails DeleteCPU(int? id)
         {
             Database.CPUs.Delete(id.Value);
+            Database.Save();
             return new OperationDetails(true, "Ok", "");
         }
 
