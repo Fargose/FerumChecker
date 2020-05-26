@@ -1,0 +1,55 @@
+﻿@model MotherBoardViewModel
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>@Model.Name</h1>
+<a class='edit-link' asp-controller="CPU" asp-action="edit" asp-route-id="@Model.Id"><i class='fas fa-edit'></i></a>
+<div class="details-container">
+    <div class="item-description">@Model.Description</div>
+    <div class="item-prop"><span class="item-prop-name">@Html.DisplayNameFor(Model => Model.Manufacturer)</span> : <span class="item-prop-value">@Model.Manufacturer</span></div>
+    <div class="item-prop"><span class="item-prop-name">@Html.DisplayNameFor(Model => Model.MaxMemory)</span> : <span class="item-prop-value">@Model.MaxMemory</span></div>
+    <div class="item-prop"><span class="item-prop-name">@Html.DisplayNameFor(Model => Model.MotherBoardNothernBridge)</span> : <span class="item-prop-value">@Model.MotherBoardNothernBridge</span></div>
+    <div class="item-prop"><span class="item-prop-name">@Html.DisplayNameFor(Model => Model.CPUSocket)</span> : <span class="item-prop-value">@Model.CPUSocket</span></div>
+    <div class="item-prop"><span class="item-prop-name">@Html.DisplayNameFor(Model => Model.MotherBoardFormFactor)</span> : <span class="item-prop-value">@Model.MotherBoardFormFactor</span></div>
+    <div class="item-prop">
+        <span class="item-prop-name">@Html.DisplayNameFor(Model => Model.VideoCardInterfaces)</span> :
+        <ul class="item-prop-value">
+            @foreach (var item in Model.VideoCardInterfaces)
+            {
+                <li>@item.FullName</li>
+            }
+        </ul>
+    </div>
+    <div class="item-prop">
+        <span class="item-prop-name">@Html.DisplayNameFor(Model => Model.OuterMemoryInterfaces)</span> :
+        <ul class="item-prop-value">
+            @foreach (var item in Model.OuterMemoryInterfaces)
+            {
+                <li>@item.Name</li>
+            }
+        </ul>
+    </div>
+    <div class="item-prop">
+        <span class="item-prop-name">@Html.DisplayNameFor(Model => Model.MotherBoardRAMSlots)</span> :
+        <ul class="item-prop-value">
+            @foreach (var item in Model.MotherBoardRAMSlots)
+            {
+                <li>@item.Name</li>
+            }
+        </ul>
+    </div>
+    <div class="item-prop">
+        <span class="item-prop-name">@Html.DisplayNameFor(Model => Model.PowerSupplyMotherBoardInterfaces)</span> :
+        <ul class="item-prop-value">
+            @foreach (var item in Model.VideoCardInterfaces)
+            {
+                <li>@item.Name</li>
+            }
+        </ul>
+    </div>
+    <div class="item-prop"><span class="item-prop-name">@Html.DisplayNameFor(Model => Model.Price)</span> : <span class="item-prop-value">@Model.Price</span></div>
+    <img src="@(Model != null && Model.ImagePath !=null ? Model.ImagePath : "/Images//not-found.png" )" style="max-width:300px;margin-top: 20px; margin-bottom: 20px;" id="country-image" />
+</div>
+

@@ -61,9 +61,30 @@ MotherBoardEditPage.prototype.clickInit = function (elem, propertyName) {
     var self = this;
     var select = elem.find(".combo-select");
     var list = elem.find(".selected-list");
+    this[propertyName] = [];
+    var items = list.find("li");
+    for (var i = 0; i < items.length; i++) {
+        this[propertyName].push({ Id: $(items[i]).attr("data-id") });
+    }
     elem.find(".add-item").click(function (e) {
         self.addItem(select, list, propertyName);
     });
+    list.on("click", ".remove-item", function (e) {
+        self.removeItem(e, propertyName);
+    })
+}
+
+MotherBoardEditPage.prototype.removeItem = function (e, propertyname) {
+    var id = $(e.target).closest("li").attr("data-id");
+    if (this[propertyname]) {
+        for (var i = this[propertyname].length - 1; i > -1 ; i--) {
+            if (this[propertyname][i].Id == id) {
+                this[propertyname].splice(i, 1);
+                break;
+            }
+        }
+    }
+    $(e.target).closest("li").remove();
 }
 
 MotherBoardEditPage.prototype.addItem = function (select, list, propertyName) {
@@ -74,7 +95,8 @@ MotherBoardEditPage.prototype.addItem = function (select, list, propertyName) {
         this[propertyName] = [];
     }
     this[propertyName].push(item);
-    list.append("<li>" + name + "</li>");
+    list.append("<li data-id='" + id + "'>" + name + "&nbsp;<a class='remove-item'><i class='fas fa-times'></i></a></li>");
+    console.log(this[propertyName]);
 }
 
 MotherBoardEditPage.prototype.addArrayToFormData = function (formData, array, name) {

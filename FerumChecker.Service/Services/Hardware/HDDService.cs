@@ -32,18 +32,24 @@ namespace FerumChecker.Service.Services.Hardware
         {
             
             Database.HDDs.Update(hdd);
+            Database.Save();
+
             return new OperationDetails(true, "Ok", "");
         }
 
         public OperationDetails CreateHDD(HDD hdd)
         {
             Database.HDDs.Create(hdd);
+            Database.Save();
+
             return new OperationDetails(true, "Ok", "");
         }
 
         public OperationDetails DeleteHDD(int? id)
         {
             Database.HDDs.Delete(id.Value);
+            Database.Save();
+
             return new OperationDetails(true, "Ok", "");
         }
 

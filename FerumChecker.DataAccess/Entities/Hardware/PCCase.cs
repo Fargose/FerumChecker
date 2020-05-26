@@ -37,11 +37,11 @@ namespace FerumChecker.DataAccess.Entities.Hardware
         public int Weight { get; set; }
 
 
-        public ICollection<PCCaseMotherBoardFormFactor> PCCaseMotherBoardFormFactors { get; } = new List<PCCaseMotherBoardFormFactor>();
+        public ICollection<PCCaseMotherBoardFormFactor> PCCaseMotherBoardFormFactors { get; set; }
 
-        public ICollection<PCCaseOuterMemoryFormFactor> PCCaseOuterMemoryFormFactors { get; } = new List<PCCaseOuterMemoryFormFactor>();
+        public ICollection<PCCaseOuterMemoryFormFactor> PCCaseOuterMemoryFormFactors { get; set; } 
 
-        public ICollection<ComputerAssembly> ComputerAssemblies { get; } = new List<ComputerAssembly>();
+        public ICollection<ComputerAssembly> ComputerAssemblies { get; set; }
 
     }
 }

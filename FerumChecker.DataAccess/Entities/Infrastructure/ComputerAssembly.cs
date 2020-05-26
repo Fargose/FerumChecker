@@ -1,4 +1,5 @@
 ﻿using FerumChecker.DataAccess.Entities.Hardware;
+using FerumChecker.DataAccess.Entities.Joins;
 using FerumChecker.DataAccess.Entities.User;
 using System;
 using System.Collections.Generic;
@@ -17,33 +18,28 @@ namespace FerumChecker.DataAccess.Entities.Infrastructure
         [MaxLength(100)]
         public string Name { get; set; }
 
-        [Required]
         [MaxLength(1000)]
         public string Description { get; set; }
 
-        [Required]
         [ForeignKey("MotherBoard")]
-        public int MotherBoardId { get; set; }
+        public int? MotherBoardId { get; set; }
 
         public MotherBoard MotherBoard { get; set; }
 
-        [Required]
         [ForeignKey("CPU")]
-        public int CPUId { get; set; }
+        public int? CPUId { get; set; }
 
         public CPU CPU { get; set; }
 
 
-        [Required]
         [ForeignKey("PCCase")]
-        public int PCCaseId { get; set; }
+        public int? PCCaseId { get; set; }
 
         public PCCase PCCase { get; set; }
 
 
-        [Required]
         [ForeignKey("PowerSupply")]
-        public int PowerSupplyId { get; set; }
+        public int? PowerSupplyId { get; set; }
 
         public PowerSupply PowerSupply { get; set; }
 
@@ -55,10 +51,10 @@ namespace FerumChecker.DataAccess.Entities.Infrastructure
 
         public UserProfile Owner { get; set; }
 
-        public ICollection<RAM> RAMs { get; } = new List<RAM>();
-        public ICollection<SSD> SSDs { get; } = new List<SSD>();
-        public ICollection<HDD> HDDs { get; } = new List<HDD>();
-        public ICollection<VideoCard> VideoCards { get; } = new List<VideoCard>();
+        public ICollection<ComputerAssemblyRAM> ComputerAssemblyRAMs { get; set; }
+        public ICollection<ComputerAssemblySSD> SSDs { get; set; } 
+        public ICollection<ComputerAssemblyHDD> HDDs { get; set; }
+        public ICollection<ComputerAssemblyVideoCard> VideoCards { get; set; } 
 
         public ICollection<Comment> Comments { get; } = new List<Comment>();
         public ICollection<ComputerAssemblyRate> ComputerAssemblyRates { get; } = new List<ComputerAssemblyRate>();

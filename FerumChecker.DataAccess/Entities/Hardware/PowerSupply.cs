@@ -16,8 +16,11 @@ namespace FerumChecker.DataAccess.Entities.Hardware
         public int Id { get; set; }
 
         [Required]
-        [MaxLength(100)]
+        [MaxLength(200)]
         public string Name { get; set; }
+
+        [MaxLength(1000)]
+        public string Description { get; set; }
 
         [Required]
         public int Power { get; set; }
@@ -40,7 +43,7 @@ namespace FerumChecker.DataAccess.Entities.Hardware
         public string Image { get; set; }
 
 
-        public ICollection<PowerSupplyPowerSupplyCPUInterface> PowerSupplyPowerSupplyCPUInterfaces { get; } = new List<PowerSupplyPowerSupplyCPUInterface>();
+        public ICollection<PowerSupplyPowerSupplyCPUInterface> PowerSupplyPowerSupplyCPUInterfaces { get; set; } 
 
         [Required]
         [ForeignKey("PowerSupplyMotherBoardInterface")]

@@ -23,12 +23,15 @@ namespace FerumChecker.Repository.Repositories.Hardware
 
         public IEnumerable<RAM> GetAll()
         {
-            return db.RAMs;
+            return db.RAMs.Include(m => m.RAMType).Include(m => m.Manufacturer);
         }
 
         public RAM Get(int id)
         {
-            return db.RAMs.Find(id);
+            var ram =  db.RAMs.Find(id);
+            ram.RAMType = db.RAMTypes.Find(ram.RAMTypeId);
+            ram.Manufacturer = db.Manufacturers.Find(ram.ManufacturerId);
+            return ram;
         }
 
         public void Create(RAM ram)

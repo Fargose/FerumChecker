@@ -23,12 +23,17 @@ namespace FerumChecker.Repository.Repositories.Hardware
 
         public IEnumerable<PCCase> GetAll()
         {
-            return db.PCCases;
+            return db.PCCases
+                .Include(m => m.Manufacturer)
+                .Include(m => m.PCCaseOuterMemoryFormFactors).ThenInclude(m => m.OuterMemoryFormFactors)
+                .Include(m => m.PCCaseMotherBoardFormFactors).ThenInclude(m => m.MotherBoardFormFactor);
         }
 
         public PCCase Get(int id)
         {
-            return db.PCCases.Find(id);
+            return db.PCCases.Include(m => m.Manufacturer)
+                .Include(m => m.PCCaseOuterMemoryFormFactors).ThenInclude(m => m.OuterMemoryFormFactors)
+                .Include(m => m.PCCaseMotherBoardFormFactors).ThenInclude(m => m.MotherBoardFormFactor).FirstOrDefault(m => m.Id == id);
         }
 
         public void Create(PCCase pcCase)

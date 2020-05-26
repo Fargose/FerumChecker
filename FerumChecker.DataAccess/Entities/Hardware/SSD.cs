@@ -54,7 +54,6 @@ namespace FerumChecker.DataAccess.Entities.Hardware
         [Required]
         public int WriteSpeed { get; set; }
 
-        public ICollection<ComputerAssembly> ComputerAssemblies { get; } = new List<ComputerAssembly>();
 
     }
 }

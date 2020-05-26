@@ -1,0 +1,127 @@
+﻿@model FerumChecker.Web.ViewModel.Infrastructure.SoftwareViewModel
+
+@{
+    ViewData["Title"] = "Create";
+}
+<link href="~/css/catalog.css" rel="stylesheet" />
+<script src="~/js/hardware/softwareeditpage.js"></script>
+
+<h1>Нове ПЗ</h1>
+
+<hr />
+<div class="row">
+    <div class="col-md-2">
+    </div>
+    <div class="col-md-4">
+        <form asp-action="Edit" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group" hidden>
+                <label asp-for="Id" class="control-label"></label>
+                <input asp-for="Id" class="form-control" />
+                <span asp-validation-for="Id" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Name" class="control-label"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Description" class="control-label"></label>
+                <textarea asp-for="Description" class="form-control"></textarea>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="DiscVolume" class="control-label"></label>
+                <input asp-for="DiscVolume" class="form-control" />
+                <span asp-validation-for="DiscVolume" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PublisherId" class="control-label"></label>
+                <select asp-for="PublisherId" class="form-control" asp-items="ViewBag.Publishers"></select>
+                <span asp-validation-for="PublisherId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="DeveloperId" class="control-label"></label>
+                <select asp-for="DeveloperId" class="form-control" asp-items="ViewBag.Developers"></select>
+                <span asp-validation-for="DeveloperId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Price" class="control-label"></label>
+                <input asp-for="Price" class="form-control" />
+                <span asp-validation-for="Price" class="text-danger"></span>
+            </div>
+            <h3>Мінімальні вимоги</h3>
+            <div class="form-group">
+                <label asp-for="MinimiumRequiredRAM" class="control-label"></label>
+                <input asp-for="MinimiumRequiredRAM" class="form-control" />
+                <span asp-validation-for="MinimiumRequiredRAM" class="text-danger"></span>
+            </div>
+            <div class="form-group" id="minimum-videocard-select">
+                <label asp-for="MinimumVideoCardRequirmentsDisplay" class="control-label"></label>
+                <span class="form-inline"><select class="form-control combo-select" style="width:91%" asp-items="ViewBag.VideoCards"></select><a class="add-item"><i class='fas fa-plus'></i></a></span>
+                <div>
+                    <ul class="selected-list">
+                    </ul>
+                </div>
+                <span asp-validation-for="MinimumVideoCardRequirmentsDisplay" class="text-danger"></span>
+            </div>
+            <div class="form-group" id="minimum-cpu-select">
+                <label asp-for="MinimumCPURequirmentsDisplay" class="control-label"></label>
+                <span class="form-inline"><select class="form-control combo-select" style="width:91%" asp-items="ViewBag.CPUs"></select><a class="add-item"><i class='fas fa-plus'></i></a></span>
+                <div>
+                    <ul class="selected-list">
+                    </ul>
+                </div>
+                <span asp-validation-for="MinimumCPURequirmentsDisplay" class="text-danger"></span>
+            </div>
+            <h3>Рекомендовані вимоги</h3>
+            <div class="form-group">
+                <label asp-for="RecommendedRequiredRAM" class="control-label"></label>
+                <input asp-for="RecommendedRequiredRAM" class="form-control" />
+                <span asp-validation-for="RecommendedRequiredRAM" class="text-danger"></span>
+            </div>
+            <div class="form-group" id="recomended-videocard-select">
+                <label asp-for="RecomendedVideoCardRequirmentsDisplay" class="control-label"></label>
+                <span class="form-inline"><select class="form-control combo-select" style="width:91%" asp-items="ViewBag.VideoCards"></select><a class="add-item"><i class='fas fa-plus'></i></a></span>
+                <div>
+                    <ul class="selected-list">
+                    </ul>
+                </div>
+                <span asp-validation-for="RecomendedVideoCardRequirmentsDisplay" class="text-danger"></span>
+            </div>
+            <div class="form-group" id="recomended-cpu-select">
+                <label asp-for="RecomendedCPURequirmentsDisplay" class="control-label"></label>
+                <span class="form-inline"><select class="form-control combo-select" style="width:91%" asp-items="ViewBag.CPUs"></select><a class="add-item"><i class='fas fa-plus'></i></a></span>
+                <div>
+                    <ul class="selected-list">
+                    </ul>
+                </div>
+                <span asp-validation-for="RecomendedCPURequirmentsDisplay" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Image" class="control-label"></label>
+                <div class="custom-file">
+                    <input asp-for="Image" class="custom-file-input" accept="image/*">
+                    <label class="custom-file-label" asp-for="Image">Оберіть файл</label>
+                    <span asp-validation-for="Image" class="text-danger"></span>
+                </div>
+            </div>
+            <img src="@(Model != null && Model.ImagePath !=null ? Model.ImagePath : "/Images//not-found.png" )" style="max-width:300px;margin-top: 20px; margin-bottom: 20px;" id="country-image" />
+            <div class="form-group">
+                <input type="submit" value="Зберегти" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index" asp-controller="Catalog" asp-route-startView="Software">Back to List</a>
+</div>
+
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        var powerSupplyEditPage = new SoftwareEditPage();
+        powerSupplyEditPage.init("Create");
+    });
+</script>

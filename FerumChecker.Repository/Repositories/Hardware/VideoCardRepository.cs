@@ -23,12 +23,17 @@ namespace FerumChecker.Repository.Repositories.Hardware
 
         public IEnumerable<VideoCard> GetAll()
         {
-            return db.VideoCards;
+            return db.VideoCards.Include(m => m.GPU).Include(m => m.GraphicMemoryType).Include(m => m.Manufacturer).Include(m => m.VideoCardInterface);
         }
 
         public VideoCard Get(int id)
         {
-            return db.VideoCards.Find(id);
+            var videoCard = db.VideoCards.Find(id);
+            videoCard.Manufacturer = db.Manufacturers.Find(videoCard.ManufacturerId);
+            videoCard.GPU = db.GPUs.Find(videoCard.GPUId);
+            videoCard.GraphicMemoryType = db.GraphicMemoryTypes.Find(videoCard.GraphicMemoryTypeId);
+            videoCard.VideoCardInterface = db.VideoCardInterfaces.Find(videoCard.VideoCardInterfaceId);
+            return videoCard;
         }
 
         public void Create(VideoCard videoCard)

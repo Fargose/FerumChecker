@@ -9,14 +9,14 @@
 
     .sidenav a.selected {
         color: white;
-        background-color: dodgerblue;
+        background-color: mediumseagreen;
     }
 
-.fas{
-    font-size : 24px;
+.fas {
+    font-size: 24px;
     text-align: center;
     vertical-align: middle;
-    color: dodgerblue;
+    color: mediumseagreen;
     padding: 10px 10px 10px 10px;
 }
 
@@ -37,22 +37,23 @@
     width: 90%;
 }
 
-.table-edit-container{
-    background-color : aliceblue;
-    padding : 25px;
+.table-edit-container {
+    background-color: whitesmoke;
+    padding: 25px;
     border-radius: 10px;
     border-style: solid;
-    border-color: darkgray;
+    border-color: mediumseagreen;
 }
 
 .catalog-item {
     border-style: solid;
-    border-color: darkgray;
-    background-color: lightblue;
+    border-color: mediumseagreen;
+    background-color: whitesmoke;
     margin: 20px;
     border-radius: 20px;
     padding: 20px;
     display: inline-block;
+    width: 90%;
 }
 
 .catalog-item img{
@@ -100,4 +101,11 @@
 
 .details-container .item-prop .item-prop-value {
     font-size: 18px;
+}
+
+form .fas {
+    cursor: pointer;
+    color: mediumseagreen;
+    text-align: center;
+    vertical-align: middle;
 }

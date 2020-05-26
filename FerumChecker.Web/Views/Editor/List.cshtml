@@ -1,0 +1,41 @@
+﻿@model IEnumerable<ComputerAssemblyViewModel>
+
+    @{
+        ViewData["Title"] = "List";
+    }
+    <link href="~/css/catalog.css" rel="stylesheet" />
+    <h1>Ваші збірки</h1>
+
+    <table class="table" id="assembly-table">
+        <thead>
+            <tr>
+                <th>
+                    <a asp-controller="Editor" asp-action="Index" class="create-link btn btn-success">Створити нову</a>
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr data-id="@item.Id">
+                    <td style="width: 100%">
+                        <div class="catalog-item">
+                            <div class="catalog-item-block" style="width: 30%; float: left">
+                            </div>
+                            <div class="catalog-item-block" style="width: 70%;float: right">
+                                <i class="fa fa-desktop" aria-hidden="true"></i>
+                                <div class="item-name">
+                                    @item.Name
+                                </div>
+                                <a asp-action="Index" asp-controller="Editor" asp-route-id="@item.Id"><i class="fa fa-cog" aria-hidden="true"></i></a>
+                            </div>
+                        </div>
+                    </td>
+                    @*<td style="width: 30%">
+                        <a class='edit-link' asp-controller="VideoCard" asp-action="edit" asp-route-id="@item.Id"><i class='fas fa-edit'></i></a>
+                        <a class='delete-link'><i class='fas fa-trash'></i></a>
+                    </td>*@
+                </tr>
+            }
+        </tbody>
+    </table>

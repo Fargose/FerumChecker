@@ -17,6 +17,9 @@ namespace FerumChecker.DataAccess.Entities.Hardware
         [MaxLength(100)]
         public string Name { get; set; }
 
+        [MaxLength(1000)]
+        public string Description { get; set; }
+
         [Required]
         public int Frequency { get; set; }
 
@@ -54,12 +57,9 @@ namespace FerumChecker.DataAccess.Entities.Hardware
         public int ManufacturerId { get; set; }
         public Manufacturer Manufacturer { get; set; }
 
-
         [Required]
         [ForeignKey("GraphicMemoryType")]
         public int GraphicMemoryTypeId { get; set; }
         public GraphicMemoryType GraphicMemoryType { get; set; }
-
-        public ICollection<ComputerAssembly> ComputerAssemblies { get; } = new List<ComputerAssembly>();
     }
 }

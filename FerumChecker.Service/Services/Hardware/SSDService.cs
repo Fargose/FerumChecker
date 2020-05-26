@@ -32,18 +32,24 @@ namespace FerumChecker.Service.Services.Hardware
         {
             
             Database.SSDs.Update(ssd);
+            Database.Save();
+
             return new OperationDetails(true, "Ok", "");
         }
 
         public OperationDetails CreateSSD(SSD ssd)
         {
             Database.SSDs.Create(ssd);
+            Database.Save();
+
             return new OperationDetails(true, "Ok", "");
         }
 
         public OperationDetails DeleteSSD(int? id)
         {
             Database.SSDs.Delete(id.Value);
+            Database.Save();
+
             return new OperationDetails(true, "Ok", "");
         }
 

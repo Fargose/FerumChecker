@@ -32,18 +32,21 @@ namespace FerumChecker.Service.Services.Hardware
         {
             
             Database.RAMs.Update(ram);
+            Database.Save();
             return new OperationDetails(true, "Ok", "");
         }
 
         public OperationDetails CreateRAM(RAM ram)
         {
             Database.RAMs.Create(ram);
+            Database.Save();
             return new OperationDetails(true, "Ok", "");
         }
 
         public OperationDetails DeleteRAM(int? id)
         {
             Database.RAMs.Delete(id.Value);
+            Database.Save();
             return new OperationDetails(true, "Ok", "");
         }
 

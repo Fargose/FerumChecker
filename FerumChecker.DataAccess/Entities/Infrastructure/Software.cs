@@ -26,9 +26,11 @@ namespace FerumChecker.DataAccess.Entities.Infrastructure
         public int RecommendedRequiredRAM { get; set; }
 
         public int DiscVolume { get; set; }
-        public ICollection<SoftwareCPURequirement> SoftwareCPURequirements { get; } = new List<SoftwareCPURequirement>();
+        public ICollection<SoftwareCPURequirement> SoftwareCPURequirements { get; set; } 
 
-        public ICollection<SoftwareVideoCardRequirement> SoftwareVideoCardRequirements { get; } = new List<SoftwareVideoCardRequirement>();
+        public ICollection<SoftwareVideoCardRequirement> SoftwareVideoCardRequirements { get; set; }
+
+        public string Image { get; set; }
 
         [Required]
         [DataType(DataType.Currency)]

@@ -1,9 +1,11 @@
 ﻿using FerumChecker.DataAccess.Entities.Hardware;
+using FerumChecker.DataAccess.Entities.Joins;
 using FerumChecker.Repository.Interfaces;
 using FerumChecker.Service.Infrastructure;
 using FerumChecker.Service.Interfaces.Hardware;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace FerumChecker.Service.Services.Hardware
@@ -32,20 +34,72 @@ namespace FerumChecker.Service.Services.Hardware
         {
             
             Database.PCCases.Update(pcCase);
+
+            Database.Save();
+            SetMotherBoardFormFactors(pcCase, (List<PCCaseMotherBoardFormFactor>)pcCase.PCCaseMotherBoardFormFactors);
+            SetOuterMemoryFormFactors(pcCase, (List<PCCaseOuterMemoryFormFactor>)pcCase.PCCaseOuterMemoryFormFactors);
             return new OperationDetails(true, "Ok", "");
         }
 
         public OperationDetails CreatePCCase(PCCase pcCase)
         {
             Database.PCCases.Create(pcCase);
+            SetMotherBoardFormFactors(pcCase, (List<PCCaseMotherBoardFormFactor>)pcCase.PCCaseMotherBoardFormFactors);
+            SetOuterMemoryFormFactors(pcCase, (List<PCCaseOuterMemoryFormFactor>)pcCase.PCCaseOuterMemoryFormFactors);
+            Database.Save();
+
             return new OperationDetails(true, "Ok", "");
         }
 
         public OperationDetails DeletePCCase(int? id)
         {
             Database.PCCases.Delete(id.Value);
+            Database.Save();
+
             return new OperationDetails(true, "Ok", "");
         }
+
+        private OperationDetails SetOuterMemoryFormFactors(PCCase pcCase, List<PCCaseOuterMemoryFormFactor> outerMemories)
+        {
+
+            if (pcCase.Id > -1 && outerMemories != null)
+            {
+                var oldOuterMemory = Database.PCCaseOuterMemoryFormFactors.GetAll().Where(m => m.PCCaseId == pcCase.Id);
+                foreach (var item in oldOuterMemory)
+                {
+                    Database.PCCaseOuterMemoryFormFactors.Delete(item.Id);
+                }
+                foreach (var item in outerMemories)
+                {
+                    item.PCCaseId = pcCase.Id;
+                    this.Database.PCCaseOuterMemoryFormFactors.Create(item);
+                }
+            }
+
+            return new OperationDetails(true, "Ok", "");
+        }
+
+
+        private OperationDetails SetMotherBoardFormFactors(PCCase pcCase, List<PCCaseMotherBoardFormFactor> outerMemories)
+        {
+
+            if (pcCase.Id > -1 && outerMemories != null)
+            {
+                var oldMotherBoardFormFactors = Database.PCCaseMotherBoardFormFactors.GetAll().Where(m => m.PCCaseId == pcCase.Id);
+                foreach (var item in oldMotherBoardFormFactors)
+                {
+                    Database.PCCaseMotherBoardFormFactors.Delete(item.Id);
+                }
+                foreach (var item in outerMemories)
+                {
+                    item.PCCaseId = pcCase.Id;
+                    this.Database.PCCaseMotherBoardFormFactors.Create(item);
+                }
+            }
+
+            return new OperationDetails(true, "Ok", "");
+        }
+
 
         public void Dispose()
         {

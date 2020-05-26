@@ -1,0 +1,21 @@
+﻿
+@model VideoCardViewModel
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>@Model.Name</h1>
+<a class='edit-link' asp-controller="VideoCard" asp-action="edit" asp-route-id="@Model.Id"><i class='fas fa-edit'></i></a>
+<div class="details-container">
+    <div class="item-description">@Model.Description</div>
+    <div class="item-prop"><span class="item-prop-name">@Html.DisplayNameFor(Model => Model.Manufacturer)</span> : <span class="item-prop-value">@Model.Manufacturer</span></div>
+    <div class="item-prop"><span class="item-prop-name">@Html.DisplayNameFor(Model => Model.MemorySizeDisplay)</span> : <span class="item-prop-value">@Model.MemorySizeDisplay</span></div>
+    <div class="item-prop"><span class="item-prop-name">@Html.DisplayNameFor(Model => Model.FrequencyDisplay)</span> : <span class="item-prop-value">@Model.FrequencyDisplay</span></div>
+    <div class="item-prop"><span class="item-prop-name">@Html.DisplayNameFor(Model => Model.MemoryFrequencyDisplay)</span> : <span class="item-prop-value">@Model.MemoryFrequencyDisplay</span></div>
+    <div class="item-prop"><span class="item-prop-name">@Html.DisplayNameFor(Model => Model.GPU)</span> : <span class="item-prop-value">@Model.GPU</span></div>
+    <div class="item-prop"><span class="item-prop-name">@Html.DisplayNameFor(Model => Model.VideoCardInterface)</span> : <span class="item-prop-value">@Model.VideoCardInterface</span></div>
+    <div class="item-prop"><span class="item-prop-name">@Html.DisplayNameFor(Model => Model.GraphicMemoryType)</span> : <span class="item-prop-value">@Model.GraphicMemoryType</span></div>
+    <div class="item-prop"><span class="item-prop-name">@Html.DisplayNameFor(Model => Model.Price)</span> : <span class="item-prop-value">@Model.Price</span></div>
+    <img src="@(Model != null && Model.ImagePath !=null ? Model.ImagePath : "/Images//not-found.png" )" style="max-width:300px;margin-top: 20px; margin-bottom: 20px;" id="country-image" />
+</div>

@@ -23,12 +23,16 @@ namespace FerumChecker.Repository.Repositories.Hardware
 
         public IEnumerable<SSD> GetAll()
         {
-            return db.SSDs;
+            return db.SSDs.Include(m => m.OuterMemoryFormFactor).Include(m => m.OuterMemoryInterface).Include(m => m.Manufacturer);
         }
 
         public SSD Get(int id)
         {
-            return db.SSDs.Find(id);
+            var ssd =  db.SSDs.Find(id);
+            ssd.Manufacturer = db.Manufacturers.Find(ssd.ManufacturerId);
+            ssd.OuterMemoryInterface = db.OuterMemoryInterfaces.Find(ssd.OuterMemoryInterfaceId);
+            ssd.OuterMemoryFormFactor = db.OuterMemoryFormFactors.Find(ssd.OuterMemoryFormFactorId);
+            return ssd;
         }
 
         public void Create(SSD ssd)

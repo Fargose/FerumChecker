@@ -23,12 +23,19 @@ namespace FerumChecker.Repository.Repositories.Hardware
 
         public IEnumerable<PowerSupply> GetAll()
         {
-            return db.PowerSupplies;
+            return db.PowerSupplies.Include(m => m.PowerSupplyMotherBoardInterface)
+                .Include(m => m.Manufacturer)
+                .Include(m => m.PowerSupplyPowerSupplyCPUInterfaces).ThenInclude(m => m.PowerSupplyCPUInterface);
+
         }
 
         public PowerSupply Get(int id)
         {
-            return db.PowerSupplies.Find(id);
+            return db.PowerSupplies
+               .Include(m => m.PowerSupplyMotherBoardInterface)
+               .Include(m => m.Manufacturer)
+               .Include(m => m.PowerSupplyPowerSupplyCPUInterfaces).ThenInclude(m => m.PowerSupplyCPUInterface)
+               .FirstOrDefault(m => m.Id == id);
         }
 
         public void Create(PowerSupply powerSupply)

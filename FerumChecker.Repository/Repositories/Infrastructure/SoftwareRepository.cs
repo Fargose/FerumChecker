@@ -21,12 +21,18 @@ namespace FerumChecker.Repository.Repositories.Infrastructure
 
         public IEnumerable<Software> GetAll()
         {
-            return db.Softwares;
+            return db.Softwares.Include(m => m.Publisher)
+                .Include(m => m.Developer)
+                .Include(m => m.SoftwareCPURequirements).ThenInclude(m => m.CPU)
+                .Include(m => m.SoftwareVideoCardRequirements).ThenInclude(m => m.VideoCard);
         }
 
         public Software Get(int id)
         {
-            return db.Softwares.Find(id);
+            return db.Softwares.Include(m => m.Publisher)
+                .Include(m => m.Developer)
+                .Include(m => m.SoftwareCPURequirements).ThenInclude(m => m.CPU)
+                .Include(m => m.SoftwareVideoCardRequirements).ThenInclude(m => m.VideoCard).FirstOrDefault(m => m.Id == id) ;
         }
 
         public void Create(Software software)

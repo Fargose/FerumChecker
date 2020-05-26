@@ -1,0 +1,103 @@
+﻿@model FerumChecker.Web.ViewModel.Hardware.PowerSupplyViewModel
+
+@{
+    ViewData["Title"] = "Create";
+}
+<link href="~/css/catalog.css" rel="stylesheet" />
+<script src="~/js/hardware/powersupplyeditpage.js"></script>
+
+<h1>Новий блок живлення</h1>
+
+<hr />
+<div class="row">
+    <div class="col-md-2">
+    </div>
+    <div class="col-md-4">
+        <form asp-action="Create" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group" hidden>
+                <label asp-for="Id" class="control-label"></label>
+                <input asp-for="Id" class="form-control" />
+                <span asp-validation-for="Id" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Name" class="control-label"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Description" class="control-label"></label>
+                <textarea asp-for="Description" class="form-control"></textarea>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Power" class="control-label"></label>
+                <input asp-for="Power" class="form-control" />
+                <span asp-validation-for="Power" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="SATAInputNumber" class="control-label"></label>
+                <input asp-for="SATAInputNumber" class="form-control" />
+                <span asp-validation-for="SATAInputNumber" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="GPUInputNumber" class="control-label"></label>
+                <input asp-for="GPUInputNumber" class="form-control" />
+                <span asp-validation-for="GPUInputNumber" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="CoolerSize" class="control-label"></label>
+                <input asp-for="CoolerSize" class="form-control" />
+                <span asp-validation-for="CoolerSize" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Price" class="control-label"></label>
+                <input asp-for="Price" class="form-control" />
+                <span asp-validation-for="Price" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PowerSupplyMotherBoardInterfaceId" class="control-label"></label>
+                <select asp-for="PowerSupplyMotherBoardInterfaceId" class="form-control" asp-items="ViewBag.PowerSuppliesMotherboardInterfaces"></select>
+                <span asp-validation-for="PowerSupplyMotherBoardInterfaceId" class="text-danger"></span>
+            </div>
+            <div class="form-group" id="power-supply-cpu-select">
+                <label asp-for="PowerSupplyCPUInterfaces" class="control-label"></label>
+                <span class="form-inline"><select class="form-control combo-select" style="width:91%" asp-items="ViewBag.PowerSupplyCPUInterfaces"></select><a class="add-item"><i class='fas fa-plus'></i></a></span>
+                <div>
+                    <ul class="selected-list">
+                    </ul>
+                </div>
+                <span asp-validation-for="PowerSupplyCPUInterfaces" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ManufacturerId" class="control-label"></label>
+                <select asp-for="ManufacturerId" class="form-control" asp-items="ViewBag.Manufacturers"></select>
+                <span asp-validation-for="ManufacturerId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Image" class="control-label"></label>
+                <div class="custom-file">
+                    <input asp-for="Image" class="custom-file-input" accept="image/*">
+                    <label class="custom-file-label" asp-for="Image">Оберіть файл</label>
+                    <span asp-validation-for="Image" class="text-danger"></span>
+                </div>
+            </div>
+            <img src="@(Model != null && Model.ImagePath !=null ? Model.ImagePath : "/Images//not-found.png" )" style="max-width:300px;margin-top: 20px; margin-bottom: 20px;" id="country-image" />
+            <div class="form-group">
+                <input type="submit" value="Зберегти" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index" asp-controller="Catalog" asp-route-startView="PowerSupply">Back to List</a>
+</div>
+
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        var powerSupplyEditPage = new PowerSupplyEditPage();
+        powerSupplyEditPage.init("Create");
+    });
+</script>

@@ -219,6 +219,10 @@ namespace FerumChecker.Repository.Migrations
                     b.Property<int>("CoolerSize")
                         .HasColumnType("int");
 
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(1000)")
+                        .HasMaxLength(1000);
+
                     b.Property<int>("GPUInputNumber")
                         .HasColumnType("int");
 
@@ -230,8 +234,8 @@ namespace FerumChecker.Repository.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(100)")
-                        .HasMaxLength(100);
+                        .HasColumnType("nvarchar(200)")
+                        .HasMaxLength(200);
 
                     b.Property<int>("Power")
                         .HasColumnType("int");
@@ -355,6 +359,10 @@ namespace FerumChecker.Repository.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(1000)")
+                        .HasMaxLength(1000);
+
                     b.Property<int>("Frequency")
                         .HasColumnType("int");
 
@@ -410,15 +418,14 @@ namespace FerumChecker.Repository.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int>("CPUId")
+                    b.Property<int?>("CPUId")
                         .HasColumnType("int");
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasColumnType("nvarchar(1000)")
                         .HasMaxLength(1000);
 
-                    b.Property<int>("MotherBoardId")
+                    b.Property<int?>("MotherBoardId")
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
@@ -430,10 +437,10 @@ namespace FerumChecker.Repository.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<int>("PCCaseId")
+                    b.Property<int?>("PCCaseId")
                         .HasColumnType("int");
 
-                    b.Property<int>("PowerSupplyId")
+                    b.Property<int?>("PowerSupplyId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -565,6 +572,9 @@ namespace FerumChecker.Repository.Migrations
 
                     b.Property<int>("DiscVolume")
                         .HasColumnType("int");
+
+                    b.Property<string>("Image")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("MinimiumRequiredRAM")
                         .HasColumnType("int");
@@ -1517,15 +1527,11 @@ namespace FerumChecker.Repository.Migrations
                 {
                     b.HasOne("FerumChecker.DataAccess.Entities.Hardware.CPU", "CPU")
                         .WithMany("ComputerAssemblies")
-                        .HasForeignKey("CPUId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("CPUId");
 
                     b.HasOne("FerumChecker.DataAccess.Entities.Hardware.MotherBoard", "MotherBoard")
                         .WithMany("ComputerAssemblies")
-                        .HasForeignKey("MotherBoardId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("MotherBoardId");
 
                     b.HasOne("FerumChecker.DataAccess.Entities.User.UserProfile", "Owner")
                         .WithMany()
@@ -1535,15 +1541,11 @@ namespace FerumChecker.Repository.Migrations
 
                     b.HasOne("FerumChecker.DataAccess.Entities.Hardware.PCCase", "PCCase")
                         .WithMany("ComputerAssemblies")
-                        .HasForeignKey("PCCaseId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("PCCaseId");
 
                     b.HasOne("FerumChecker.DataAccess.Entities.Hardware.PowerSupply", "PowerSupply")
                         .WithMany("ComputerAssemblies")
-                        .HasForeignKey("PowerSupplyId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("PowerSupplyId");
                 });
 
             modelBuilder.Entity("FerumChecker.DataAccess.Entities.Infrastructure.Developer", b =>
@@ -1681,7 +1683,7 @@ namespace FerumChecker.Repository.Migrations
             modelBuilder.Entity("FerumChecker.DataAccess.Entities.Joins.MotherBoardRAMSlot", b =>
                 {
                     b.HasOne("FerumChecker.DataAccess.Entities.Hardware.MotherBoard", "MotherBoard")
-                        .WithMany("PowerSupplyCPUInterfaces")
+                        .WithMany("MotherBoardRAMSlots")
                         .HasForeignKey("MotherBoardId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();

@@ -3,6 +3,7 @@
 @{
     ViewData["Title"] = "Create";
 }
+<link href="~/css/catalog.css" rel="stylesheet" />
 <script src="~/js/hardware/motherboardeditpage.js"></script>
 
 <h1>Нова материнська плата</h1>
@@ -56,25 +57,25 @@
             </div>
             <div class="form-group" id="outer-memory-interfaces-select">
                 <label asp-for="OuterMemoryInterfaces" class="control-label"></label>
-                <span><select class="form-control combo-select"  asp-items="ViewBag.OuterMemoryInterfaces"></select><a class="add-item"><i class='fas fa-plus'></i></a></span>
+                <span class="form-inline"><select class="form-control combo-select" style="width:91%" asp-items="ViewBag.OuterMemoryInterfaces"></select><a class="add-item"><i class='fas fa-plus'></i></a></span>
                 <div><ul class="selected-list"></ul></div>
                 <span asp-validation-for="OuterMemoryInterfaces" class="text-danger"></span>
             </div>
             <div class="form-group" id="video-card-interfaces-select">
                 <label asp-for="VideoCardInterfaces" class="control-label"></label>
-                <span><select class="form-control combo-select" asp-items="ViewBag.VideoCardInterfaces"></select><a class="add-item"><i class='fas fa-plus'></i></a></span>
+                <span class="form-inline"><select class="form-control combo-select" style="width:91%" asp-items="ViewBag.VideoCardInterfaces"></select><a class="add-item"><i class='fas fa-plus'></i></a></span>
                 <div><ul class="selected-list"></ul></div>
                 <span asp-validation-for="VideoCardInterfaces" class="text-danger"></span>
             </div>
             <div class="form-group" id="power-supply-interfaces-select">
                 <label asp-for="PowerSupplyMotherBoardInterfaces" class="control-label"></label>
-                <span><select class="form-control combo-select" asp-items="ViewBag.PowerSupplyMotherBoardInterfaces"></select><a class="add-item"><i class='fas fa-plus'></i></a></span>
+                <span class="form-inline"><select class="form-control combo-select" style="width:91%" asp-items="ViewBag.PowerSupplyMotherBoardInterfaces"></select><a class="add-item"><i class='fas fa-plus'></i></a></span>
                 <div><ul class="selected-list"></ul></div>
                 <span asp-validation-for="PowerSupplyMotherBoardInterfaces" class="text-danger"></span>
             </div>
             <div class="form-group" id="ram-types-select">
                 <label asp-for="MotherBoardRAMSlots" class="control-label"></label>
-                <span><select class="form-control combo-select" asp-items="ViewBag.RamTypes"></select><a class="add-item"><i class='fas fa-plus'></i></a></span>
+                <span class="form-inline"><select class="form-control combo-select" style="width:91%" asp-items="ViewBag.RamTypes"></select><a class="add-item"><i class='fas fa-plus'></i></a></span>
                 <div><ul class="selected-list"></ul></div>
                 <span asp-validation-for="MotherBoardRAMSlots" class="text-danger"></span>
             </div>
@@ -100,7 +101,7 @@
 </div>
 
 <div>
-    <a asp-action="Index" asp-controller="Catalog" asp-route-startView = "MotherBoard">Back to List</a>
+    <a asp-action="Index" asp-controller="Catalog" asp-route-startView="MotherBoard">Back to List</a>
 </div>
 
 

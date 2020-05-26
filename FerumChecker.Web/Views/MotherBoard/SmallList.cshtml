@@ -1,0 +1,29 @@
+﻿@model IEnumerable<MotherBoardViewModel>
+
+@{
+    ViewData["Title"] = "SmallList";
+}
+
+<table class="table container-table">
+    <thead>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr data-id="@item.Id" data-image="@(Model != null && item.ImagePath !=null ? item.ImagePath : "/Images//not-found.png" )">
+                <td style="width: 100%">
+                    <div class="catalog-item">
+                        <div class="catalog-item-block" style="width: 30%; float: left">
+                            <img src="@(Model != null && item.ImagePath !=null ? item.ImagePath : "/Images//not-found.png" )" style="max-width:45px;margin-top: 4px; margin-bottom: 4px;" />
+                        </div>
+                        <div class="catalog-item-block" style="width: 70%;float: right">
+                            <div class="item-name">
+                                @item.Name
+                            </div>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -5,6 +5,7 @@ using FerumChecker.Service.Infrastructure;
 using FerumChecker.Service.Interfaces.Hardware;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace FerumChecker.Service.Services.Hardware
@@ -33,6 +34,10 @@ namespace FerumChecker.Service.Services.Hardware
         {
             
             Database.MotherBoards.Update(motherBoard);
+            SetOuterMemoryInterfaces(motherBoard, (List<MotherBoardOuterMemorySlot>)motherBoard.MotherBoardOuterMemorySlots);
+            SetVideoCardInterfaces(motherBoard, (List<MotherBoardVideoCardSlot>)motherBoard.MotherBoardVideoCardSlots);
+            SetPowerSupplyInterfaces(motherBoard, (List<MotherBoardPowerSupplySlot>)motherBoard.PowerSupplyMotherBoardSlots);
+            SetRAMSlots(motherBoard, (List<MotherBoardRAMSlot>)motherBoard.MotherBoardRAMSlots);
             Database.Save();
             return new OperationDetails(true, "Ok", "");
         }
@@ -59,7 +64,12 @@ namespace FerumChecker.Service.Services.Hardware
         {
             if(motherBoard.Id > -1 && videoCards != null)
             {
-                foreach(var item in videoCards)
+                var oldVideoCards = Database.MotherBoardVideoCardSlots.GetAll().Where(m => m.MotherBoardId == motherBoard.Id);
+                foreach(var item in oldVideoCards)
+                {
+                    Database.MotherBoardVideoCardSlots.Delete(item.Id);
+                }
+                foreach (var item in videoCards)
                 {
                     item.MotherBoardId = motherBoard.Id;
                     this.Database.MotherBoardVideoCardSlots.Create(item);
@@ -72,8 +82,14 @@ namespace FerumChecker.Service.Services.Hardware
 
         private OperationDetails SetOuterMemoryInterfaces(MotherBoard motherBoard, List<MotherBoardOuterMemorySlot> outerMemories)
         {
+
             if (motherBoard.Id > -1 && outerMemories != null)
             {
+                var oldOuterMemory = Database.MotherBoardOuterMemorySlots.GetAll().Where(m => m.MotherBoardId == motherBoard.Id);
+                foreach (var item in oldOuterMemory)
+                {
+                    Database.MotherBoardOuterMemorySlots.Delete(item.Id);
+                }
                 foreach (var item in outerMemories)
                 {
                     item.MotherBoardId = motherBoard.Id;
@@ -89,6 +105,11 @@ namespace FerumChecker.Service.Services.Hardware
         {
             if (motherBoard.Id > -1 && rams != null)
             {
+                var oldRams = Database.MotherBoardRAMSlots.GetAll().Where(m => m.MotherBoardId == motherBoard.Id);
+                foreach (var item in oldRams)
+                {
+                    Database.MotherBoardRAMSlots.Delete(item.Id);
+                }
                 foreach (var item in rams)
                 {
                     item.MotherBoardId = motherBoard.Id;
@@ -104,6 +125,11 @@ namespace FerumChecker.Service.Services.Hardware
         {
             if (motherBoard.Id > -1 && powerSuppliesSlots != null)
             {
+                var oldPowerSupplies = Database.MotherBoardPowerSupplySlots.GetAll().Where(m => m.MotherBoardId == motherBoard.Id);
+                foreach (var item in oldPowerSupplies)
+                {
+                    Database.MotherBoardPowerSupplySlots.Delete(item.Id);
+                }
                 foreach (var item in powerSuppliesSlots)
                 {
                     item.MotherBoardId = motherBoard.Id;

@@ -83,6 +83,7 @@ namespace FerumChecker.Web
             services.AddTransient<IManufacturerService, ManufacturerService>();
             services.AddTransient<IPublisherService, PublisherService>();
             services.AddTransient<IDeveloperService, DeveloperService>();
+            services.AddTransient<ISoftwareService, SoftwareService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

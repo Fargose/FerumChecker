@@ -1,0 +1,96 @@
+﻿@model FerumChecker.Web.ViewModel.Hardware.RAMViewModel
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Редагувати ОЗП</h1>
+
+<hr />
+<div class="row">
+    <div class="col-md-2">
+    </div>
+    <div class="col-md-4">
+        <form asp-action="EDIT" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group" hidden>
+                <label asp-for="Id" class="control-label"></label>
+                <input asp-for="Id" class="form-control" />
+                <span asp-validation-for="Id" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Name" class="control-label"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Description" class="control-label"></label>
+                <textarea asp-for="Description" class="form-control"></textarea>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="MemorySize" class="control-label"></label>
+                <input asp-for="MemorySize" class="form-control" />
+                <span asp-validation-for="MemorySize" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Frequency" class="control-label"></label>
+                <input asp-for="Frequency" class="form-control" />
+                <span asp-validation-for="Frequency" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Price" class="control-label"></label>
+                <input asp-for="Price" class="form-control" />
+                <span asp-validation-for="Price" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="RAMTypeId" class="control-label"></label>
+                <select asp-for="RAMTypeId" class="form-control" asp-items="ViewBag.RAMTypes"></select>
+                <span asp-validation-for="RAMTypeId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ManufacturerId" class="control-label"></label>
+                <select asp-for="ManufacturerId" class="form-control" asp-items="ViewBag.Manufacturers"></select>
+                <span asp-validation-for="ManufacturerId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Image" class="control-label"></label>
+                <div class="custom-file">
+                    <input asp-for="Image" class="custom-file-input" accept="image/*">
+                    <label class="custom-file-label" asp-for="Image">Оберіть файл</label>
+                    <span asp-validation-for="Image" class="text-danger"></span>
+                </div>
+            </div>
+            <img src="@(Model != null && Model.ImagePath !=null ? Model.ImagePath : "/Images//not-found.png" )" style="max-width:300px;margin-top: 20px; margin-bottom: 20px;" id="country-image" />
+            <div class="form-group">
+                <input type="submit" value="Зберегти" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index" asp-controller="Catalog" asp-route-startView="RAM">Back to List</a>
+</div>
+
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        // Add the following code if you want the name of the file appear on select
+        $(".custom-file-input").on("change", function (data) {
+            var fileName = $(this).val().split("\\").pop();
+            console.log(data);
+            if (data.currentTarget.files && data.currentTarget.files[0]) {
+                var reader = new FileReader();
+
+                reader.onload = function (e) {
+                    $('#country-image').attr('src', e.target.result)
+                };
+
+                reader.readAsDataURL(data.currentTarget.files[0]);
+            }
+            $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
+        });
+    });
+</script>
+

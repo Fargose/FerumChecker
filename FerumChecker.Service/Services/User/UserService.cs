@@ -1,4 +1,5 @@
 ﻿using FerumChecker.DataAccess.Entities.User;
+using FerumChecker.Repository.Identity;
 using FerumChecker.Repository.Interfaces;
 using FerumChecker.Service.DTO;
 using FerumChecker.Service.Infrastructure;
@@ -83,6 +84,10 @@ namespace FerumChecker.Service.Services.user
             await Create(adminDto);
         }
 
+        public ApplicationUserManager GetApplicationUserManager() 
+        {
+            return Database.ApplicationUsers;
+        }
         public void Dispose()
         {
             Database.Dispose();

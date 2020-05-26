@@ -1,0 +1,133 @@
+﻿.sidenav a {
+    padding: 6px 8px 6px 16px;
+    text-decoration: none;
+    font-size: 25px;
+    color: #818181;
+    display: block;
+}
+
+    .sidenav a.selected {
+        color: white;
+        background-color: mediumseagreen;
+    }
+
+.fas {
+    font-size: 24px;
+    text-align: center;
+    vertical-align: middle;
+    color: mediumseagreen;
+    padding: 10px 10px 10px 10px;
+}
+
+    .fas:hover {
+        cursor: pointer;
+    }
+
+.items-container {
+    height: 400px;
+    display: none;
+}
+
+.container-table .catalog-item {
+    border-style: solid;
+    border-width: 2px;
+    border-color: mediumseagreen;
+    border-radius: 20px;
+    height: 100px;
+    padding: 10px;
+    cursor: pointer;
+}
+
+.container-table .catalog-item:hover{
+
+    background-color: rgba(60, 179, 113, 0.2);
+}
+
+
+    .container-table .catalog-item .item-name {
+        font-size: 12px;
+        overflow-wrap:break-word;
+    }
+
+.pc-image{
+    position: absolute;
+    left: 400px;
+    top: 200px;
+}
+
+.hardware-slot {
+    width: 75px;
+    height: 75px;
+    border-style: solid;
+    border-width: 3px;
+    border-color: mediumseagreen;
+    position: absolute;
+}
+
+    .hardware-slot img {
+        width: 70px;
+        height: 70px;
+    }
+
+.cpu-slot{
+    left: 100px;
+    top: 600px;
+
+}
+
+.motherboard-slot {
+    left: 100px;
+    top: 400px;
+}
+
+.videocard-slot {
+    left: 100px;
+    top: 200px;
+}
+
+
+.pccase-slot {
+    left: 500px;
+}
+
+
+.powersupply-slot {
+    left: 900px;
+    top: 200px;
+}
+
+.ram-slot {
+    left: 900px;
+    top: 400px;
+}
+
+.ssd-slot {
+    left: 900px;
+    top: 500px;
+}
+
+.hdd-slot {
+    left: 900px;
+    top: 600px;
+}
+
+.hardware-slot:hover {
+    background: #ffffff; /*необходимо для IE6*/
+    text-decoration: none;
+}
+
+.hardware-slot.tooltip span {
+    display: none;
+    padding: 2px 3px;
+    margin-left: 8px;
+    width: 130px;
+}
+
+.hardware-slot.tooltip:hover span {
+    display: inline;
+    position: absolute;
+    background: #ffffff;
+    border: 1px solid #cccccc;
+    color: #6c6c6c;
+}
+

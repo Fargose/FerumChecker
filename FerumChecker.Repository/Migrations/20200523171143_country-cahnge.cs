@@ -6,17 +6,7 @@ namespace FerumChecker.Repository.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropForeignKey(
-                name: "FK_PowerSupplyCPUInterfaces_PowerSupplies_PowerSupplyId",
-                table: "PowerSupplyCPUInterfaces");
-
-            migrationBuilder.DropIndex(
-                name: "IX_PowerSupplyCPUInterfaces_PowerSupplyId",
-                table: "PowerSupplyCPUInterfaces");
-
-            migrationBuilder.DropColumn(
-                name: "PowerSupplyId",
-                table: "PowerSupplyCPUInterfaces");
+            
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

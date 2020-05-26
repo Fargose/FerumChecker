@@ -6,6 +6,7 @@ using FerumChecker.DataAccess.Entities.Hardware;
 using FerumChecker.DataAccess.Entities.Infrastructure;
 using FerumChecker.DataAccess.Entities.Specification;
 using FerumChecker.Service.Interfaces.Hardware;
+using FerumChecker.Service.Interfaces.Infrastructure;
 using FerumChecker.Web.Code;
 using FerumChecker.Web.ViewModel.Hardware;
 using Microsoft.AspNetCore.Hosting;
@@ -23,12 +24,20 @@ namespace FerumChecker.Web.Controllers
         private readonly ICPUSocketService _cpuSocketService;
         private readonly IManufacturerService _manufacturerService;
         private readonly IWebHostEnvironment _webHostEnvironment;
-        public CPUController(ICPUService cpuService, IWebHostEnvironment hostEnvironment, ICPUSocketService cpuSocketService, IManufacturerService manufacturerService)
+        private readonly IComputerAssemblyService _assemblyService;
+        public CPUController(ICPUService cpuService, IWebHostEnvironment hostEnvironment, ICPUSocketService cpuSocketService, IManufacturerService manufacturerService, IComputerAssemblyService assemblyService)
         {
             _cpuService = cpuService;
             _webHostEnvironment = hostEnvironment;
             _cpuSocketService = cpuSocketService;
             _manufacturerService = manufacturerService;
+            _assemblyService = assemblyService;
+        }
+
+        public ActionResult SetHardware(int id, int assemblyId)
+        {
+            var result = _assemblyService.SetCPU(id, assemblyId);
+            return Json(result);
         }
         // GET: CPU
         public ActionResult Index()
@@ -101,6 +110,50 @@ namespace FerumChecker.Web.Controllers
             };
 
             return View(model);
+        }
+
+        public ActionResult PartialDetails(int id)
+        {
+            var cpu = _cpuService.GetCPU(id);
+            if (cpu == null)
+            {
+                return NotFound();
+            }
+            var model = new CPUViewModel()
+            {
+                Id = cpu.Id,
+                Name = cpu.Name,
+                CoresName = cpu.CoresName,
+                CoresNumber = cpu.CoresNumber,
+                Description = cpu.Description,
+                Frequency = cpu.Frequency,
+                MaxFrequency = cpu.MaxFrequency,
+                CPUSocketId = cpu.CPUSocketId,
+                CPUSocket = cpu.CPUSocket.Name,
+                ManufacturerId = cpu.ManufacturerId,
+                Manufacturer = cpu.Manufacturer.Name,
+                FrequencyDisplay = ((double)cpu.Frequency / 1000) + " GHz",
+                MaxFrequencyDisplay = ((double)cpu.MaxFrequency / 1000) + " GHz",
+                ThreadsNumber = cpu.ThreadsNumber,
+                Price = cpu.Price,
+                ImagePath = "/Images/CPU/" + cpu.Image
+            };
+
+            return PartialView("PartialDetails", model);
+        }
+
+        public IActionResult SmallList()
+        {
+            var cpus = _cpuService.GetCPUs().OrderBy(m => m.Name);
+
+            var model = cpus.Select(m => new CPUViewModel
+            {
+                Id = m.Id,
+                Name = m.Name,
+                ImagePath = "/Images/CPU/" + m.Image
+            });
+
+            return PartialView(model);
         }
 
         // GET: CPU/Create

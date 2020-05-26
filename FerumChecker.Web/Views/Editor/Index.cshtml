@@ -1,0 +1,95 @@
+﻿@model ComputerAssemblyViewModel
+@{
+    ViewData["Title"] = "Index";
+}
+<link href="~/css/editor.css" rel="stylesheet" />
+<script src="~/js/AssemblyEditor.js"></script>
+<h1>Редактор збірок</h1>
+
+<div class="container editor-page">
+    <div class="row">
+        <div class="col-lg-3 please-scroll">
+            <div class="sidenav">
+                <div class="category-container">
+                    <a href="#" class="category-link" data-link="CPU">Процесори</a>
+                    <div class="items-container please-scroll"></div>
+                </div>
+            </div>
+            <div class="sidenav">
+                <div class="category-container">
+                    <a href="#" class="category-link" data-link="MotherBoard">Материнські плати</a>
+                    <div class="items-container please-scroll"></div>
+                </div>
+            </div>
+            <div class="sidenav">
+                <div class="category-container">
+                    <a href="#" class="category-link" data-link="HDD">HDD</a>
+                    <div class="items-container please-scroll"></div>
+                </div>
+            </div>
+            <div class="sidenav">
+                <div class="category-container">
+                    <a href="#" class="category-link" data-link="SSD">SSD</a>
+                    <div class="items-container please-scroll"></div>
+                </div>
+            </div>
+            <div class="sidenav">
+                <div class="category-container">
+                    <a href="#" class="category-link" data-link="VideoCard">Відеокарти</a>
+                    <div class="items-container please-scroll"></div>
+                </div>
+            </div>
+            <div class="sidenav">
+                <div class="category-container">
+                    <a href="#" class="category-link" data-link="RAM">RAM</a>
+                    <div class="items-container please-scroll"></div>
+                </div>
+            </div>
+            <div class="sidenav">
+                <div class="category-container">
+                    <a href="#" class="category-link" data-link="PowerSupply">Блоки живлення</a>
+                    <div class="items-container please-scroll"></div>
+                </div>
+            </div>
+            <div class="sidenav">
+                <div class="category-container">
+                    <a href="#" class="category-link" data-link="PCCase">Корпуси</a>
+                    <div class="items-container please-scroll"></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-9 please-scroll ">
+            <div><h2 class="сategory-name">@Model.Name</h2></div>
+            <div class="editor-container main">
+                <div class="pc-image">
+                    <img src="/Images//PC.png" style="width: 310px;" />
+                </div>
+                <div class="hardware-slot cpu-slot" data-toggle="tooltip" title="@Model.CPUName" data-id="@Model.CPUId"><img class="hardware-img" src="@Model.CPUImage"/></div>
+                <div class="hardware-slot motherboard-slot" data-toggle="tooltip" data-id="@Model.MotherBoardId" title="@Model.MotherBoardName"><img class="hardware-img" src="@Model.MotherBoardImage"/></div>
+                <div class="hdd-slot-container"><div class="hardware-slot hdd-slot multiple" data-toggle="tooltip" title="Пусто"><img class="hardware-img" /></div></div>
+                <div class="ssd-slot-container"><div class="hardware-slot ssd-slot multiple" data-toggle="tooltip" title="Пусто"><img class="hardware-img"/></div></div>
+                <div class="videocard-slot-container">
+                    @foreach (var item in Model.VideoCards)
+                    {
+                        <div class="hardware-slot videocard-slot multiple" data-toggle="tooltip" title="@item.VideoCardName" data-id="@item.VideoCardId"><img class="hardware-img" src="@item.VideoCardImage" /></div>
+                    }
+                    @if (!Model.VideoCards.Any())
+                    {
+                        <div class="hardware-slot videocard-slot multiple" data-toggle="tooltip" title= "Пусто"><img /></div>
+                    }
+                </div>
+                <div class="hardware-slot powersupply-slot" data-toggle="tooltip" title="Пусто"><img class="hardware-img"/></div>
+                <div class="hardware-slot pccase-slot" data-toggle="tooltip" title="Пусто"><img class="hardware-img"/></div>
+                <div class="ram-slot-container"><div class="hardware-slot ram-slot multiple" data-toggle="tooltip" title="Пусто"><img class="hardware-img"/></div></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    $(document).ready(function () {
+        var editor = new AssemblyEditor();
+        editor.init("@Model.Id");
+    })
+</script>

@@ -32,18 +32,24 @@ namespace FerumChecker.Service.Services.Hardware
         {
             
             Database.VideoCards.Update(videoCard);
+            Database.Save();
+
             return new OperationDetails(true, "Ok", "");
         }
 
         public OperationDetails CreateVideoCard(VideoCard videoCard)
         {
             Database.VideoCards.Create(videoCard);
+            Database.Save();
+
             return new OperationDetails(true, "Ok", "");
         }
 
         public OperationDetails DeleteVideoCard(int? id)
         {
             Database.VideoCards.Delete(id.Value);
+            Database.Save();
+
             return new OperationDetails(true, "Ok", "");
         }
 
