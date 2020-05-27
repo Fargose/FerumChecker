@@ -14,14 +14,14 @@ namespace FerumChecker.DataAccess.Entities.Joins
         public int Id { get; set; }
 
 
-        [Required]
+        [Required(ErrorMessage = "Поле обов'язкове")]
         [ForeignKey("MotherBoard")]
         public int MotherBoardId { get; set; }
         public MotherBoard MotherBoard { get; set; }
 
         public int ChannelsCount{ get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Поле обов'язкове")]
         [ForeignKey("RAMType")]
         public int RAMTypeId { get; set; }
         public RAMType RAMType { get; set; }

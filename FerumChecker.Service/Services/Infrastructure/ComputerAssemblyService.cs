@@ -17,6 +17,7 @@ namespace FerumChecker.Service.Services.Infrastructure
     public class ComputerAssemblyService : IComputerAssemblyService
     {
         IUnitOfWork Database { get; set; }
+        
 
         public ComputerAssemblyService(IUnitOfWork uow)
         {
@@ -76,6 +77,18 @@ namespace FerumChecker.Service.Services.Infrastructure
                 return new OperationDetails(false, "Збірка не знайдена", "");
             }
 
+            var result = CheckCPU(cpu, computerAssembly);
+            if (result.Succedeed)
+            {
+                computerAssembly.CPUId = cpu.Id;
+                UpdateComputerAssembly(computerAssembly);
+                Database.Save();
+            }
+            return result;
+        }
+
+        private OperationDetails CheckCPU(CPU cpu, ComputerAssembly computerAssembly)
+        {
             var result = true;
             var resultMessages = new List<string>();
 
@@ -88,15 +101,8 @@ namespace FerumChecker.Service.Services.Infrastructure
                     resultMessages.Add("Сокети на процесорі (" + cpu.CPUSocket.Name + ") та материнській платі (" + computerAssembly.MotherBoard.CPUSocket.Name + ") не співпадають");
                 }
             }
-            if (result)
-            {
-                computerAssembly.CPUId = cpu.Id;
-                UpdateComputerAssembly(computerAssembly);
-                Database.Save();
-            }
             return new OperationDetails(result, resultMessages, "");
         }
-
         public OperationDetails SetMotherBoard(int motherBoardId, int assemblyId)
         {
             var motherBoard = Database.MotherBoards.Get(motherBoardId);
@@ -109,6 +115,26 @@ namespace FerumChecker.Service.Services.Infrastructure
             {
                 return new OperationDetails(false, "Збірка не знайдена", "");
             }
+            var result = CheckMotherBoard(motherBoard, computerAssembly);
+            if (result.Succedeed)
+            {
+                computerAssembly.MotherBoardId = motherBoard.Id;
+                UpdateComputerAssembly(computerAssembly);
+                Database.Save();
+            }
+            var details = result;
+            details.RamFree = motherBoard.MotherBoardRAMSlots.Count();
+            details.MemoryFree = motherBoard.MotherBoardOuterMemorySlots.Count();
+            if (computerAssembly.PCCase != null)
+            {
+                computerAssembly.PCCase = Database.PCCases.Get(computerAssembly.PCCaseId.Value);
+                details.MemoryFree = Math.Min(computerAssembly.PCCase.PCCaseOuterMemoryFormFactors.Count(), details.MemoryFree.Value);
+            }
+            return details;
+        }
+
+        private OperationDetails CheckMotherBoard(MotherBoard motherBoard, ComputerAssembly computerAssembly)
+        {
             var result = true;
             var resultMessages = new List<string>();
             if (computerAssembly.CPU != null)
@@ -123,13 +149,96 @@ namespace FerumChecker.Service.Services.Infrastructure
             if (computerAssembly.PCCase != null)
             {
                 computerAssembly.PCCase = Database.PCCases.Get(computerAssembly.PCCaseId.Value);
-                if (computerAssembly.PCCase.PCCaseMotherBoardFormFactors == null || !computerAssembly.PCCase.PCCaseMotherBoardFormFactors.Where(m => m.MotherBoardFormFactorId == motherBoardId).Any())
+                if (computerAssembly.PCCase.PCCaseMotherBoardFormFactors == null || !computerAssembly.PCCase.PCCaseMotherBoardFormFactors.Where(m => m.MotherBoardFormFactorId == motherBoard.MotherBoardFormFactorId).Any())
                 {
                     result = false;
                     resultMessages.Add("Материнська плата має форм-фактор відсутній в обраному корпусі (форм-фактор материнської плати: " + motherBoard.MotherBoardFormFactor.Name + ")");
                 }
             }
+            if(computerAssembly.VideoCards.Count() > 0)
+            {
+                var videoCard = Database.VideoCards.Get(computerAssembly.VideoCards.ElementAt(0).VideoCardId);
+                if (!motherBoard.MotherBoardVideoCardSlots.Where(m => m.VideoCardInterface.Version >= videoCard.VideoCardInterface.Version).Any())
+                {
+                    result = false;
+                    resultMessages.Add("Материнська плата не має інтерфейсу для встановленої відео карти!");
+                }
+            }
+            var bufferResult = CheckMotherBoardOnRAM(motherBoard, computerAssembly);
+            result = bufferResult.Succedeed;
+            resultMessages = resultMessages.Concat(bufferResult.Messages).ToList();
+            bufferResult = CheckMotherBoardOnOuterMemory(motherBoard, computerAssembly);
+            result = bufferResult.Succedeed;
+            resultMessages = resultMessages.Concat(bufferResult.Messages).ToList();
+            return new OperationDetails(result, resultMessages, ""); ;
+        }
+
+        public OperationDetails SetSSD(int ssdId, int assemblyId)
+        {
+            var ssd = Database.SSDs.Get(ssdId);
+            if (ssd == null)
+            {
+                return new OperationDetails(false, "Апаратне забезпечення не знайдене", "");
+            }
+            var computerAssembly = Database.ComputerAssemblies.Get(assemblyId);
+            if (computerAssembly == null)
+            {
+                return new OperationDetails(false, "Збірка не знайдена", "");
+            }
+
+            var result = CheckSSD(ssd, computerAssembly);
+            if (result.Succedeed)
+            {
+                var item = new ComputerAssemblySSD();
+                item.ComputerAssemblyId = computerAssembly.Id;
+                item.SSDId = ssd.Id;
+                Database.ComputerAssemblySSDs.Create(item);
+                Database.Save();
+            }
+            return result;
+        }
+        private OperationDetails CheckSSD(SSD ssd, ComputerAssembly computerAssembly)
+        {
+            var result = true;
+            var resultMessages = new List<string>();
+            if (computerAssembly.MotherBoard != null)
+            {
+                var freeSlots = GetFreeOuterSlotsForMotherBoard(computerAssembly);
+                if (!freeSlots.Any(m => m.OuterMemoryInterfaceId == ssd.OuterMemoryInterfaceId))
+                {
+                    result = false;
+                    resultMessages.Add("Материнська плата не містить інтерфейсу для зовнішньої памяті   (" + ssd.OuterMemoryInterface.Name + ").");
+                }
+            }
+            if (computerAssembly.PCCase != null)
+            {
+                var freeSlots = GetFreeOuterSlotsForPCCase(computerAssembly);
+                if (!freeSlots.Any(m => m.OuterMemoryFormFactorId == ssd.OuterMemoryFormFactorId))
+                {
+                    result = false;
+                    resultMessages.Add("Корпус не містить форм фактору для зовнішньої памяті  (" + ssd.OuterMemoryFormFactor.Name + ").");
+                }
+            }
+            if (computerAssembly.PowerSupply != null)
+            {
+                if (computerAssembly.PowerSupply.SATAInputNumber < computerAssembly.HDDs.Count() + computerAssembly.SSDs.Count() + 1)
+                {
+                    result = false;
+                    resultMessages.Add("Блок не має достатньо входів для зовнішньої пам'яті");
+                }
+            }
+            return new OperationDetails(result, resultMessages, "");
+        }
+        private OperationDetails CheckMotherBoardOnRAM(MotherBoard motherBoard, ComputerAssembly computerAssembly)
+        {
+            var result = true;
+            var resultMessages = new List<string>();
             var bufferList = new List<ComputerAssemblyRAM>(computerAssembly.ComputerAssemblyRAMs);
+            if(GetTotalRAM(computerAssembly) > motherBoard.MaxMemory)
+            {
+                result = false;
+                resultMessages.Add("Материнська плата не підтримує таки обсяг ОЗП");
+            }
             foreach (var slot in motherBoard.MotherBoardRAMSlots)
             {
                 var usedRAM = bufferList.FirstOrDefault(m => m.RAM.RAMTypeId == slot.RAMTypeId);
@@ -143,6 +252,12 @@ namespace FerumChecker.Service.Services.Infrastructure
                 result = false;
                 resultMessages.Add("Материнська плата не має підходячих інтерфейсів для ОЗП");
             }
+            return new OperationDetails(result, resultMessages, "");
+        }
+        private OperationDetails CheckMotherBoardOnOuterMemory(MotherBoard motherBoard, ComputerAssembly computerAssembly)
+        {
+            var result = true;
+            var resultMessages = new List<string>();
             var bufferList2 = new List<ComputerAssemblyHDD>(computerAssembly.HDDs);
             foreach (var slot in motherBoard.MotherBoardOuterMemorySlots)
             {
@@ -171,64 +286,6 @@ namespace FerumChecker.Service.Services.Infrastructure
                 result = false;
                 resultMessages.Add("Материнська плата не має підходячих інтерфейсів для SSD диска");
             }
-            if (result)
-            {
-                computerAssembly.MotherBoardId = motherBoard.Id;
-                UpdateComputerAssembly(computerAssembly);
-                Database.Save();
-            }
-            var details = new OperationDetails(result, resultMessages, "");
-            details.RamFree = motherBoard.MotherBoardRAMSlots.Count();
-            details.MemoryFree = motherBoard.MotherBoardOuterMemorySlots.Count();
-            if (computerAssembly.PCCase != null)
-            {
-                computerAssembly.PCCase = Database.PCCases.Get(computerAssembly.PCCaseId.Value);
-                details.MemoryFree = Math.Min(computerAssembly.PCCase.PCCaseOuterMemoryFormFactors.Count(), details.MemoryFree.Value);
-            }
-            return details;
-        }
-
-        public OperationDetails SetSSD(int ssdId, int assemblyId)
-        {
-            var ssd = Database.SSDs.Get(ssdId);
-            if (ssd == null)
-            {
-                return new OperationDetails(false, "Апаратне забезпечення не знайдене", "");
-            }
-            var computerAssembly = Database.ComputerAssemblies.Get(assemblyId);
-            if (computerAssembly == null)
-            {
-                return new OperationDetails(false, "Збірка не знайдена", "");
-            }
-            var result = true;
-            var resultMessages = new List<string>();
-            if (computerAssembly.MotherBoard != null)
-            {
-                var freeSlots = GetFreeOuterSlotsForMotherBoard(computerAssembly);
-                if (!freeSlots.Any(m => m.OuterMemoryInterfaceId == ssd.OuterMemoryInterfaceId))
-                {
-                    result = false;
-                    resultMessages.Add("Материнська плата не містить інтерфейсу для зовнішньої памяті   (" + ssd.OuterMemoryInterface.Name + ").");
-                }
-            }
-            if (computerAssembly.PCCase != null)
-            {
-                var freeSlots = GetFreeOuterSlotsForPCCase(computerAssembly);
-                if (!freeSlots.Any(m => m.OuterMemoryFormFactorId == ssd.OuterMemoryFormFactorId))
-                {
-                    result = false;
-                    resultMessages.Add("Корпус не містить форм фактору для зовнішньої памяті  (" + ssd.OuterMemoryFormFactor.Name + ").");
-                }
-            }
-
-            if (result)
-            {
-                var item = new ComputerAssemblySSD();
-                item.ComputerAssemblyId = computerAssembly.Id;
-                item.SSDId = ssd.Id;
-                Database.ComputerAssemblySSDs.Create(item);
-                Database.Save();
-            }
             return new OperationDetails(result, resultMessages, "");
         }
 
@@ -244,6 +301,21 @@ namespace FerumChecker.Service.Services.Infrastructure
             {
                 return new OperationDetails(false, "Збірка не знайдена", "");
             }
+
+            var result = CheckHDD(hdd, computerAssembly);
+            if (result.Succedeed)
+            {
+                var item = new ComputerAssemblyHDD();
+                item.ComputerAssemblyId = computerAssembly.Id;
+                item.HDDId = hdd.Id;
+                Database.ComputerAssemblyHDDs.Create(item);
+                Database.Save();
+            }
+            return result;
+        }
+
+        private OperationDetails CheckHDD(HDD hdd, ComputerAssembly computerAssembly)
+        {
             var result = true;
             var resultMessages = new List<string>();
             if (computerAssembly.MotherBoard != null)
@@ -264,18 +336,16 @@ namespace FerumChecker.Service.Services.Infrastructure
                     resultMessages.Add("Корпус не містить форм фактору для зовнішньої памяті  (" + hdd.OuterMemoryFormFactor.Name + ").");
                 }
             }
-
-            if (result)
+            if (computerAssembly.PowerSupply != null)
             {
-                var item = new ComputerAssemblyHDD();
-                item.ComputerAssemblyId = computerAssembly.Id;
-                item.HDDId = hdd.Id;
-                Database.ComputerAssemblyHDDs.Create(item);
-                Database.Save();
+                if (computerAssembly.PowerSupply.SATAInputNumber < computerAssembly.HDDs.Count() + computerAssembly.SSDs.Count() + 1)
+                {
+                    result = false;
+                    resultMessages.Add("Блок не має достатньо входів для зовнішньої пам'яті");
+                }
             }
             return new OperationDetails(result, resultMessages, "");
         }
-
         public OperationDetails SetPCCase(int pcCaseId, int assemblyId)
         {
             var pcCase = Database.PCCases.Get(pcCaseId);
@@ -288,6 +358,24 @@ namespace FerumChecker.Service.Services.Infrastructure
             {
                 return new OperationDetails(false, new List<string>() { "Збірка не знайдена" }, "");
             }
+            var result = CheckPCCase(pcCase, computerAssembly);
+            if (result.Succedeed)
+            {
+                computerAssembly.PCCaseId = pcCase.Id;
+                UpdateComputerAssembly(computerAssembly);
+                Database.Save();
+            }
+            var details = result;
+            details.MemoryFree = pcCase.PCCaseOuterMemoryFormFactors.Count();
+            if (computerAssembly.MotherBoard != null)
+            {
+                computerAssembly.MotherBoard = Database.MotherBoards.Get(computerAssembly.MotherBoardId.Value);
+                details.MemoryFree = Math.Min(computerAssembly.MotherBoard.MotherBoardOuterMemorySlots.Count(), details.MemoryFree.Value);
+            }
+            return details;
+        }
+        private OperationDetails CheckPCCase(PCCase pcCase, ComputerAssembly computerAssembly)
+        {
             var result = true;
             var resultMessages = new List<string>();
             if (computerAssembly.MotherBoard != null)
@@ -299,6 +387,15 @@ namespace FerumChecker.Service.Services.Infrastructure
                     resultMessages.Add("Даний корпус не має форм-фактора для обраної материнської плати (форм-фактор материнської плати: " + computerAssembly.MotherBoard.MotherBoardFormFactor.Name + ")");
                 }
             }
+            var bufferResult = CheckPCCaseOnOuterMemory(pcCase, computerAssembly);
+            result = bufferResult.Succedeed;
+            resultMessages = resultMessages.Concat(bufferResult.Messages).ToList();
+            return new OperationDetails(result, resultMessages, "");
+        }
+        private OperationDetails CheckPCCaseOnOuterMemory(PCCase pcCase, ComputerAssembly computerAssembly)
+        {
+            var result = true;
+            var resultMessages = new List<string>();
             var bufferList2 = new List<ComputerAssemblyHDD>(computerAssembly.HDDs);
             foreach (var slot in pcCase.PCCaseOuterMemoryFormFactors)
             {
@@ -327,22 +424,9 @@ namespace FerumChecker.Service.Services.Infrastructure
                 result = false;
                 resultMessages.Add("Корпус не має підходячих форм-факторів для SSD диска");
             }
-            if (result)
-            {
-                computerAssembly.PCCaseId = pcCase.Id;
-                UpdateComputerAssembly(computerAssembly);
-                Database.Save();
-            }
-            var details = new OperationDetails(result, resultMessages, "");
-            details.MemoryFree = pcCase.PCCaseOuterMemoryFormFactors.Count();
-            if (computerAssembly.MotherBoard != null)
-            {
-                computerAssembly.MotherBoard = Database.MotherBoards.Get(computerAssembly.MotherBoardId.Value);
-                details.MemoryFree = Math.Min(computerAssembly.MotherBoard.MotherBoardOuterMemorySlots.Count(), details.MemoryFree.Value);
-            }
-            return details;
-        }
 
+            return new OperationDetails(result, resultMessages, "");
+        }
         public OperationDetails SetPowerSupply(int powerSupplyId, int assemblyId)
         {
             var powerSupply = Database.PowerSupplies.Get(powerSupplyId);
@@ -355,6 +439,16 @@ namespace FerumChecker.Service.Services.Infrastructure
             {
                 return new OperationDetails(false, new List<string>() { "Збірка не знайдена" }, "");
             }
+            var result = CheckPowerSupply(powerSupply, computerAssembly);
+            if (result.Succedeed) {
+                computerAssembly.PowerSupplyId = powerSupply.Id;
+                UpdateComputerAssembly(computerAssembly);
+                Database.Save();
+            }
+            return result;
+        }
+        private OperationDetails CheckPowerSupply (PowerSupply powerSupply, ComputerAssembly computerAssembly)
+        {
             var result = true;
             var resultMessages = new List<string>();
             if (computerAssembly.MotherBoard != null)
@@ -374,14 +468,16 @@ namespace FerumChecker.Service.Services.Infrastructure
                     resultMessages.Add("Блока живлення не вистачить для коректної роботи обраної відеокарти (мінімум " + computerAssembly.VideoCards.ElementAt(0).VideoCard.MinimumPowerConsuming + " Вт )");
                 }
             }
-            if (result) {
-                computerAssembly.PowerSupplyId = powerSupply.Id;
-                UpdateComputerAssembly(computerAssembly);
-                Database.Save();
+            if (computerAssembly.HDDs.Count() > 0 || computerAssembly.SSDs.Count() > 0)
+            {
+                if (powerSupply.SATAInputNumber < computerAssembly.HDDs.Count() + computerAssembly.SSDs.Count())
+                {
+                    result = false;
+                    resultMessages.Add("Блок не має достатньо входів для зовнішньої пам'яті");
+                }
             }
             return new OperationDetails(result, resultMessages, "");
         }
-
         public OperationDetails SetVideoCard(int videoCardId, int assemblyId)
         {
             var videoCard = Database.VideoCards.Get(videoCardId);
@@ -394,6 +490,16 @@ namespace FerumChecker.Service.Services.Infrastructure
             {
                 return new OperationDetails(false, "Збірка не знайдена", "");
             }
+            var result = CheckVideoCard(videoCard, computerAssembly);
+            if (result.Succedeed)
+            {
+                SetVideoCards(computerAssembly, new List<VideoCard> { videoCard });
+                Database.Save();
+            }
+            return result;
+        }
+        private OperationDetails CheckVideoCard(VideoCard videoCard, ComputerAssembly computerAssembly)
+        {
             var result = true;
             var resultMessages = new List<string>();
             var warnings = new List<string>();
@@ -410,14 +516,8 @@ namespace FerumChecker.Service.Services.Infrastructure
                     warnings.Add("Материнська плата не має оптимального прискорювача для інтерфейсу відео карти ( x " + videoCard.VideoCardInterface.Multiplier + "). Можливе використання графычного процесора не на повну потужність");
                 }
             }
-            if (result)
-            {
-                SetVideoCards(computerAssembly, new List<VideoCard> { videoCard });
-                Database.Save();
-            }
             return new OperationDetails(result, resultMessages, "", warnings);
         }
-
         public OperationDetails SetRAM(int ramId, int assemblyId)
         {
             var ram = Database.RAMs.Get(ramId);
@@ -430,19 +530,8 @@ namespace FerumChecker.Service.Services.Infrastructure
             {
                 return new OperationDetails(false, "Збірка не знайдена", "");
             }
-            var result = true;
-            var resultMessages = new List<string>();
-            if (computerAssembly.MotherBoard != null)
-            {
-                var freeSlots = GetFreeRamSlots(computerAssembly);
-                if (!freeSlots.Any(m => m.RAMTypeId == ram.RAMTypeId))
-                {
-                    result = false;
-                    resultMessages.Add("Материнська плата не містить входу для цієї оперативної памяті  (" + ram.RAMType.Name + ").");
-                }
-            }
-
-            if (result)
+            var result = CheckRAM(ram, computerAssembly);
+            if (result.Succedeed)
             {
                 var item = new ComputerAssemblyRAM();
                 item.ComputerAssemblyId = computerAssembly.Id;
@@ -450,10 +539,28 @@ namespace FerumChecker.Service.Services.Infrastructure
                 Database.ComputerAssemblyRAMs.Create(item);
                 Database.Save();
             }
+            return result;
+        }
+        private OperationDetails CheckRAM(RAM ram, ComputerAssembly computerAssembly)
+        {
+            var result = true;
+            var resultMessages = new List<string>();
+            if (computerAssembly.MotherBoard != null)
+            {
+                if (GetTotalRAM(computerAssembly) + ram.MemorySize > computerAssembly.MotherBoard.MaxMemory)
+                {
+                    result = false;
+                    resultMessages.Add("Материнська плата не підтримує таки обсяг ОЗП");
+                }
+                var freeSlots = GetFreeRamSlots(computerAssembly);
+                if (!freeSlots.Any(m => m.RAMTypeId == ram.RAMTypeId))
+                {
+                    result = false;
+                    resultMessages.Add("Материнська плата не містить входу для цієї оперативної памяті  (" + ram.RAMType.Name + ").");
+                }
+            }
             return new OperationDetails(result, resultMessages, "");
         }
-
-
         public OperationDetails RemoveCPU(ComputerAssembly assembly)
         {
             if (assembly == null)
@@ -491,11 +598,7 @@ namespace FerumChecker.Service.Services.Infrastructure
             var result = new OperationDetails(true, "Ok", "");
             result.RamFree = 1;
             result.MemoryFree = 1;
-            if (assembly.PCCase != null)
-            {
-                assembly.PCCase = Database.PCCases.Get(assembly.PCCaseId.Value);
-                result.MemoryFree = assembly.PCCase.PCCaseOuterMemoryFormFactors.Count();
-            }
+            result.MemoryFree = CalculateFreeOuterMemorySlot(assembly);
             return result;
 
         }
@@ -511,13 +614,13 @@ namespace FerumChecker.Service.Services.Infrastructure
             Database.ComputerAssemblies.Update(assembly);
             Database.Save();
             var result = new OperationDetails(true, "Ok", "");
-            result.RamFree = 1;
             result.MemoryFree = 1;
-            if (assembly.MotherBoard != null)
-            {
-                assembly.MotherBoard = Database.MotherBoards.Get(assembly.MotherBoardId.Value);
-                result.MemoryFree = assembly.MotherBoard.MotherBoardOuterMemorySlots.Count();
-            }
+            //if (assembly.MotherBoard != null)
+            //{
+            //    assembly.MotherBoard = Database.MotherBoards.Get(assembly.MotherBoardId.Value);
+            //    result.MemoryFree = assembly.MotherBoard.MotherBoardOuterMemorySlots.Count();
+            //}
+            result.MemoryFree = CalculateFreeOuterMemorySlot(assembly);
             return result;
         }
 
@@ -531,7 +634,10 @@ namespace FerumChecker.Service.Services.Infrastructure
             assembly.PowerSupplyId = null;
             Database.ComputerAssemblies.Update(assembly);
             Database.Save();
-            return new OperationDetails(true, "Ok", "");
+            var result = new OperationDetails(true, "Ok", "");
+            result.MemoryFree = 1;
+            result.MemoryFree = CalculateFreeOuterMemorySlot(assembly);
+            return result;
         }
 
         private OperationDetails SetVideoCards(ComputerAssembly computerAssembly, List<VideoCard> videoCards)
@@ -622,30 +728,40 @@ namespace FerumChecker.Service.Services.Infrastructure
             {
                 return 0;
             }
-            var motherBoardSlots = -1;
-            var pcCaseSlots = -1;
+            var motherBoardSlots = 0;
+            var pcCaseSlots = 0;
+            var powerSupplySlots = 0;
             var freeSlots = 0;
+            var calculatedItems = new List<int>();
+
             if (computerAssembly.MotherBoard != null)
             {
                 computerAssembly.MotherBoard = Database.MotherBoards.Get(computerAssembly.MotherBoardId.Value);
                 motherBoardSlots = computerAssembly.MotherBoard.MotherBoardOuterMemorySlots.Count();
+                calculatedItems.Add(motherBoardSlots);
             }
             if (computerAssembly.PCCase != null)
             {
                 computerAssembly.PCCase = Database.PCCases.Get(computerAssembly.PCCaseId.Value);
                 pcCaseSlots = computerAssembly.PCCase.PCCaseOuterMemoryFormFactors.Count();
+                calculatedItems.Add(pcCaseSlots);
             }
-            if (pcCaseSlots == -1 && motherBoardSlots >= 0)
+            if(computerAssembly.PowerSupply != null)
             {
-                freeSlots = motherBoardSlots - (computerAssembly.SSDs.Count() + computerAssembly.HDDs.Count());
+                powerSupplySlots = computerAssembly.PowerSupply.SATAInputNumber;
+                calculatedItems.Add(powerSupplySlots);
             }
-            else if (pcCaseSlots >= 0 && motherBoardSlots == -1)
+            //if (pcCaseSlots == -1 && motherBoardSlots >= 0)
+            //{
+            //    freeSlots = motherBoardSlots - (computerAssembly.SSDs.Count() + computerAssembly.HDDs.Count());
+            //}
+            //else if (pcCaseSlots >= 0 && motherBoardSlots == -1)
+            //{
+            //    freeSlots = pcCaseSlots - (computerAssembly.SSDs.Count() + computerAssembly.HDDs.Count());
+            //}
+            if (calculatedItems.Count() > 0)
             {
-                freeSlots = pcCaseSlots - (computerAssembly.SSDs.Count() + computerAssembly.HDDs.Count());
-            }
-            else if (pcCaseSlots > 0 && motherBoardSlots > 0)
-            {
-                freeSlots = Math.Min(pcCaseSlots, motherBoardSlots) - (computerAssembly.SSDs.Count() + computerAssembly.HDDs.Count());
+                freeSlots = calculatedItems.Min() - (computerAssembly.SSDs.Count() + computerAssembly.HDDs.Count());
             }
             else
             {
@@ -768,7 +884,7 @@ namespace FerumChecker.Service.Services.Infrastructure
             result = result.Concat(CreatePCCaseRecomendation(computerAssembly)).ToList();
             result = result.Concat(CreateSSDRecomendation(computerAssembly)).ToList();
             result = result.Concat(CreateVideCardRecomendation(computerAssembly)).ToList();
-            result = result.Concat(CreatePCCaseRecomendation(computerAssembly)).ToList();
+            result = result.Concat(CreateRAMRecomendation(computerAssembly)).ToList();
             result = result.Concat(CreatePowerSupplyRecomendation(computerAssembly)).ToList();
 
             return result;
@@ -796,56 +912,498 @@ namespace FerumChecker.Service.Services.Infrastructure
         private IEnumerable<RecomendationDTO> CreateMotherBoardRecomendation(ComputerAssembly computerAssembly)
         {
             var result = new List<RecomendationDTO>();
+            if(computerAssembly.MotherBoard == null)
+            {
+                var motherboards = Database.MotherBoards.GetAll();
+                if(computerAssembly.CPUId != null)
+                {
+                    motherboards = motherboards.Where(m => m.CPUSocketId == computerAssembly.CPU.CPUSocketId);
+                }
+                if(computerAssembly.PCCase != null)
+                {
+                    computerAssembly.PCCase = Database.PCCases.Get(computerAssembly.PCCaseId.Value);
+                    motherboards = motherboards.Where(m => computerAssembly.PCCase.PCCaseMotherBoardFormFactors.Any(z => z.MotherBoardFormFactorId == m.MotherBoardFormFactorId));
+                }
+                if(computerAssembly.PowerSupply != null)
+                {
+                    motherboards = motherboards.Where(m => computerAssembly.PowerSupply.PowerSupplyMotherBoardInterfaceId == m.MotherBoardFormFactorId).ToList();
+                }
+                if(computerAssembly.VideoCards.Count() > 0)
+                {
+                    var videoCard = computerAssembly.VideoCards.ElementAt(0);
+                    motherboards = motherboards.Where(m => m.MotherBoardVideoCardSlots.Any(z => z.VideoCardInterfaceId == videoCard.VideoCard.VideoCardInterfaceId));
+                }
+                if(computerAssembly.ComputerAssemblyRAMs.Count() > 0)
+                {
+                    motherboards = motherboards.Where(m => CheckMotherBoardOnRAM(m, computerAssembly).Succedeed);
+                    motherboards = motherboards.Where(m => m.MaxMemory > GetTotalRAM(computerAssembly));
+                }
+                if (computerAssembly.HDDs.Count() > 0 || computerAssembly.SSDs.Count() > 0)
+                {
+                    motherboards = motherboards.Where(m => CheckMotherBoardOnOuterMemory(m, computerAssembly).Succedeed).ToList();
+                }
+                result = motherboards.Select(m => new RecomendationDTO()
+                {
+                    Id = m.Id,
+                    Display = "Материнська плата",
+                    Name = m.Name,
+                    ImagePath = "/Images/MotherBoard/" + m.Image,
+                    Type = "MotherBoard"
+                }).Take(3).ToList();
+
+            }
             return result;
         }
 
         private IEnumerable<RecomendationDTO> CreateSSDRecomendation(ComputerAssembly computerAssembly)
         {
             var result = new List<RecomendationDTO>();
+            if (CalculateFreeOuterMemorySlot(computerAssembly) > 0)
+            {
+                var ssds = Database.SSDs.GetAll();
+                if (computerAssembly.MotherBoard != null)
+                {
+                    var freeSlots = GetFreeOuterSlotsForMotherBoard(computerAssembly);
+                    ssds = ssds.Where(m => freeSlots.Any(z => z.OuterMemoryInterfaceId == m.OuterMemoryInterfaceId));
+                }
+                if (computerAssembly.PCCase != null)
+                {
+                    var freeSlots = GetFreeOuterSlotsForPCCase(computerAssembly);
+                    ssds = ssds.Where(m => freeSlots.Any(z => z.OuterMemoryFormFactorId == m.OuterMemoryFormFactorId));
+                }
+                result = ssds.Select(m => new RecomendationDTO()
+                {
+                    Id = m.Id,
+                    Display = "SSD",
+                    Name = m.Name,
+                    ImagePath = "/Images/SSD/" + m.Image,
+                    Type = "SSD"
+                }).Take(3).ToList();
+            }
             return result;
         }
 
         private IEnumerable<RecomendationDTO> CreateRAMRecomendation(ComputerAssembly computerAssembly)
         {
             var result = new List<RecomendationDTO>();
+            if (CalculateFreeRAMSlot(computerAssembly) > 0)
+            {
+                var rams = Database.RAMs.GetAll();
+                if (computerAssembly.MotherBoard != null)
+                {
+
+                    var freeSlots = GetFreeRamSlots(computerAssembly);
+                    rams = rams.Where(m => freeSlots.Any(z => z.RAMTypeId == m.RAMTypeId));
+                    rams = rams.Where(m => m.MemorySize + GetTotalRAM(computerAssembly) < computerAssembly.MotherBoard.MaxMemory);
+                }
+                result = rams.Select(m => new RecomendationDTO()
+                {
+                    Id = m.Id,
+                    Display = "RAM",
+                    Name = m.Name,
+                    ImagePath = "/Images/RAM/" + m.Image,
+                    Type = "RAM"
+                }).Take(2).ToList();
+            }
             return result;
         }
 
         private IEnumerable<RecomendationDTO> CreateHDDRecomendation(ComputerAssembly computerAssembly)
         {
             var result = new List<RecomendationDTO>();
+            if (CalculateFreeOuterMemorySlot(computerAssembly) > 0)
+            {
+                var hdds = Database.HDDs.GetAll();
+                if (computerAssembly.MotherBoard != null)
+                {
+                    var freeSlots = GetFreeOuterSlotsForMotherBoard(computerAssembly);
+                    hdds = hdds.Where(m => freeSlots.Any(z => z.OuterMemoryInterfaceId == m.OuterMemoryInterfaceId));
+                }
+                if (computerAssembly.PCCase != null)
+                {
+                    var freeSlots = GetFreeOuterSlotsForPCCase(computerAssembly);
+                    hdds = hdds.Where(m => freeSlots.Any(z => z.OuterMemoryFormFactorId == m.OuterMemoryFormFactorId));
+                }
+                result = hdds.Select(m => new RecomendationDTO()
+                {
+                    Id = m.Id,
+                    Display = "HDD",
+                    Name = m.Name,
+                    ImagePath = "/Images/HDD/" + m.Image,
+                    Type = "HDD"
+                }).Take(3).ToList();
+            }
             return result;
         }
 
         private IEnumerable<RecomendationDTO> CreateVideCardRecomendation(ComputerAssembly computerAssembly)
         {
             var result = new List<RecomendationDTO>();
+            if (computerAssembly.VideoCards.Count() <= 0)
+            {
+                var videoCards = Database.VideoCards.GetAll();
+                if (computerAssembly.PowerSupply != null)
+                {
+                    videoCards = videoCards.Where(m => m.MinimumPowerConsuming <= computerAssembly.PowerSupply.Power);
+                }
+                if (computerAssembly.MotherBoard != null)
+                {
+                    computerAssembly.MotherBoard = Database.MotherBoards.Get(computerAssembly.MotherBoardId.Value);
+                    videoCards = videoCards.Where(m => computerAssembly.MotherBoard.MotherBoardVideoCardSlots.Any(z => z.VideoCardInterface.Version == m.VideoCardInterface.Version));
+                }
+                result = videoCards.Select(m => new RecomendationDTO()
+                {
+                    Id = m.Id,
+                    Display = "Відео карта",
+                    Name = m.Name,
+                    ImagePath = "/Images/VideoCard/" + m.Image,
+                    Type = "VideoCard"
+                }).Take(3).ToList();
+            }
             return result;
         }
 
         private IEnumerable<RecomendationDTO> CreatePowerSupplyRecomendation(ComputerAssembly computerAssembly)
         {
             var result = new List<RecomendationDTO>();
+            if(computerAssembly.PowerSupply == null)
+            {
+                var powerSupplies = Database.PowerSupplies.GetAll();
+                if (computerAssembly.VideoCards.Count() > 0)
+                {
+                    var videoCard = computerAssembly.VideoCards.ElementAt(0);
+                    powerSupplies = powerSupplies.Where(m => m.Power >= videoCard.VideoCard.MinimumPowerConsuming);
+                }
+                if (computerAssembly.MotherBoard != null)
+                {
+                    computerAssembly.MotherBoard = Database.MotherBoards.Get(computerAssembly.MotherBoardId.Value);
+                    powerSupplies = powerSupplies.Where(m => computerAssembly.MotherBoard.PowerSupplyMotherBoardSlots.Any(z => z.PowerSupplyMotherBoardInterfaceId == m.PowerSupplyMotherBoardInterfaceId ));
+                }
+                if(computerAssembly.HDDs.Count() > 0 || computerAssembly.SSDs.Count() > 0)
+                {
+                    powerSupplies = powerSupplies.Where(m => m.SATAInputNumber >= computerAssembly.HDDs.Count() + computerAssembly.SSDs.Count());
+                }
+                result = powerSupplies.Select(m => new RecomendationDTO()
+                {
+                    Id = m.Id,
+                    Display = "Блок живлення",
+                    Name = m.Name,
+                    ImagePath = "/Images/PowerSupply/" + m.Image,
+                    Type = "PowerSupply"
+                }).Take(3).ToList() ;
+            }
             return result;
         }
 
         private IEnumerable<RecomendationDTO> CreatePCCaseRecomendation(ComputerAssembly computerAssembly)
         {
             var result = new List<RecomendationDTO>();
+            if(computerAssembly.PCCase == null)
+            {
+                var pcCases = Database.PCCases.GetAll();
+                if(computerAssembly.MotherBoard != null)
+                {
+                    pcCases = pcCases.Where(m => m.PCCaseMotherBoardFormFactors.Any(z => z.MotherBoardFormFactorId == computerAssembly.MotherBoard.MotherBoardFormFactorId));
+                }
+                if(computerAssembly.SSDs.Count() > 0 || computerAssembly.HDDs.Count() > 0)
+                {
+                    pcCases = pcCases.Where(m => CheckPCCaseOnOuterMemory(m, computerAssembly).Succedeed);
+                }
+                result = pcCases.Select(m => new RecomendationDTO()
+                {
+                    Id = m.Id,
+                    Display = "Корпуси",
+                    Name = m.Name,
+                    ImagePath = "/Images/PCCase/" + m.Image,
+                    Type = "PCCase"
+                }).Take(3).ToList();
+            }
             return result;
         }
 
 
-       private bool IsFull(int id)
+       private bool IsFull(ComputerAssembly computerAssembly)
         {
-            var assenbly = Database.ComputerAssemblies.Get(id);
-            if(assenbly == null)
+            if(computerAssembly == null)
             {
                 return false;
             }
-            return assenbly.CPU != null && assenbly.MotherBoard != null && assenbly.PowerSupply != null
-                && assenbly.PCCase != null && assenbly.VideoCards.Count() > 0
-                && assenbly.ComputerAssemblyRAMs.Count() > 0 && (assenbly.HDDs.Count() + assenbly.SSDs.Count() > 0);
+            return computerAssembly.CPU != null && computerAssembly.MotherBoard != null && computerAssembly.PowerSupply != null
+                && computerAssembly.PCCase != null && computerAssembly.VideoCards.Count() > 0
+                && computerAssembly.ComputerAssemblyRAMs.Count() > 0 && (computerAssembly.HDDs.Count() + computerAssembly.SSDs.Count() > 0);
+        }
+
+        public OperationDetails OnRAMDelete(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public OperationDetails OnCPUDelete(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public OperationDetails OnMotherBoardDelete(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public OperationDetails OnSSDDelete(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public OperationDetails OnHDDDelete(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public OperationDetails OnPCCaseDelete(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public OperationDetails OnPowerSupplyDelete(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public OperationDetails OnVideoCardDelete(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public OperationDetails OnRAMChange(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public OperationDetails OnCPUChange(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public OperationDetails OnMotherBoardChange(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public OperationDetails OnSSDChange(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public OperationDetails OnHDDChange(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public OperationDetails OnPCCaseChange(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public OperationDetails OnPowerSupplyChange(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public OperationDetails OnVideoCardChange(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public OperationDetails SoftwareSyncEvaluate(int id, ComputerAssembly computerAssembly)
+        {
+            var result = true;
+            var messages = new List<string>();
+            if (!IsFull(computerAssembly)){
+                messages.Add("Щоб оцінити сумісність з ПЗ спочатку завершіть збірку");
+                return new OperationDetails(false, messages, "");
+            };
+            var software = Database.Softwares.Get(id);
+            if(software == null)
+            {
+                messages.Add("Виникла помилка ПЗ не знайдене.");
+                return new OperationDetails(false, messages, "");
+            }
+            var minimumCPU = software.SoftwareCPURequirements.Where(m => m.RequirementTypeId == 1).Select(m => m.CPU);
+            var requiredCPU = software.SoftwareCPURequirements.Where(m => m.RequirementTypeId == 2).Select(m => m.CPU);
+            var minimumVideoCard = software.SoftwareVideoCardRequirements.Where(m => m.RequirementTypeId == 1).Select(m => m.VideoCard);
+            var recomendedVideoCard = software.SoftwareVideoCardRequirements.Where(m => m.RequirementTypeId == 2).Select(m => m.VideoCard);
+            if(minimumCPU.Count() <= 0 && requiredCPU.Count() <= 0)
+            {
+                messages.Add("Немає відомостей про вимоги до процесора.");
+            }
+
+
+            if(requiredCPU.Any(m => (m.Frequency <= computerAssembly.CPU.Frequency && m.ThreadsNumber <= computerAssembly.CPU.ThreadsNumber && m.CoresNumber <= computerAssembly.CPU.CoresNumber)))
+            {
+                messages.Add("<i class='fa fa-check' aria-hidden='true'></i>&nbsp; Процесор " + computerAssembly.CPU.Name + " повністю задовільняє рекомендованим вимогам");
+            }
+            else
+            {
+                if (!requiredCPU.Any(m => (m.Frequency <= computerAssembly.CPU.Frequency)))
+                {
+                    messages.Add("<i class='fa fa-ban' aria-hidden='true'></i>&nbsp;Процесор " + computerAssembly.CPU.Name + " має недостатню частоту для рекомендованих вимог");
+                }
+                if (!requiredCPU.Any(m => (m.ThreadsNumber <= computerAssembly.CPU.ThreadsNumber)))
+                {
+                    messages.Add("<i class='fa fa-ban' aria-hidden='true'></i>&nbsp;Процесор " + computerAssembly.CPU.Name + " має недостатню кількість потоків для рекомендованих вимог");
+                }
+                if (!requiredCPU.Any(m => (m.CoresNumber <= computerAssembly.CPU.CoresNumber)))
+                {
+                    messages.Add("<i class='fa fa-ban' aria-hidden='true'></i>&nbsp;Процесор " + computerAssembly.CPU.Name + " має недостатню кількість ядер для рекомендованих вимог");
+                }
+                if (minimumCPU.Any(m => (m.Frequency <= computerAssembly.CPU.Frequency && m.ThreadsNumber <= computerAssembly.CPU.ThreadsNumber && m.CoresNumber <= computerAssembly.CPU.CoresNumber)))
+                {
+                    messages.Add("<i class='fa fa-check' aria-hidden='true'></i>&nbsp;Процесор " + computerAssembly.CPU.Name + " повністю задовільняє мінімальним вимогам");
+                }
+                else
+                {
+                    if (!minimumCPU.Any(m => (m.Frequency <= computerAssembly.CPU.Frequency)))
+                    {
+                        messages.Add("<i class='fa fa-ban' aria-hidden='true'></i>&nbsp;Процесор " + computerAssembly.CPU.Name + " має недостатню частоту для мінімальних вимог");
+                    }
+                    if (!minimumCPU.Any(m => (m.ThreadsNumber <= computerAssembly.CPU.ThreadsNumber)))
+                    {
+                        messages.Add("<i class='fa fa-ban' aria-hidden='true'></i>&nbsp;Процесор " + computerAssembly.CPU.Name + " має недостатню кількість потоків для мінімальних вимог");
+                    }
+                    if (!minimumCPU.Any(m => (m.CoresNumber <= computerAssembly.CPU.CoresNumber)))
+                    {
+                        messages.Add("<i class='fa fa-ban' aria-hidden='true'></i>&nbsp;Процесор " + computerAssembly.CPU.Name + " має недостатню кількість ядер для мінімальних   вимог");
+                    }
+                }
+            }
+            
+
+
+
+            if (minimumVideoCard.Count() <= 0 && recomendedVideoCard.Count() <= 0)
+            {
+                messages.Add("Немає відомостей про вимоги до відеокарти.");
+            }
+
+
+            if (recomendedVideoCard.Any(m => (m.MemorySize <= computerAssembly.VideoCards.ElementAt(0).VideoCard.MemorySize && m.Frequency <= computerAssembly.VideoCards.ElementAt(0).VideoCard.Frequency && m.MemoryFrequency <= computerAssembly.VideoCards.ElementAt(0).VideoCard.MemoryFrequency)))
+            {
+                messages.Add("<i class='fa fa-check' aria-hidden='true'></i>&nbsp;Відеокарта " + computerAssembly.VideoCards.ElementAt(0).VideoCard.Name + " повністю задовільняє рекомендованим вимогам");
+            }
+            else
+            {
+                if (!recomendedVideoCard.Any(m => (m.Frequency <= computerAssembly.VideoCards.ElementAt(0).VideoCard.Frequency)))
+                {
+                    messages.Add("<i class='fa fa-ban' aria-hidden='true'></i>&nbsp;Відеокарта " + computerAssembly.VideoCards.ElementAt(0).VideoCard.Name + " має недостатню частоту ядра для рекомендованих вимог");
+                }
+                if (!recomendedVideoCard.Any(m => (m.MemoryFrequency <= computerAssembly.VideoCards.ElementAt(0).VideoCard.MemoryFrequency)))
+                {
+                    messages.Add("<i class='fa fa-ban' aria-hidden='true'></i>&nbsp;Відеокарта " + computerAssembly.VideoCards.ElementAt(0).VideoCard.Name + " має недостатню частоту пам'яті для рекомендованих вимог");
+                }
+                if (!recomendedVideoCard.Any(m => (m.MemorySize <= computerAssembly.VideoCards.ElementAt(0).VideoCard.MemorySize)))
+                {
+                    messages.Add("<i class='fa fa-ban' aria-hidden='true'></i>&nbsp;Відеокарта " + computerAssembly.VideoCards.ElementAt(0).VideoCard.Name + " має недостатній обсяг відео пам'яті для рекомендованих вимог");
+                }
+                if (minimumVideoCard.Any(m => (m.MemorySize <= computerAssembly.VideoCards.ElementAt(0).VideoCard.MemorySize && m.Frequency <= computerAssembly.VideoCards.ElementAt(0).VideoCard.Frequency && m.MemoryFrequency <= computerAssembly.VideoCards.ElementAt(0).VideoCard.MemoryFrequency)))
+                {
+                    messages.Add("<i class='fa fa-check' aria-hidden='true'></i>&nbsp;Відеокарта " + computerAssembly.VideoCards.ElementAt(0).VideoCard.Name + " повністю задовільняє мінімальним вимогам");
+                }
+                else
+                {
+                    if (!minimumVideoCard.Any(m => (m.Frequency <= computerAssembly.VideoCards.ElementAt(0).VideoCard.Frequency)))
+                    {
+                        messages.Add("<i class='fa fa-ban' aria-hidden='true'></i>&nbsp;Відеокарта " + computerAssembly.VideoCards.ElementAt(0).VideoCard.Name + " має недостатню частоту ядра для мінімальних вимог");
+                    }
+                    if (!minimumVideoCard.Any(m => (m.MemoryFrequency <= computerAssembly.VideoCards.ElementAt(0).VideoCard.MemoryFrequency)))
+                    {
+                        messages.Add("<i class='fa fa-ban' aria-hidden='true'></i>&nbsp;Відеокарта " + computerAssembly.VideoCards.ElementAt(0).VideoCard.Name + " має недостатню частоту пам'яті для мінімальних вимог");
+                    }
+                    if (!minimumVideoCard.Any(m => (m.MemorySize <= computerAssembly.VideoCards.ElementAt(0).VideoCard.MemorySize)))
+                    {
+                        messages.Add("<i class='fa fa-ban' aria-hidden='true'></i>&nbsp;Відеокарта " + computerAssembly.VideoCards.ElementAt(0).VideoCard.Name + " має недостатній обсяг відео пам'яті для мінімальних вимог");
+                    }
+                }
+            }
+
+
+            
+
+
+            if (software.RecommendedRequiredRAM <= GetTotalRAM(computerAssembly))
+            {
+                messages.Add("<i class='fa fa-check' aria-hidden='true'></i>&nbsp;Збірка має достатньо ОЗУ для рекомендованих вимог");
+            } else if(software.MinimiumRequiredRAM <= GetTotalRAM(computerAssembly))
+            {
+                messages.Add("<i class='fa fa-check' aria-hidden='true'></i>&nbsp;Збірка має достатньо ОЗУ для мінімальних вимог");
+            } else
+            {
+                messages.Add("<i class='fa fa-ban' aria-hidden='true'></i>&nbsp;Збірка має недостатньо ОЗУ для підтримки ПЗ");
+            }
+
+
+
+            if (software.DiscVolume / 1000 <= GetTotalVolume(computerAssembly))
+            {
+                messages.Add("<i class='fa fa-check' aria-hidden='true'></i>&nbsp;Збірка має достатньо памяті для зберігання ПЗ");
+            }
+            else
+            {
+                messages.Add("<i class='fa fa-ban' aria-hidden='true'></i>&nbsp;Збірка не має достатньо памяті для зберігання ПЗ");
+            }
+
+            return new OperationDetails(result, messages, "");
+
+        }
+
+        public OperationDetails compareCPU(CPU cpu1, CPU cpu2)
+        {
+            var result = true;
+            var messages = new List<string>();
+
+            if (cpu1.CoresNumber < cpu2.CoresNumber || cpu1.Frequency < cpu2.Frequency || cpu1.ThreadsNumber < cpu2.ThreadsNumber)
+            {
+                result = false;
+            }
+
+            return new OperationDetails(result, "", "");
+        }
+
+
+        public OperationDetails compareVideoCards(VideoCard videoCard1, VideoCard videoCard2)
+        {
+            var result = true;
+            var messages = new List<string>();
+
+            if (videoCard1.MemoryFrequency < videoCard2.MemoryFrequency || videoCard1.Frequency < videoCard2.Frequency || videoCard1.MemorySize < videoCard2.MemorySize)
+            {
+                result = false;
+            }
+
+            return new OperationDetails(result, "", "");
+        }
+        public int GetTotalRAM(ComputerAssembly computerAssembly)
+        {
+            var sum = 0;
+            foreach (var ram in computerAssembly.ComputerAssemblyRAMs)
+            {
+                sum += ram.RAM.MemorySize;
+            }
+
+            return sum;
+        }
+
+        public int GetTotalVolume(ComputerAssembly computerAssembly)
+        {
+            var sum = 0;
+            foreach(var ssd in computerAssembly.SSDs)
+            {
+                sum += ssd.SSD.MemorySize;
+            }
+            foreach (var hdd in computerAssembly.HDDs)
+            {
+                sum += hdd.HDD.MemorySize;
+            }
+
+            return sum;
         }
     }
 }

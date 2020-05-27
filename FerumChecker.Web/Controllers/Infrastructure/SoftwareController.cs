@@ -8,6 +8,8 @@ using FerumChecker.DataAccess.Entities.Infrastructure;
 using FerumChecker.DataAccess.Entities.Joins;
 using FerumChecker.DataAccess.Entities.Specification;
 using FerumChecker.Service.Interfaces.Hardware;
+using FerumChecker.Service.Interfaces.Infrastructure;
+using FerumChecker.Service.Interfaces.User;
 using FerumChecker.Web.Code;
 using FerumChecker.Web.ViewModel.Hardware;
 using FerumChecker.Web.ViewModel.Infrastructure;
@@ -29,8 +31,10 @@ namespace FerumChecker.Web.Controllers
         private readonly IPublisherService _publisherService;
         private readonly ICPUService _cpuService;
         private readonly IVideoCardService _videoCardService;
+        private readonly IComputerAssemblyService _computerAssemblyService;
+        private readonly IUserService _userService;
 
-        public SoftwareController(ISoftwareService powerSupplyService, IWebHostEnvironment hostEnvironment, IPublisherService publisherService, IDeveloperService developerService, ICPUService cpuService, IVideoCardService videoCardService)
+        public SoftwareController(ISoftwareService powerSupplyService, IWebHostEnvironment hostEnvironment, IPublisherService publisherService, IDeveloperService developerService, ICPUService cpuService, IVideoCardService videoCardService, IComputerAssemblyService computerAssemblyService, IUserService userService)
         {
             _softwareService = powerSupplyService;
             _webHostEnvironment = hostEnvironment;
@@ -38,6 +42,15 @@ namespace FerumChecker.Web.Controllers
             _developerService = developerService;
             _cpuService = cpuService;
             _videoCardService = videoCardService;
+            _computerAssemblyService = computerAssemblyService;
+            _userService = userService;
+        }
+
+        public ActionResult Evaluate()
+        {
+            var softwares = _softwareService.GetSoftwares();
+            ViewBag.Softwares = new SelectList(softwares, "Id", "Name");
+            return PartialView();
         }
         // GET: Software
         public ActionResult Index()
@@ -108,6 +121,35 @@ namespace FerumChecker.Web.Controllers
             return View(model);
         }
 
+        public ActionResult PartialDetails(int id)
+        {
+            var software = _softwareService.GetSoftware(id);
+            if (software == null)
+            {
+                return NotFound();
+            }
+            var model = new SoftwareViewModel()
+            {
+                Id = software.Id,
+                Name = software.Name,
+                ShortDescription = string.IsNullOrEmpty(software.Description) ? "" : CreateShortDescription(software.Description),
+                Publisher = software.Publisher.Name,
+                Developer = software.Developer.Name,
+                RecomendedCPURequirmentsDisplay = CreateCPuDisplay(software.SoftwareCPURequirements.Where(m => m.RequirementTypeId == 2).ToList()),
+                RecomendedVideoCardRequirmentsDisplay = CreateVideoCardDisplay(software.SoftwareVideoCardRequirements.Where(m => m.RequirementTypeId == 2).ToList()),
+                MinimiumRequiredRAMDisplay = software.MinimiumRequiredRAM + " Гб",
+                RecommendedRequiredRAMDisplay = software.RecommendedRequiredRAM + " Гб",
+                DiscVolumeDisplay = CreateMemoryDescription(software.DiscVolume),
+                MinimumCPURequirmentsDisplay = CreateCPuDisplay(software.SoftwareCPURequirements.Where(m => m.RequirementTypeId == 1).ToList()),
+                MinimumVideoCardRequirmentsDisplay = CreateVideoCardDisplay(software.SoftwareVideoCardRequirements.Where(m => m.RequirementTypeId == 1).ToList()),
+                ImagePath = "/Images/Software/" + software.Image,
+                Price = software.Price,
+                Description = software.Description
+            };
+
+            return PartialView(model);
+        }
+
         // GET: Software/Create
         public ActionResult Create()
         {
@@ -127,16 +169,33 @@ namespace FerumChecker.Web.Controllers
         //[ValidateAntiForgeryToken]
         public IActionResult Create(SoftwareViewModel model)
         {
+            if (model.SoftwareCPURequirements == null)
+            {
+                model.SoftwareCPURequirements = new List<SoftwareCPURequirement>();
+            }
+            if (model.SoftwareVideoCardRequirements == null)
+            {
+                model.SoftwareVideoCardRequirements = new List<SoftwareVideoCardRequirement>();
+            }
+            if (model.MinimiumRequiredRAM > model.RecommendedRequiredRAM)
+            {
+                ModelState.AddModelError("MinimiumRequiredRAM", "Мінімальні вимоги не можуть бути кращими за рекомендовані");
+
+            }
+            var newMinCpus = model.SoftwareCPURequirements.Where(m => m.RequirementTypeId == 1).Select(m => _cpuService.GetCPU(m.CPUId));
+            var newReqCpus = model.SoftwareCPURequirements.Where(m => m.RequirementTypeId == 2).Select(m => _cpuService.GetCPU(m.CPUId));
+            var newMinVC = model.SoftwareVideoCardRequirements.Where(m => m.RequirementTypeId == 1).Select(m => _videoCardService.GetVideoCard(m.VideoCardId));
+            var newReqVC = model.SoftwareVideoCardRequirements.Where(m => m.RequirementTypeId == 2).Select(m => _videoCardService.GetVideoCard(m.VideoCardId));
+            if (newMinCpus.Any(m => newReqCpus.Any(z => m.Frequency > z.Frequency || m.ThreadsNumber > z.ThreadsNumber || m.CoresNumber > z.CoresNumber)))
+            {
+                ModelState.AddModelError("SoftwareCPURequirements", "Мінімальні вимоги не можуть бути кращими за рекомендовані");
+            }
+            if (newMinVC.Any(m => newReqVC.Any(z => m.Frequency > z.Frequency || m.MemoryFrequency > z.MemoryFrequency || m.MemorySize > z.MemorySize)))
+            {
+                ModelState.AddModelError("SoftwareVideoCardRequirements", "Мінімальні вимоги не можуть бути кращими за рекомендовані");
+            }
             if (ModelState.IsValid)
             {
-                if(model.SoftwareCPURequirements == null)
-                {
-                    model.SoftwareCPURequirements = new List<SoftwareCPURequirement>();
-                }
-                if (model.SoftwareVideoCardRequirements == null)
-                {
-                    model.SoftwareVideoCardRequirements = new List<SoftwareVideoCardRequirement>();
-                }
                 var helper = new ImageHelper(_webHostEnvironment);
                 var image = helper.GetUploadedFile(model.Image, "Software");
                 var powerSupply = new Software()
@@ -222,18 +281,33 @@ namespace FerumChecker.Web.Controllers
             {
                 return NotFound();
             }
+            if (model.SoftwareCPURequirements == null)
+            {
+                model.SoftwareCPURequirements = new List<SoftwareCPURequirement>();
+            }
+            if (model.SoftwareVideoCardRequirements == null)
+            {
+                model.SoftwareVideoCardRequirements = new List<SoftwareVideoCardRequirement>();
+            }
+            var newMinCpus = model.SoftwareCPURequirements.Where(m => m.RequirementTypeId == 1).Select(m => _cpuService.GetCPU(m.CPUId));
+            var newReqCpus = model.SoftwareCPURequirements.Where(m => m.RequirementTypeId == 2).Select(m => _cpuService.GetCPU(m.CPUId));
+            var newMinVC = model.SoftwareVideoCardRequirements.Where(m => m.RequirementTypeId == 1).Select(m => _videoCardService.GetVideoCard(m.VideoCardId));
+            var newReqVC = model.SoftwareVideoCardRequirements.Where(m => m.RequirementTypeId == 2).Select(m => _videoCardService.GetVideoCard(m.VideoCardId));
+            if (newMinCpus.Any(m => newReqCpus.Any(z => m.Frequency > z.Frequency || m.ThreadsNumber > z.ThreadsNumber || m.CoresNumber > z.CoresNumber)))
+            {
+                ModelState.AddModelError("SoftwareCPURequirements", "Мінімальні вимоги не можуть бути кращими за рекомендовані");
+            }
+            if (newMinVC.Any(m => newReqVC.Any(z => m.Frequency > z.Frequency || m.MemoryFrequency > z.MemoryFrequency || m.MemorySize > z.MemorySize)))
+            {
+                ModelState.AddModelError("SoftwareVideoCardRequirements", "Мінімальні вимоги не можуть бути кращими за рекомендовані");
+            }
+            if(model.MinimiumRequiredRAM > model.RecommendedRequiredRAM)
+            {
+                ModelState.AddModelError("MinimiumRequiredRAM", "Мінімальні вимоги не можуть бути кращими за рекомендовані");
 
+            }
             if (ModelState.IsValid)
             {
-
-                if (model.SoftwareCPURequirements == null)
-                {
-                    model.SoftwareCPURequirements = new List<SoftwareCPURequirement>();
-                }
-                if (model.SoftwareVideoCardRequirements == null)
-                {
-                    model.SoftwareVideoCardRequirements = new List<SoftwareVideoCardRequirement>();
-                }
                 software.Name = model.Name;
                 software.Description = model.Description;
                 software.MinimiumRequiredRAM = model.MinimiumRequiredRAM;
@@ -275,6 +349,56 @@ namespace FerumChecker.Web.Controllers
             return View("Edit", model);
         }
 
+
+        public IActionResult EvaluateResult(int id, int assemblyId)
+        {
+            var computerAssembly = _computerAssemblyService.GetComputerAssembly(assemblyId);
+            if (computerAssembly == null)
+            {
+                return NotFound();
+            }
+            var userId = _userService.GetApplicationUserManager().GetUserId(this.User);
+            if (computerAssembly.OwnerId != userId)
+            {
+                return Forbid();
+            }
+            var software = _softwareService.GetSoftware(id);
+            if(software == null)
+            {
+                return NotFound();
+            }
+
+            var result = _computerAssemblyService.SoftwareSyncEvaluate(id, computerAssembly);
+            if (!result.Succedeed)
+            {
+                return Json(result);
+            }
+
+            var model = new SoftwareResultViewModel();
+            model.ComputerAssembly = computerAssembly;
+            model.Software = new SoftwareViewModel()
+            {
+                Id = software.Id,
+                Name = software.Name,
+                ShortDescription = string.IsNullOrEmpty(software.Description) ? "" : CreateShortDescription(software.Description),
+                Publisher = software.Publisher.Name,
+                Developer = software.Developer.Name,
+                RecomendedCPURequirmentsDisplay = CreateCPuDisplay(software.SoftwareCPURequirements.Where(m => m.RequirementTypeId == 2).ToList()),
+                RecomendedVideoCardRequirmentsDisplay = CreateVideoCardDisplay(software.SoftwareVideoCardRequirements.Where(m => m.RequirementTypeId == 2).ToList()),
+                MinimiumRequiredRAMDisplay = software.MinimiumRequiredRAM + " Гб",
+                RecommendedRequiredRAMDisplay = software.RecommendedRequiredRAM + " Гб",
+                DiscVolumeDisplay = CreateMemoryDescription(software.DiscVolume),
+                MinimumCPURequirmentsDisplay = CreateCPuDisplay(software.SoftwareCPURequirements.Where(m => m.RequirementTypeId == 1).ToList()),
+                MinimumVideoCardRequirmentsDisplay = CreateVideoCardDisplay(software.SoftwareVideoCardRequirements.Where(m => m.RequirementTypeId == 1).ToList()),
+                ImagePath = "/Images/Software/" + software.Image,
+                Price = software.Price,
+                Description = software.Description
+            }; 
+            model.Result = result;
+
+            return PartialView(model);
+            
+        }
 
         // POST: Software/Delete/5
         [HttpPost]

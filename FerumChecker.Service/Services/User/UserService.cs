@@ -24,6 +24,11 @@ namespace FerumChecker.Service.Services.user
             Database = uow;
         }
 
+        public UserProfile Get(string id)
+        {
+            return Database.UserProfiles.Get(id);
+        }
+
         public async Task<OperationDetails> Create(UserDTO userDto)
         {
             ApplicationUser user = await Database.ApplicationUsers.FindByEmailAsync(userDto.Email);
@@ -35,15 +40,19 @@ namespace FerumChecker.Service.Services.user
                     return new OperationDetails(false, result.Errors.FirstOrDefault().ToString(), "");
                 // добавляем роль
                 await Database.ApplicationUsers.AddToRoleAsync(user, "User");
+                if(userDto.Role == "Administrator")
+                {
+                    await Database.ApplicationUsers.AddToRoleAsync(user, "Administrator");
+                }
                 // создаем профиль клиента
-                UserProfile clientProfile = new UserProfile { Id = user.Id, Name = userDto.Name };
+                UserProfile clientProfile = new UserProfile { Id = user.Id, Name = userDto.Name, Surname = userDto.SurName };
                 Database.UserProfiles.Create(clientProfile);
                 await Database.SaveAsync();
-                return new OperationDetails(true, "Регистрация успешно пройдена", "");
+                return new OperationDetails(true, "Зареєстрвоано", "");
             }
             else
             {
-                return new OperationDetails(false, "Пользователь с таким логином уже существует", "Email");
+                return new OperationDetails(false, "Пользователь с таким логіном уже існує", "Email");
             }
         }
 
@@ -58,7 +67,7 @@ namespace FerumChecker.Service.Services.user
             {
                 var identity = new ClaimsIdentity(IdentityConstants.ApplicationScheme);
                 identity.AddClaim(new Claim(ClaimTypes.NameIdentifier, user.Id));
-                identity.AddClaim(new Claim(ClaimTypes.Name, user.UserName));
+                identity.AddClaim(new Claim(ClaimTypes.Name, user.UserProfile.Name));
                 
 
                 claim = identity;

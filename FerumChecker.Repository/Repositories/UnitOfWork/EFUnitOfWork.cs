@@ -104,7 +104,7 @@ namespace FerumChecker.Repository.Repositories.UnitOfWork
 
         #region User
         public ApplicationUserManager ApplicationUsers { get; }
-        public IRepository<UserProfile> UserProfiles { get; }
+        public IStringRepository<UserProfile> UserProfiles { get; }
         public ApplicationRoleManager Roles { get; }
         public IRepository<Comment> Comments { get; }
         public IRepository<ComputerAssemblyRate> ComputerAssemblyRates { get; }

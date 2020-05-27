@@ -13,16 +13,16 @@ namespace FerumChecker.DataAccess.Interfaces
     {
         public int Id { get; set; }
 
-        [Required]
-        [MaxLength(200)]
+        [Required(ErrorMessage = "Поле обов'язкове")]
+        [MaxLength(200, ErrorMessage = "Некоректне поле")]
         public string Name { get; set; }
 
-        [MaxLength(1000)]
+        [MaxLength(1000, ErrorMessage = "Некоректне поле")]
         public string Description { get; set; }
 
         public int MemorySize { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Поле обов'язкове")]
         [ForeignKey("Manufacturer")]
         public int ManufacturerId { get; set; }
         public Manufacturer Manufacturer { get; set; }
@@ -30,19 +30,19 @@ namespace FerumChecker.DataAccess.Interfaces
 
 
 
-        [Required]
+        [Required(ErrorMessage = "Поле обов'язкове")]
         [ForeignKey("OuterMemoryInterface")]
         public int OuterMemoryInterfaceId { get; set; }
         public OuterMemoryInterface OuterMemoryInterface { get; set; }
 
 
-        [Required]
+        [Required(ErrorMessage = "Поле обов'язкове")]
         [ForeignKey("OuterMemoryFormFactor")]
         public int OuterMemoryFormFactorId { get; set; }
         public OuterMemoryFormFactor OuterMemoryFormFactor { get; set; }
 
 
-        [Required]
+        [Required(ErrorMessage = "Поле обов'язкове")]
         [DataType(DataType.Currency)]
         [Column(TypeName = "money")]
         public decimal Price { get; set; }

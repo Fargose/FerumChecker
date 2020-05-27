@@ -137,7 +137,7 @@ namespace FerumChecker.Web.Controllers
                 GPUInputNumber = powerSupply.GPUInputNumber,
                 SATAInputNumber = powerSupply.SATAInputNumber,
                 Manufacturer = powerSupply.Manufacturer.Name,         
-                PowerSupplyCPUInterfaces = powerSupply.PowerSupplyPowerSupplyCPUInterfaces.Select(m => new PowerSupplyCPUInterfaceViewModel { Id = m.PowerSupplyCPUInterface.Id, Name = m.PowerSupplyCPUInterface.Name }).ToList(),
+                //PowerSupplyCPUInterfaces = powerSupply.PowerSupplyPowerSupplyCPUInterfaces.Select(m => new PowerSupplyCPUInterfaceViewModel { Id = m.PowerSupplyCPUInterface.Id, Name = m.PowerSupplyCPUInterface.Name }).ToList(),
                 Price = powerSupply.Price,
                 ImagePath = "/Images/PowerSupply/" + powerSupply.Image,
                 Description = powerSupply.Description
@@ -164,7 +164,7 @@ namespace FerumChecker.Web.Controllers
                 GPUInputNumber = powerSupply.GPUInputNumber,
                 SATAInputNumber = powerSupply.SATAInputNumber,
                 Manufacturer = powerSupply.Manufacturer.Name,
-                PowerSupplyCPUInterfaces = powerSupply.PowerSupplyPowerSupplyCPUInterfaces.Select(m => new PowerSupplyCPUInterfaceViewModel { Id = m.PowerSupplyCPUInterface.Id, Name = m.PowerSupplyCPUInterface.Name }).ToList(),
+                //PowerSupplyCPUInterfaces = powerSupply.PowerSupplyPowerSupplyCPUInterfaces.Select(m => new PowerSupplyCPUInterfaceViewModel { Id = m.PowerSupplyCPUInterface.Id, Name = m.PowerSupplyCPUInterface.Name }).ToList(),
                 Price = powerSupply.Price,
                 ImagePath = "/Images/PowerSupply/" + powerSupply.Image,
                 Description = powerSupply.Description
@@ -192,10 +192,10 @@ namespace FerumChecker.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                if(model.PowerSupplyCPUInterfaces == null)
-                {
-                    model.PowerSupplyCPUInterfaces = new List<PowerSupplyCPUInterfaceViewModel>();
-                }
+                //if(model.PowerSupplyCPUInterfaces == null)
+                //{
+                //    model.PowerSupplyCPUInterfaces = new List<PowerSupplyCPUInterfaceViewModel>();
+                //}
                 var helper = new ImageHelper(_webHostEnvironment);
                 var image = helper.GetUploadedFile(model.Image, "PowerSupply");
                 var powerSupply = new PowerSupply()
@@ -212,7 +212,7 @@ namespace FerumChecker.Web.Controllers
                     Price = model.Price
                 };
 
-                powerSupply.PowerSupplyPowerSupplyCPUInterfaces = model.PowerSupplyCPUInterfaces.Select(m => new PowerSupplyPowerSupplyCPUInterface() { PowerSupplyCPUInterfaceId = m.Id }).ToList();
+                //powerSupply.PowerSupplyPowerSupplyCPUInterfaces = model.PowerSupplyCPUInterfaces.Select(m => new PowerSupplyPowerSupplyCPUInterface() { PowerSupplyCPUInterfaceId = m.Id }).ToList();
                 var result = _powerSupplyService.CreatePowerSupply(powerSupply);
 
                 if (result.Succedeed)
@@ -254,7 +254,7 @@ namespace FerumChecker.Web.Controllers
                 GPUInputNumber = powerSupply.GPUInputNumber,
                 ImagePath = "/Images/PowerSupply/" + powerSupply.Image,
                 Price = powerSupply.Price,
-                PowerSupplyCPUInterfaces = powerSupply.PowerSupplyPowerSupplyCPUInterfaces.Select(m => new PowerSupplyCPUInterfaceViewModel() { Id = m.PowerSupplyCPUInterface.Id, Name = m.PowerSupplyCPUInterface.Name }).ToList()
+                //PowerSupplyCPUInterfaces = powerSupply.PowerSupplyPowerSupplyCPUInterfaces.Select(m => new PowerSupplyCPUInterfaceViewModel() { Id = m.PowerSupplyCPUInterface.Id, Name = m.PowerSupplyCPUInterface.Name }).ToList()
             };
 
             var powerSuppliesMotherboardInterfaces = _motherBoardPowerSupplyInterfaceService.GetPowerSupplyMotherBoardInterfaces();
@@ -279,10 +279,10 @@ namespace FerumChecker.Web.Controllers
 
             if (ModelState.IsValid)
             {
-                if (model.PowerSupplyCPUInterfaces == null)
-                {
-                    model.PowerSupplyCPUInterfaces = new List<PowerSupplyCPUInterfaceViewModel>();
-                }
+                //if (model.PowerSupplyCPUInterfaces == null)
+                //{
+                //    model.PowerSupplyCPUInterfaces = new List<PowerSupplyCPUInterfaceViewModel>();
+                //}
                 powerSupply.Name = model.Name;
                 powerSupply.Description = model.Description;
                 powerSupply.ManufacturerId = model.ManufacturerId;
@@ -299,7 +299,7 @@ namespace FerumChecker.Web.Controllers
                     var image = helper.GetUploadedFile(model.Image, "PowerSupply");
                     powerSupply.Image = image;
                 }
-                powerSupply.PowerSupplyPowerSupplyCPUInterfaces = model.PowerSupplyCPUInterfaces.Select(m => new PowerSupplyPowerSupplyCPUInterface() { PowerSupplyCPUInterfaceId = m.Id }).ToList();
+                //powerSupply.PowerSupplyPowerSupplyCPUInterfaces = model.PowerSupplyCPUInterfaces.Select(m => new PowerSupplyPowerSupplyCPUInterface() { PowerSupplyCPUInterfaceId = m.Id }).ToList();
 
                 var result = _powerSupplyService.UpdatePowerSupply(powerSupply);
 

@@ -10,20 +10,20 @@ namespace FerumChecker.Web.ViewModel.Infrastructure
     {
         public int? Id { get; set; }
 
-        [Required]
-        [MaxLength(100)]
+        [Required(ErrorMessage = "Поле обов'язкове")]
+        [MaxLength(100, ErrorMessage = "Некоректне поле")]
         [MinLength(1)]
         [Display(Name = "Назва")]
         public string Name { get; set; }
 
-        [Required]
-        [MaxLength(1000)]
+        [Required(ErrorMessage = "Поле обов'язкове")]
+        [MaxLength(1000, ErrorMessage = "Некоректне поле")]
         [MinLength(1)]
         [Display(Name = "Опис")]
         [DataType(DataType.MultilineText)]
         public string Description { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Поле обов'язкове")]
         public int CountryId { get; set; }
 
         [Display(Name = "Назва")]

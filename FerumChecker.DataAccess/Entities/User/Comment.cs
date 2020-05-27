@@ -13,16 +13,16 @@ namespace FerumChecker.DataAccess.Entities.User
         public int Id { get; set; }
 
 
-        [MaxLength(1000)]
+        [MaxLength(1000, ErrorMessage = "Некоректне поле")]
         public string Text { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Поле обов'язкове")]
         [ForeignKey("UserProfile")]
         public string OwnerId { get; set; }
 
         public UserProfile Owner { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Поле обов'язкове")]
         [ForeignKey("ComputerAssembly")]
         public int ComputerAssemblyId { get; set; }
 

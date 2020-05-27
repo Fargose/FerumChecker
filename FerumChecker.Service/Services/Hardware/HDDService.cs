@@ -2,6 +2,8 @@
 using FerumChecker.Repository.Interfaces;
 using FerumChecker.Service.Infrastructure;
 using FerumChecker.Service.Interfaces.Hardware;
+using FerumChecker.Service.Interfaces.Infrastructure;
+using FerumChecker.Service.Services.Infrastructure;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -13,9 +15,11 @@ namespace FerumChecker.Service.Services.Hardware
 
         IUnitOfWork Database { get; set; }
 
-        public HDDService(IUnitOfWork uow)
+        IComputerAssemblyService _computerAssemblyService { get; set; }
+        public HDDService(IUnitOfWork uow, IComputerAssemblyService computerAssemblyService)
         {
             Database = uow;
+            _computerAssemblyService = computerAssemblyService;
         }
 
         public HDD GetHDD(int? id)

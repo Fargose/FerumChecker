@@ -16,7 +16,7 @@ namespace FerumChecker.Repository.Interfaces
     {
         #region User
         ApplicationUserManager ApplicationUsers { get; }
-        IRepository<UserProfile> UserProfiles { get; }
+        IStringRepository<UserProfile> UserProfiles { get; }
         ApplicationRoleManager Roles { get; }
         public IRepository<Comment> Comments { get; }
         public IRepository<ComputerAssemblyRate> ComputerAssemblyRates { get; }

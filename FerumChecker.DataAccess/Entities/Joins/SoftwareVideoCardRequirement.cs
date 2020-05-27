@@ -13,19 +13,19 @@ namespace FerumChecker.DataAccess.Entities.Joins
     {
         public int? Id { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Поле обов'язкове")]
         [ForeignKey("Software")]
         public int SoftwareId { get; set; }
         public Software Software { get; set; }
 
 
-        [Required]
+        [Required(ErrorMessage = "Поле обов'язкове")]
         [ForeignKey("VideoCard")]
         public int VideoCardId { get; set; }
         public VideoCard VideoCard { get; set; }
 
 
-        [Required]
+        [Required(ErrorMessage = "Поле обов'язкове")]
         [ForeignKey("RequirementType")]
         public int RequirementTypeId { get; set; }
         public RequirementType RequirementType { get; set; }

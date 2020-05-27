@@ -17,13 +17,13 @@ namespace FerumChecker.DataAccess.Entities.User
         [MaxLength(5)]
         public short Rate { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Поле обов'язкове")]
         [ForeignKey("UserProfile")]
         public string OwnerId { get; set; }
 
         public UserProfile Owner { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Поле обов'язкове")]
         [ForeignKey("ComputerAssembly")]
         public int ComputerAssemblyId { get; set; }
 

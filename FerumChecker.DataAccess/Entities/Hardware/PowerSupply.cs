@@ -15,27 +15,27 @@ namespace FerumChecker.DataAccess.Entities.Hardware
         [Key]
         public int Id { get; set; }
 
-        [Required]
-        [MaxLength(200)]
+        [Required(ErrorMessage = "Поле обов'язкове")]
+        [MaxLength(200, ErrorMessage = "Некоректне поле")]
         public string Name { get; set; }
 
-        [MaxLength(1000)]
+        [MaxLength(1000, ErrorMessage = "Некоректне поле")]
         public string Description { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Поле обов'язкове")]
         public int Power { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Поле обов'язкове")]
         public int GPUInputNumber { get; set; }
 
 
-        [Required]
+        [Required(ErrorMessage = "Поле обов'язкове")]
         public int SATAInputNumber { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Поле обов'язкове")]
         public int CoolerSize { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Поле обов'язкове")]
         [DataType(DataType.Currency)]
         [Column(TypeName = "money")]
         public decimal Price { get; set; }
@@ -45,13 +45,13 @@ namespace FerumChecker.DataAccess.Entities.Hardware
 
         public ICollection<PowerSupplyPowerSupplyCPUInterface> PowerSupplyPowerSupplyCPUInterfaces { get; set; } 
 
-        [Required]
+        [Required(ErrorMessage = "Поле обов'язкове")]
         [ForeignKey("PowerSupplyMotherBoardInterface")]
         public int PowerSupplyMotherBoardInterfaceId { get; set; }
 
         public PowerSupplyMotherBoardInterface PowerSupplyMotherBoardInterface { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Поле обов'язкове")]
         [ForeignKey("Manufacturer")]
         public int ManufacturerId { get; set; }
         public Manufacturer Manufacturer { get; set; }

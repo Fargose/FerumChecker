@@ -32,6 +32,8 @@ namespace FerumChecker.Web.ViewModel.Infrastructure
 
         public int RAMFreeSlot { get; set; }
 
+        public string OwnerName { get; set; }
+
         public int OuterMemoryFreeSlot { get; set; }
         public List<VideoCardShortModel> VideoCards { get; set; }
 

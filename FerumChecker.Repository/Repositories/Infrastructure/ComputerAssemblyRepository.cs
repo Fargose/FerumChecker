@@ -28,7 +28,8 @@ namespace FerumChecker.Repository.Repositories.Infrastructure
                 .Include(m => m.VideoCards).ThenInclude(m => m.VideoCard)
                 .Include(m => m.ComputerAssemblyRAMs).ThenInclude(m => m.RAM)
                 .Include(m => m.HDDs).ThenInclude(m => m.HDD)
-                .Include(m => m.SSDs).ThenInclude(m => m.SSD);
+                .Include(m => m.SSDs).ThenInclude(m => m.SSD)
+                .Include(m => m.Owner);
         }
 
         public ComputerAssembly Get(int id)
@@ -42,6 +43,7 @@ namespace FerumChecker.Repository.Repositories.Infrastructure
                 .Include(m => m.ComputerAssemblyRAMs).ThenInclude(m => m.RAM)
                 .Include(m => m.HDDs).ThenInclude(m => m.HDD)
                 .Include(m => m.SSDs).ThenInclude(m => m.SSD)
+                .Include(m => m.Owner)
                 .FirstOrDefault(m => m.Id == id);
         }
 

@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FerumChecker.Web.Controllers
 {
-    [Authorize(Roles ="Administrator")]
+    [Authorize(Roles = "Administrator")]
     public class SpecificationController : Controller
     {
         public IActionResult Index()

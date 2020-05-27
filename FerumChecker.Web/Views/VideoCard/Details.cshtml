@@ -7,7 +7,10 @@
 <link href="~/css/catalog.css" rel="stylesheet" />
 
 <h1>@Model.Name</h1>
-<a class='edit-link' asp-controller="VideoCard" asp-action="edit" asp-route-id="@Model.Id"><i class='fas fa-edit'></i></a>
+@if (User.IsInRole("Administrator"))
+{
+    <a class='edit-link' asp-controller="VideoCard" asp-action="edit" asp-route-id="@Model.Id"><i class='fas fa-edit'></i></a>
+}
 <div class="details-container">
     <div class="item-description">@Model.Description</div>
     <div class="item-prop"><span class="item-prop-name">@Html.DisplayNameFor(Model => Model.Manufacturer)</span> : <span class="item-prop-value">@Model.Manufacturer</span></div>

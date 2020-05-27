@@ -26,6 +26,16 @@
 .items-container {
     height: 400px;
     display: none;
+    overflow-y: scroll;
+}
+
+.button-evaluate{
+    background-color: mediumseagreen;
+}
+
+.button-evaluate span{
+   color: white;
+   font-weight: bold;
 }
 
 .container-table .catalog-item {
@@ -72,7 +82,7 @@
 }
 
     .recomendation-container .catalog-item {
-        width: 25%;
+        width: 20%;
         border-style: solid;
         border-width: 2px;
         border-color: mediumseagreen;
@@ -81,6 +91,7 @@
         cursor: pointer;
         height: 70%;
         margin : 10px;
+        display: inline-block;
     }
 
     .hardware-slot {

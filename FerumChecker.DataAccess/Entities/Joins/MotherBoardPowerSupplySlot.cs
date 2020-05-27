@@ -14,13 +14,13 @@ namespace FerumChecker.DataAccess.Entities.Joins
         public int Id { get; set; }
 
 
-        [Required]
+        [Required(ErrorMessage = "Поле обов'язкове")]
         [ForeignKey("MotherBoard")]
         public int MotherBoardId { get; set; }
         public MotherBoard MotherBoard { get; set; }
 
 
-        [Required]
+        [Required(ErrorMessage = "Поле обов'язкове")]
         [ForeignKey("PowerSupplyMotherBoardInterface")]
         public int PowerSupplyMotherBoardInterfaceId { get; set; }
         public PowerSupplyMotherBoardInterface PowerSupplyMotherBoardInterface { get; set; }

@@ -8,27 +8,29 @@ namespace FerumChecker.Web.ViewModel
 {
     public class RegistrationViewModel
     {
-        [Required(ErrorMessage = "EmailRequired")]
+        [Required(ErrorMessage = "Введіть Email")]
         [Display(Name = "Email")]
         public string Email { get; set; }
 
-        [Required(ErrorMessage = "NameRequired")]
-        [Display(Name = "Name")]
+        [Required(ErrorMessage = "Введіть ім'я")]
+        [Display(Name = "Ім'я")]
         public string Name { get; set; }
-        [Required(ErrorMessage = "SurnameRequired")]
-        [Display(Name = "Surname")]
+        [Required(ErrorMessage = "Введіть прізвище")]
+        [Display(Name = "Прізвище")]
         public string SurName { get; set; }
 
 
-        [Required(ErrorMessage = "PasswordRequired")]
+        [Required(ErrorMessage = "Введіть пароль")]
         [DataType(DataType.Password)]
-        [Display(Name = "Password")]
+        [Display(Name = "Пароль")]
         public string Password { get; set; }
 
-        [Required(ErrorMessage = "PasswordCompRequired")]
-        [Compare("Password", ErrorMessage = "PasswordCompError")]
+        [Required(ErrorMessage = "Підтвердіть пароль")]
+        [Compare("Password", ErrorMessage = "Паролі повинні співпадати")]
         [DataType(DataType.Password)]
-        [Display(Name = "ConfirmPassword")]
+        [Display(Name = "Підтвердіть пароль")]
         public string PasswordConfirm { get; set; }
+
+        public bool isAdmin { get; set; }
     }
 }

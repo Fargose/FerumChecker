@@ -2,6 +2,7 @@
 using FerumChecker.Repository.Interfaces;
 using FerumChecker.Service.Infrastructure;
 using FerumChecker.Service.Interfaces.Hardware;
+using FerumChecker.Service.Interfaces.Infrastructure;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -12,10 +13,11 @@ namespace FerumChecker.Service.Services.Hardware
     {
 
         IUnitOfWork Database { get; set; }
-
-        public SSDService(IUnitOfWork uow)
+        IComputerAssemblyService _computerAssemblyService { get; set; }
+        public SSDService(IUnitOfWork uow, IComputerAssemblyService computerAssemblyService)
         {
             Database = uow;
+            _computerAssemblyService = computerAssemblyService;
         }
 
         public SSD GetSSD(int? id)

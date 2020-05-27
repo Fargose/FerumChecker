@@ -10,8 +10,8 @@ namespace FerumChecker.DataAccess.Entities.Infrastructure
         [Key]
         public int Id { get; set; }
 
-        [Required]
-        [MaxLength(100)]
+        [Required(ErrorMessage = "Поле обов'язкове")]
+        [MaxLength(100, ErrorMessage = "Некоректне поле")]
         public string Name { get; set; }
 
         public string Image { get; set; }

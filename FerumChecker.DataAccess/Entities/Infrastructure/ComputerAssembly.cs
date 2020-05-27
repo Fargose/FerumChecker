@@ -14,11 +14,11 @@ namespace FerumChecker.DataAccess.Entities.Infrastructure
         [Key]
         public int Id { get; set; }
 
-        [Required]
-        [MaxLength(100)]
+        [Required(ErrorMessage = "Поле обов'язкове")]
+        [MaxLength(100, ErrorMessage = "Некоректне поле")]
         public string Name { get; set; }
 
-        [MaxLength(1000)]
+        [MaxLength(1000, ErrorMessage = "Некоректне поле")]
         public string Description { get; set; }
 
         [ForeignKey("MotherBoard")]
@@ -45,7 +45,7 @@ namespace FerumChecker.DataAccess.Entities.Infrastructure
 
 
 
-        [Required]
+        [Required(ErrorMessage = "Поле обов'язкове")]
         [ForeignKey("UserProfile")]
         public string OwnerId { get; set; }
 

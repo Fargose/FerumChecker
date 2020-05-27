@@ -1,0 +1,22 @@
+﻿@model SoftwareViewModel
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>@Model.Name</h1>
+<div class="details-container">
+    <div class="item-description">@Model.Description</div>
+    <h2>Мінімальні вимоги</h2>
+    <div class="item-prop"><span class="item-prop-name">@Html.DisplayNameFor(Model => Model.MinimiumRequiredRAMDisplay)</span> : <span class="item-prop-value">@Model.MinimiumRequiredRAMDisplay</span></div>
+    <div class="item-prop"><span class="item-prop-name">@Html.DisplayNameFor(Model => Model.MinimumCPURequirmentsDisplay)</span> : <span class="item-prop-value">@Model.MinimumCPURequirmentsDisplay</span></div>
+    <div class="item-prop"><span class="item-prop-name">@Html.DisplayNameFor(Model => Model.MinimumVideoCardRequirmentsDisplay)</span> : <span class="item-prop-value">@Model.MinimumVideoCardRequirmentsDisplay</span></div>
+    <h2>Рекомендовані вимоги</h2>
+    <div class="item-prop"><span class="item-prop-name">@Html.DisplayNameFor(Model => Model.RecomendedCPURequirmentsDisplay)</span> : <span class="item-prop-value">@Model.RecomendedCPURequirmentsDisplay</span></div>
+    <div class="item-prop"><span class="item-prop-name">@Html.DisplayNameFor(Model => Model.RecommendedRequiredRAMDisplay)</span> : <span class="item-prop-value">@Model.RecommendedRequiredRAMDisplay</span></div>
+    <div class="item-prop"><span class="item-prop-name">@Html.DisplayNameFor(Model => Model.RecomendedVideoCardRequirmentsDisplay)</span> : <span class="item-prop-value">@Model.RecomendedVideoCardRequirmentsDisplay</span></div>
+    <div class="item-prop"><span class="item-prop-name">@Html.DisplayNameFor(Model => Model.DiscVolumeDisplay)</span> : <span class="item-prop-value">@Model.DiscVolumeDisplay</span></div>
+    <div class="item-prop"><span class="item-prop-name">@Html.DisplayNameFor(Model => Model.Price)</span> : <span class="item-prop-value">@Model.Price</span></div>
+    <img src="@(Model != null && Model.ImagePath !=null ? Model.ImagePath : "/Images//not-found.png" )" style="max-width:300px;margin-top: 20px; margin-bottom: 20px;" id="country-image" />
+</div>
+

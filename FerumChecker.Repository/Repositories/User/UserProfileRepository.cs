@@ -9,7 +9,7 @@ using System.Text;
 
 namespace FerumChecker.Repository.Repositories.User
 {
-    class UserProfileRepository: IRepository<UserProfile>
+    class UserProfileRepository: IStringRepository<UserProfile>
     {
         private ApplicationContext db;
 
@@ -23,7 +23,7 @@ namespace FerumChecker.Repository.Repositories.User
             return db.UserProfiles;
         }
 
-        public UserProfile Get(int id)
+        public UserProfile Get(string id)
         {
             return db.UserProfiles.Find(id);
         }

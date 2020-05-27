@@ -57,6 +57,48 @@ AssemblyEditor.prototype.init = function (id) {
         }
     });
 
+    $(".button-evaluate").click(function (e) {
+        $.ajax({
+            url: "/Software/Evaluate",
+            data: { id: id },
+            success: function (content) {
+                var confirm = BasicWidgets.confirmWindow(content);
+                $(confirm).find(".modal-content").width(1100);
+                $(confirm).css("left", "-300px");
+                $(confirm).find(".cancel-btn").on("click", function () {
+                    $(confirm).modal("hide");
+                    $(confirm).remove();
+                });
+                $(confirm).find(".confirm-btn").html("Перевірити сумісніть");
+                $(confirm).find(".confirm-btn").click(function (event) {
+                    $.ajax({
+                        url: "/Software/EvaluateResult",
+                        data: { id: $(confirm).find("#software-select").val(), assemblyId: self.ComputerAssemblyId },
+                        success: function (result) {
+                            if (result.succedeed == false) {
+                                $(confirm).find(".error-container").html(result.messages[0]);
+                            } else {
+                                $(confirm).find(".modal-body").html(result);
+                                $(confirm).find(".confirm-btn").remove();
+                            }
+                        }
+                    })
+                });
+                $(confirm).find("#software-select").change(function (e) {
+                    $.ajax({
+                        url: "/Software/PartialDetails",
+                        data: { id: $(e.target).val() },
+                        success: function (details) {
+                            $(confirm).find(".software-description-container").html(details);
+                        },
+                        fail: function () {
+                            $(confirm).find(".software-description-container").html("Проблеми  з завнтаженням деталей");
+                        }
+                    })
+                });
+            }
+        });
+    })
     this.updateRecomendation();
 }
 
@@ -196,7 +238,7 @@ AssemblyEditor.prototype.removeHardware = function (elem) {
                 elem.attr("data-id", "");
                 if (data.ramFree) {
                     var size = $(".ram-slot").length;
-                    while ($(".ram-slot[data-id='']").length > data.ramFree) {
+                    while ($(".ram-slot[data-id='']").length >= data.ramFree) {
                         $(".ram-slot[data-id='']")[0].remove();
                     }
                     if ($(".ram-slot").length == 0) {
@@ -205,13 +247,13 @@ AssemblyEditor.prototype.removeHardware = function (elem) {
                 }
                 if (data.memoryFree) {
                     var size = $(".ram-slot").length;
-                    while ($(".outer-memory-slot[data-id='']").length > data.memoryFree) {
+                    while ($(".outer-memory-slot[data-id='']").length >= data.memoryFree) {
                         $(".outer-memory-slot[data-id='']")[0].remove();
                     }
                     if ($(".outer-memory-slot").length == 0) {
-                        $(".outermemory-slot-container").append('<div class="hardware-slot outer-memory-slot multiple" data-toggle="tooltip" data-original-title="' + name + '" data-type="' + type + '" data-id="' + id + '"><img class="hardware-img" src = "' + image + '"/></div>')
+                        $(".outermemory-slot-container").append('<div class="hardware-slot outer-memory-slot multiple" data-toggle="tooltip" data-original-title="" data-type="" data-id=""><img class="hardware-img" src = ""/></div>')
                     }
-                }
+                }       
             }
             else {
                 alert("Щось пішло не так");

@@ -14,44 +14,44 @@ namespace FerumChecker.DataAccess.Entities.Hardware
         [Key]
         public int Id { get; set; }
 
-        [Required]
-        [MaxLength(200)]
+        [Required(ErrorMessage = "Поле обов'язкове")]
+        [MaxLength(200, ErrorMessage = "Некоректне поле")]
         public string Name { get; set; }
 
-        [MaxLength(1000)]
+        [MaxLength(1000, ErrorMessage = "Некоректне поле")]
         public string Description { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Поле обов'язкове")]
 
         public int MaxMemory { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Поле обов'язкове")]
         [DataType(DataType.Currency)]
         [Column(TypeName = "money")]
         public decimal Price { get; set; }
         public string Image { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Поле обов'язкове")]
         [ForeignKey("Manufacturer")]
         public int ManufacturerId { get; set; }
         public Manufacturer Manufacturer { get; set; }
 
 
-        [Required]
+        [Required(ErrorMessage = "Поле обов'язкове")]
         [ForeignKey("MotherBoardFormFactor")]
         public int MotherBoardFormFactorId { get; set; }
         public MotherBoardFormFactor MotherBoardFormFactor { get; set; }
 
 
 
-        [Required]
+        [Required(ErrorMessage = "Поле обов'язкове")]
         [ForeignKey("MotherBoardNothernBridge")]
         public int MotherBoardNothernBridgeId { get; set; }
         public MotherBoardNorthBridge MotherBoardNothernBridge { get; set; }
 
 
 
-        [Required]
+        [Required(ErrorMessage = "Поле обов'язкове")]
         [ForeignKey("CPUSocket")]
         public int CPUSocketId { get; set; }
         public CPUSocket CPUSocket { get; set; }

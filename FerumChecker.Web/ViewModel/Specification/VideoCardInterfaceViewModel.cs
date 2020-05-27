@@ -10,16 +10,16 @@ namespace FerumChecker.Web.ViewModel.Specification
     {
             public int? Id { get; set; }
 
-            [Required]
-            [MaxLength(100)]   
+            [Required(ErrorMessage = "Поле обов'язкове")]
+            [MaxLength(100, ErrorMessage = "Некоректне поле")]   
             [Display(Name = "Назва")]
             public string Name { get; set; }
 
-            [Required]
+            [Required(ErrorMessage = "Поле обов'язкове")]
             [Display(Name = "Версія")]
             public int Version { get; set; }
 
-            [Required]
+            [Required(ErrorMessage = "Поле обов'язкове")]
             [Display(Name = "Множник")]
             public int Multiplier { get; set; }
 

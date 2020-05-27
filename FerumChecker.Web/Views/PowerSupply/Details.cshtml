@@ -6,26 +6,29 @@
 <link href="~/css/catalog.css" rel="stylesheet" />
 
 <h1>@Model.Name</h1>
-<a class='edit-link' asp-controller="CPU" asp-action="edit" asp-route-id="@Model.Id"><i class='fas fa-edit'></i></a>
-<div class="details-container">
-    <div class="item-description">@Model.Description</div>
-    <div class="item-prop"><span class="item-prop-name">@Html.DisplayNameFor(Model => Model.Manufacturer)</span> : <span class="item-prop-value">@Model.Manufacturer</span></div>
-    <div class="item-prop"><span class="item-prop-name">@Html.DisplayNameFor(Model => Model.PowerDisplay)</span> : <span class="item-prop-value">@Model.PowerDisplay</span></div>
-    <div class="item-prop"><span class="item-prop-name">@Html.DisplayNameFor(Model => Model.CoolerSizeDisplay)</span> : <span class="item-prop-value">@Model.CoolerSizeDisplay</span></div>
-    <div class="item-prop"><span class="item-prop-name">@Html.DisplayNameFor(Model => Model.SATAInputNumber)</span> : <span class="item-prop-value">@Model.SATAInputNumber</span></div>
-    <div class="item-prop"><span class="item-prop-name">@Html.DisplayNameFor(Model => Model.GPUInputNumber)</span> : <span class="item-prop-value">@Model.GPUInputNumber</span></div>
-    <div class="item-prop"><span class="item-prop-name">@Html.DisplayNameFor(Model => Model.PowerSupplyMotherBoardInterface)</span> : <span class="item-prop-value">@Model.PowerSupplyMotherBoardInterface</span></div>
-    <div class="item-prop"><span class="item-prop-name">@Html.DisplayNameFor(Model => Model.Price)</span> : <span class="item-prop-value">@Model.Price</span></div>
-    <div class="item-prop">
-        <span class="item-prop-name">@Html.DisplayNameFor(Model => Model.PowerSupplyCPUInterfaces)</span> :
-        <ul class="item-prop-value">
-            @foreach (var item in Model.PowerSupplyCPUInterfaces)
-            {
-                <li>@item.Name</li>
-            }
-        </ul>
+@if (User.IsInRole("Administrator"))
+{
+    <a class='edit-link' asp-controller="PowerSupply" asp-action="edit" asp-route-id="@Model.Id"><i class='fas fa-edit'></i></a>
+}
+    <div class="details-container">
+        <div class="item-description">@Model.Description</div>
+        <div class="item-prop"><span class="item-prop-name">@Html.DisplayNameFor(Model => Model.Manufacturer)</span> : <span class="item-prop-value">@Model.Manufacturer</span></div>
+        <div class="item-prop"><span class="item-prop-name">@Html.DisplayNameFor(Model => Model.PowerDisplay)</span> : <span class="item-prop-value">@Model.PowerDisplay</span></div>
+        <div class="item-prop"><span class="item-prop-name">@Html.DisplayNameFor(Model => Model.CoolerSizeDisplay)</span> : <span class="item-prop-value">@Model.CoolerSizeDisplay</span></div>
+        <div class="item-prop"><span class="item-prop-name">@Html.DisplayNameFor(Model => Model.SATAInputNumber)</span> : <span class="item-prop-value">@Model.SATAInputNumber</span></div>
+        <div class="item-prop"><span class="item-prop-name">@Html.DisplayNameFor(Model => Model.GPUInputNumber)</span> : <span class="item-prop-value">@Model.GPUInputNumber</span></div>
+        <div class="item-prop"><span class="item-prop-name">@Html.DisplayNameFor(Model => Model.PowerSupplyMotherBoardInterface)</span> : <span class="item-prop-value">@Model.PowerSupplyMotherBoardInterface</span></div>
+        <div class="item-prop"><span class="item-prop-name">@Html.DisplayNameFor(Model => Model.Price)</span> : <span class="item-prop-value">@Model.Price</span></div>
+        @*<div class="item-prop">
+                <span class="item-prop-name">@Html.DisplayNameFor(Model => Model.PowerSupplyCPUInterfaces)</span> :
+                <ul class="item-prop-value">
+                    @foreach (var item in Model.PowerSupplyCPUInterfaces)
+                    {
+                        <li>@item.Name</li>
+                    }
+                </ul>
+            </div>*@
+        <div class="item-prop"><span class="item-prop-name">@Html.DisplayNameFor(Model => Model.Price)</span> : <span class="item-prop-value">@Model.Price</span></div>
+        <img src="@(Model != null && Model.ImagePath !=null ? Model.ImagePath : "/Images//not-found.png" )" style="max-width:300px;margin-top: 20px; margin-bottom: 20px;" id="country-image" />
     </div>
-    <div class="item-prop"><span class="item-prop-name">@Html.DisplayNameFor(Model => Model.Price)</span> : <span class="item-prop-value">@Model.Price</span></div>
-    <img src="@(Model != null && Model.ImagePath !=null ? Model.ImagePath : "/Images//not-found.png" )" style="max-width:300px;margin-top: 20px; margin-bottom: 20px;" id="country-image" />
-</div>
 

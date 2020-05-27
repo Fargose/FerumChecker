@@ -14,6 +14,8 @@ namespace FerumChecker.DataAccess.Entities.User
 
         public string Name { get; set; }
 
+        public string Surname { get; set; }
+
         public virtual ApplicationUser ApplicationUser { get; set; }
     }
 }

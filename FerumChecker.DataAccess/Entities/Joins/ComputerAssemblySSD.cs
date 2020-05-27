@@ -14,13 +14,13 @@ namespace FerumChecker.DataAccess.Entities.Joins
         public int Id { get; set; }
 
 
-        [Required]
+        [Required(ErrorMessage = "Поле обов'язкове")]
         [ForeignKey("ComputerAssembly")]
         public int ComputerAssemblyId { get; set; }
         public ComputerAssembly ComputerAssembly { get; set; }
 
 
-        [Required]
+        [Required(ErrorMessage = "Поле обов'язкове")]
         [ForeignKey("SSD")]
         public int SSDId { get; set; }
         public SSD SSD { get; set; }

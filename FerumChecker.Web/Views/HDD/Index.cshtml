@@ -33,9 +33,12 @@
                             <div class="item-prop"><span class="item-prop-name">@Html.DisplayNameFor(item => item.OuterMemoryInterface) </span> : <span class="item-prop-value">@item.OuterMemoryInterface</span></div>
                             <div>
                                 <a class='edit-link' asp-controller="HDD" asp-action="details" asp-route-id="@item.Id"><i class='fas fa-eye'></i></a>
-                                <a class='edit-link' asp-controller="HDD" asp-action="edit" asp-route-id="@item.Id"><i class='fas fa-edit'></i></a>
-                                <a class='delete-link'><i class='fas fa-trash'></i></a>
-                            </div>
+                                @if (User.IsInRole("Administrator"))
+                                {
+                                    <a class='edit-link' asp-controller="HDD" asp-action="edit" asp-route-id="@item.Id"><i class='fas fa-edit'></i></a>
+                                    <a class='delete-link'><i class='fas fa-trash'></i></a>
+                                }
+                                </div>
                         </div>
                     </div>
                 </td>

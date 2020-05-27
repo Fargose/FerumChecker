@@ -10,7 +10,7 @@ namespace FerumChecker.DataAccess.Entities.Specification
         [Key]
         public int Id { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Поле обов'язкове")]
         [MaxLength]
         public string Name { get; set; }
     }

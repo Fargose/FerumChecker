@@ -14,11 +14,11 @@ namespace FerumChecker.DataAccess.Entities.Infrastructure
         [Key]
         public int Id { get; set; }
 
-        [Required]
-        [MaxLength(200)]
+        [Required(ErrorMessage = "Поле обов'язкове")]
+        [MaxLength(200, ErrorMessage = "Некоректне поле")]
         public string Name { get; set; }
 
-        [MaxLength(1000)]
+        [MaxLength(1000, ErrorMessage = "Некоректне поле")]
         public string Description { get; set; }
 
         public int MinimiumRequiredRAM { get; set; }
@@ -32,18 +32,18 @@ namespace FerumChecker.DataAccess.Entities.Infrastructure
 
         public string Image { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Поле обов'язкове")]
         [DataType(DataType.Currency)]
         [Column(TypeName = "money")]
         public decimal Price { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Поле обов'язкове")]
         [ForeignKey("Publisher")]
         public int PublisherId { get; set; }
         public Publisher Publisher { get; set; }
 
 
-        [Required]
+        [Required(ErrorMessage = "Поле обов'язкове")]
         [ForeignKey("Developer")]
         public int DeveloperId { get; set; }
         public Developer Developer { get; set; }

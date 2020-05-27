@@ -6,11 +6,13 @@ using FerumChecker.DataAccess.Entities.Infrastructure;
 using FerumChecker.Service.Interfaces.Infrastructure;
 using FerumChecker.Service.Interfaces.User;
 using FerumChecker.Web.ViewModel.Infrastructure;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using static FerumChecker.Web.ViewModel.Infrastructure.ComputerAssemblyViewModel;
 
 namespace FerumChecker.Web.Controllers
 {
+    [Authorize]
     public class EditorController : Controller
     {
         private readonly IComputerAssemblyService _computerAssemblyService;
@@ -40,14 +42,14 @@ namespace FerumChecker.Web.Controllers
             if (id.HasValue)
             {
                 var computerAssembly = _computerAssemblyService.GetComputerAssembly(id.Value);
-                if(computerAssembly == null)
+                if (computerAssembly == null)
                 {
                     return NotFound();
                 }
 
                 System.Security.Claims.ClaimsPrincipal currentUser = this.User;
                 var userId = _userService.GetApplicationUserManager().GetUserId(this.User);
-                if(computerAssembly.OwnerId != userId)
+                if (computerAssembly.OwnerId != userId)
                 {
                     return Forbid();
                 }
@@ -91,6 +93,42 @@ namespace FerumChecker.Web.Controllers
                 return View(model);
             }
         }
+
+
+        public IActionResult Details(int id)
+        {
+            var computerAssembly = _computerAssemblyService.GetComputerAssembly(id);
+            if (computerAssembly == null)
+            {
+                return NotFound();
+            }
+
+            var model = new ComputerAssemblyViewModel();
+            model.Id = computerAssembly.Id;
+            model.Name = computerAssembly.Name;
+            model.UserId = computerAssembly.OwnerId;
+            model.CPUId = computerAssembly.CPUId;
+            model.CPUName = computerAssembly.CPU == null ? "Пусто" : computerAssembly.CPU.Name;
+            model.CPUImage = computerAssembly.CPU == null ? "" : "/Images/CPU/" + computerAssembly.CPU.Image;
+            model.MotherBoardId = computerAssembly.MotherBoardId;
+            model.MotherBoardName = computerAssembly.MotherBoard == null ? "Пусто" : computerAssembly.MotherBoard.Name;
+            model.MotherBoardImage = computerAssembly.MotherBoard == null ? "" : "/Images/MotherBoard/" + computerAssembly.MotherBoard.Image;
+            model.PCCaseId = computerAssembly.PCCaseId;
+            model.PCCaseName = computerAssembly.PCCase == null ? "Пусто" : computerAssembly.PCCase.Name;
+            model.PCCaseImage = computerAssembly.PCCase == null ? "" : "/Images/PCCase/" + computerAssembly.PCCase.Image;
+            model.PowerSupplyId = computerAssembly.PowerSupplyId;
+            model.PowerSupplyName = computerAssembly.PowerSupply == null ? "Пусто" : computerAssembly.PowerSupply.Name;
+            model.PowerSupplyImage = computerAssembly.PowerSupply == null ? "" : "/Images/PowerSupply/" + computerAssembly.PowerSupply.Image;
+            model.VideoCards = computerAssembly.VideoCards.Select(m => new VideoCardShortModel(m.VideoCard)).ToList();
+            model.RAMs = computerAssembly.ComputerAssemblyRAMs.Select(m => new RAMShortModel(m.RAM)).ToList();
+            model.SSDs = computerAssembly.SSDs.Select(m => new SSDShortModel(m.SSD)).ToList();
+            model.HDDs = computerAssembly.HDDs.Select(m => new HDDShortModel(m.HDD)).ToList();
+            model.RAMFreeSlot = _computerAssemblyService.CalculateFreeRAMSlot(computerAssembly);
+            model.OuterMemoryFreeSlot = _computerAssemblyService.CalculateFreeOuterMemorySlot(computerAssembly);
+            model.OwnerName = computerAssembly.Owner.Name + " " + computerAssembly.Owner.Surname;
+            return View(model);
+        }
+
 
         public ActionResult GetRecomendation(int assemblyId)
         {

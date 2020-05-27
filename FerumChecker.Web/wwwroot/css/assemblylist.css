@@ -1,0 +1,9 @@
+﻿.item-name
+{
+    font-size : 24px;
+    border-style: solid;
+    border-width: 3px;
+    border-color : mediumseagreen;
+    padding: 10px;
+    border-radius: 10px;
+}

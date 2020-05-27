@@ -14,7 +14,7 @@ namespace FerumChecker.Web.ViewModel
 
         [Required(ErrorMessage = "PasswordRequired")]
         [DataType(DataType.Password)]
-        [Display(Name = "Password")]
+        [Display(Name = "Пароль")]
         public string Password { get; set; }
 
 

@@ -1,0 +1,13 @@
+﻿
+    <div>
+        <h1>Оцінити сумісність</h1>
+        <div class="form-group">
+            <label class="control-label"></label>
+            <select id="software-select" class="form-control" asp-items="ViewBag.Softwares">
+                <option value="" disabled selected>Оберіть ПЗ</option>
+            </select>
+            <span  class="text-danger"></span>
+        </div>
+        <div class="text-danger error-container"></div>
+        <div class="software-description-container"></div>
+    </div>

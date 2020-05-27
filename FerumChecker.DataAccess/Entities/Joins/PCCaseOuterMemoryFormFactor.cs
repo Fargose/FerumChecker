@@ -14,12 +14,12 @@ namespace FerumChecker.DataAccess.Entities.Joins
         public int Id { get; set; }
 
 
-        [Required]
+        [Required(ErrorMessage = "Поле обов'язкове")]
         [ForeignKey("PCCase")]
         public int PCCaseId { get; set; }
         public PCCase PCCase { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Поле обов'язкове")]
         [ForeignKey("OuterMemoryFormFactor")]
         public int OuterMemoryFormFactorId { get; set; }
         public OuterMemoryFormFactor OuterMemoryFormFactors { get; set; }

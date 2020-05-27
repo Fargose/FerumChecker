@@ -4,6 +4,7 @@ using FerumChecker.DataAccess.Entities.Specification;
 using FerumChecker.Repository.Interfaces;
 using FerumChecker.Service.Infrastructure;
 using FerumChecker.Service.Interfaces.Hardware;
+using FerumChecker.Service.Interfaces.Infrastructure;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,9 +17,13 @@ namespace FerumChecker.Service.Services.Hardware
 
         IUnitOfWork Database { get; set; }
 
-        public PowerSupplyService(IUnitOfWork uow)
+        IComputerAssemblyService _computerAssemblyService { get; set; }
+
+        public PowerSupplyService(IUnitOfWork uow, IComputerAssemblyService computerAssemblyService)
         {
             Database = uow;
+            _computerAssemblyService = computerAssemblyService;
+
         }
 
         public PowerSupply GetPowerSupply(int? id)
@@ -35,7 +40,7 @@ namespace FerumChecker.Service.Services.Hardware
         {
             
             Database.PowerSupplies.Update(powerSupply);
-            SetPowerSupplyCPUInterfaces(powerSupply, (List<PowerSupplyPowerSupplyCPUInterface>)powerSupply.PowerSupplyPowerSupplyCPUInterfaces);
+            //SetPowerSupplyCPUInterfaces(powerSupply, (List<PowerSupplyPowerSupplyCPUInterface>)powerSupply.PowerSupplyPowerSupplyCPUInterfaces);
             Database.Save();
 
             return new OperationDetails(true, "Ok", "");

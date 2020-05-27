@@ -42,8 +42,13 @@ namespace FerumChecker.Web.Controllers
                     Email = model.Email,
                     UserName = model.Email,
                     Name = model.Name,
+                    SurName = model.SurName
 
                 };
+                if(User.IsInRole("Administrator") && model.isAdmin)
+                {
+                    user.Role = "Administrator";
+                }
                 var result = await userService.Create(user);
                 if (result.Succedeed)
                 {
@@ -94,8 +99,7 @@ namespace FerumChecker.Web.Controllers
             return View(model);
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
+        [HttpGet]
         public async Task<IActionResult> Logout()
         {
 

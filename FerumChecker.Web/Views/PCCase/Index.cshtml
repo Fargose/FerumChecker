@@ -4,8 +4,11 @@
     <thead>
         <tr>
             <th>
-                <a asp-controller="PCCase" asp-action="Create" class="create-link btn btn-success">Додати</a>
-            </th>
+                @if (User.IsInRole("Administrator"))
+                {
+                    <a asp-controller="PCCase" asp-action="Create" class="create-link btn btn-success">Додати</a>
+                }
+                </th>
         </tr>
         @*<tr>
             <th>
