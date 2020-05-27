@@ -1,9 +1,11 @@
 ﻿@model FerumChecker.Web.ViewModel.LoginViewModel
 @using Microsoft.AspNetCore.Mvc.Localization
 
-<h2>Sign Up</h2>
 <div class="row">
     <div class="col-md-4">
+    </div>
+    <div class="col-md-4">
+        <h2>Увійти</h2>
         <form method="post" asp-action="Login"
               asp-route-returnUrl="@Model.ReturnUrl">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
@@ -18,9 +20,11 @@
                 <span asp-validation-for="Password" class="text-danger"></span>
             </div>
             <div>
-                <input type="submit" class=" btn btn-success" value="Sign Up" />
+                <input style ="margin-top: 15px; margin-left: 300px;"type="submit" class=" btn btn-success" value="Увійти" />
             </div>
         </form>
 
+    </div>
+    <div class="col-md-4">
     </div>
 </div>

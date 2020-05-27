@@ -49,68 +49,129 @@
         overflow-wrap:break-word;
     }
 
-.pc-image{
-    position: absolute;
-    left: 400px;
-    top: 200px;
-}
-
-.hardware-slot {
-    width: 75px;
-    height: 75px;
+.category-scroller {
     border-style: solid;
     border-width: 3px;
     border-color: mediumseagreen;
-    position: absolute;
 }
+
+.pc-image {
+    position: absolute;
+    left: 400px;
+    top: 250px;
+
+}
+
+.recomendation-container {
+    height: 200px;
+    border-style: solid;
+    border-width: 3px;
+    border-color: mediumseagreen;
+    width: 1400px;
+    overflow-x :  scroll;
+}
+
+    .recomendation-container .catalog-item {
+        width: 25%;
+        border-style: solid;
+        border-width: 2px;
+        border-color: mediumseagreen;
+        border-radius: 20px;
+        padding: 10px;
+        cursor: pointer;
+        height: 70%;
+        margin : 10px;
+    }
+
+    .hardware-slot {
+        width: 75px;
+        height: 75px;
+        border-style: solid;
+        border-width: 3px;
+        border-color: mediumseagreen;
+        margin-left: 10px;
+        /*position: absolute;*/
+    }
 
     .hardware-slot img {
         width: 70px;
         height: 70px;
     }
 
-.cpu-slot{
+.cpu-slot {
     left: 100px;
     top: 600px;
-
+    position: absolute;
 }
 
 .motherboard-slot {
     left: 100px;
     top: 400px;
+    position: absolute;
 }
 
 .videocard-slot {
     left: 100px;
     top: 200px;
+    position: absolute;
 }
 
 
 .pccase-slot {
     left: 500px;
+    position: absolute;
 }
 
 
 .powersupply-slot {
     left: 900px;
     top: 200px;
+    position: absolute;
+}
+
+.ram-slot-container {
+    position: absolute;
+    left: 900px;
+    top: 400px;
+    width: 800px;
+}
+
+.ssd-slot-container {
+    position: absolute;
+    left: 900px;
+    top: 500px;
+    width: 800px;
+}
+
+.outermemory-slot-container {
+    position: absolute;
+    left: 900px;
+    top: 600px;
+    width: 800px;
+}
+
+.outer-memory-slot {
+    display: inline-block;
 }
 
 .ram-slot {
-    left: 900px;
-    top: 400px;
+    display: inline-block;
 }
 
-.ssd-slot {
-    left: 900px;
-    top: 500px;
+.editor-container{
+    margin-top: 50px;
+    background-color: aliceblue;
+    border-width: 4px;
+    border-color: mediumseagreen;
+    border-style: solid;
+    width: 1400px;
+    height: 800px;
+    padding-top: 40px;
 }
 
-.hdd-slot {
-    left: 900px;
-    top: 600px;
+.editor-page{
+    max-width: 1600px;
 }
-
 .hardware-slot:hover {
     background: #ffffff; /*необходимо для IE6*/
     text-decoration: none;

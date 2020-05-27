@@ -102,5 +102,10 @@ namespace FerumChecker.Web.Controllers
             await signInManager.SignOutAsync();
             return RedirectToAction("Login", "Account");
         }
+
+        public IActionResult AccessDenied()
+        {
+            return View();
+        }
     }
 }

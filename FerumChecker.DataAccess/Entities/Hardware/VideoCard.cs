@@ -61,5 +61,7 @@ namespace FerumChecker.DataAccess.Entities.Hardware
         [ForeignKey("GraphicMemoryType")]
         public int GraphicMemoryTypeId { get; set; }
         public GraphicMemoryType GraphicMemoryType { get; set; }
+
+        public int? Year { get; set; }
     }
 }

@@ -57,5 +57,7 @@ namespace FerumChecker.DataAccess.Entities.Hardware
         public Manufacturer Manufacturer { get; set; }
 
         public ICollection<ComputerAssembly> ComputerAssemblies { get; } = new List<ComputerAssembly>();
+
+        public int? Year { get; set; }
     }
 }

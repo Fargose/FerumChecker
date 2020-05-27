@@ -54,6 +54,6 @@ namespace FerumChecker.DataAccess.Entities.Hardware
         [Required]
         public int WriteSpeed { get; set; }
 
-
+        public int? Year { get; set; }
     }
 }

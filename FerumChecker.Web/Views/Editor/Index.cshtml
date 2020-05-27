@@ -8,7 +8,7 @@
 
 <div class="container editor-page">
     <div class="row">
-        <div class="col-lg-3 please-scroll">
+        <div class="col-lg-3 please-scroll category-scroller">
             <div class="sidenav">
                 <div class="category-container">
                     <a href="#" class="category-link" data-link="CPU">Процесори</a>
@@ -58,29 +58,62 @@
                 </div>
             </div>
         </div>
-        <div class="col-lg-9 please-scroll ">
+        <div class="col-lg-9 please-scroll">
             <div><h2 class="сategory-name">@Model.Name</h2></div>
             <div class="editor-container main">
                 <div class="pc-image">
                     <img src="/Images//PC.png" style="width: 310px;" />
                 </div>
-                <div class="hardware-slot cpu-slot" data-toggle="tooltip" title="@Model.CPUName" data-id="@Model.CPUId"><img class="hardware-img" src="@Model.CPUImage"/></div>
-                <div class="hardware-slot motherboard-slot" data-toggle="tooltip" data-id="@Model.MotherBoardId" title="@Model.MotherBoardName"><img class="hardware-img" src="@Model.MotherBoardImage"/></div>
-                <div class="hdd-slot-container"><div class="hardware-slot hdd-slot multiple" data-toggle="tooltip" title="Пусто"><img class="hardware-img" /></div></div>
-                <div class="ssd-slot-container"><div class="hardware-slot ssd-slot multiple" data-toggle="tooltip" title="Пусто"><img class="hardware-img"/></div></div>
+                <div class="hardware-slot cpu-slot" data-toggle="tooltip" title="@Model.CPUName" data-id="@Model.CPUId" data-type="CPU"><img class="hardware-img" src="@Model.CPUImage" /></div>
+                <div class="hardware-slot motherboard-slot" data-toggle="tooltip" data-id="@Model.MotherBoardId" title="@Model.MotherBoardName" data-type="MotherBoard"><img class="hardware-img" src="@Model.MotherBoardImage" /></div>
+                <div class="outermemory-slot-container">
+                    @foreach (var item in Model.HDDs)
+                    {
+                        <div class="hardware-slot outer-memory-slot multiple" data-toggle="tooltip" title="@item.HDDName" data-id="@item.HDDId" data-type="HDD"><img class="hardware-img" src="@item.HDDImage" /></div>
+                    }
+                    @foreach (var item in Model.SSDs)
+                    {
+                        <div class="hardware-slot outer-memory-slot multiple" data-toggle="tooltip" title="@item.SSDName" data-id="@item.SSDId" data-type="SSD"><img class="hardware-img" src="@item.SSDImage" /></div>
+                    }
+                    @for (var i = 0; i < Model.OuterMemoryFreeSlot; i++)
+                    {
+                        <div class="hardware-slot outer-memory-slot multiple" data-toggle="tooltip" title="Пусто" data-type="HDD" data-id=""><img class="hardware-img" /></div>
+                    }
+                </div>
+                @*<div class="ssd-slot-container">
+                @foreach (var item in Model.SSDs)
+                {
+                    <div class="hardware-slot hdd-slot multiple" data-toggle="tooltip" title="@item.SSDName" data-id="@item.SSDId" data-type="SSD"><img class="hardware-img" src="@item.SSDImage" /></div>
+                }
+                @if (!Model.SSDs.Any())
+                {
+                    <div class="hardware-slot ram-slot multiple" data-toggle="tooltip" title="Пусто" data-type="SSD"><img class="hardware-img" /></div>
+                }
+            </div>*@
                 <div class="videocard-slot-container">
                     @foreach (var item in Model.VideoCards)
                     {
-                        <div class="hardware-slot videocard-slot multiple" data-toggle="tooltip" title="@item.VideoCardName" data-id="@item.VideoCardId"><img class="hardware-img" src="@item.VideoCardImage" /></div>
+                        <div class="hardware-slot videocard-slot multiple" data-toggle="tooltip" title="@item.VideoCardName" data-id="@item.VideoCardId" data-type="VideoCard"><img class="hardware-img" src="@item.VideoCardImage" /></div>
                     }
                     @if (!Model.VideoCards.Any())
                     {
-                        <div class="hardware-slot videocard-slot multiple" data-toggle="tooltip" title= "Пусто"><img /></div>
+                        <div class="hardware-slot videocard-slot multiple" data-toggle="tooltip" title="Пусто" data-type="VideoCard"><img class="hardware-img" /></div>
                     }
                 </div>
-                <div class="hardware-slot powersupply-slot" data-toggle="tooltip" title="Пусто"><img class="hardware-img"/></div>
-                <div class="hardware-slot pccase-slot" data-toggle="tooltip" title="Пусто"><img class="hardware-img"/></div>
-                <div class="ram-slot-container"><div class="hardware-slot ram-slot multiple" data-toggle="tooltip" title="Пусто"><img class="hardware-img"/></div></div>
+                <div class="hardware-slot powersupply-slot" data-toggle="tooltip" title="@Model.PowerSupplyName" data-id="@Model.PowerSupplyId" data-type="PowerSupply"><img class="hardware-img" src="@Model.PowerSupplyImage" /></div>
+                <div class="hardware-slot pccase-slot" data-toggle="tooltip" title="@Model.PCCaseName" data-id="@Model.PCCaseId" data-type="PCCase"><img class="hardware-img" src="@Model.PCCaseImage" /></div>
+                <div class="ram-slot-container">
+                    @foreach (var item in Model.RAMs)
+                    {
+                        <div class="hardware-slot ram-slot multiple" data-toggle="tooltip" title="@item.RAMName" data-id="@item.RAMId" data-type="RAM"><img class="hardware-img" src="@item.RAMImage" /></div>
+                    }
+                    @for (var i = 0; i < Model.RAMFreeSlot; i++)
+                    {
+                        <div class="hardware-slot ram-slot multiple" data-toggle="tooltip" title="Пусто" data-type="RAM" data-id=""><img class="hardware-img" /></div>
+                    }
+                </div>
+            </div>
+            <div class="recomendation-container">
             </div>
         </div>
     </div>

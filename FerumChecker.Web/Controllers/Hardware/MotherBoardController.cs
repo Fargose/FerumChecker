@@ -8,6 +8,7 @@ using FerumChecker.DataAccess.Entities.Joins;
 using FerumChecker.DataAccess.Entities.Specification;
 using FerumChecker.Service.Interfaces.Hardware;
 using FerumChecker.Service.Interfaces.Infrastructure;
+using FerumChecker.Service.Interfaces.User;
 using FerumChecker.Web.Code;
 using FerumChecker.Web.ViewModel.Hardware;
 using FerumChecker.Web.ViewModel.Specification;
@@ -33,7 +34,8 @@ namespace FerumChecker.Web.Controllers
         private readonly IPowerSupplyMotherBoardInterfaceService _powerSupplyMotherBoardInterfaceService;
         private readonly IRAMTypeService _ramTypeService;
         private readonly IComputerAssemblyService _assemblyService;
-        public MotherBoardController(IMotherBoardService motherBoardService, IWebHostEnvironment hostEnvironment, ICPUSocketService cpuSocketService, IManufacturerService manufacturerService, IMotherBoardNorthBridgeService northBridgeService, IMotherBoardFormFactorService motherBoardFormFactorService, IOuterMemoryInterfaceService outerMemoryInterfaceService, IVideoCardInterfaceService videoCardInterfaceService, IPowerSupplyMotherBoardInterfaceService powerSupplyMotherBoardInterfaceService, IRAMTypeService ramTypeService, IComputerAssemblyService assemblyService)
+        private readonly IUserService _userService;
+        public MotherBoardController(IMotherBoardService motherBoardService, IWebHostEnvironment hostEnvironment, ICPUSocketService cpuSocketService, IManufacturerService manufacturerService, IMotherBoardNorthBridgeService northBridgeService, IMotherBoardFormFactorService motherBoardFormFactorService, IOuterMemoryInterfaceService outerMemoryInterfaceService, IVideoCardInterfaceService videoCardInterfaceService, IPowerSupplyMotherBoardInterfaceService powerSupplyMotherBoardInterfaceService, IRAMTypeService ramTypeService, IComputerAssemblyService assemblyService, IUserService userService)
         {
             _motherBoardService = motherBoardService;
             _webHostEnvironment = hostEnvironment;
@@ -46,12 +48,39 @@ namespace FerumChecker.Web.Controllers
             _powerSupplyMotherBoardInterfaceService = powerSupplyMotherBoardInterfaceService;
             _ramTypeService = ramTypeService;
             _assemblyService = assemblyService;
+            _userService = userService;
 
         }
 
         public ActionResult SetHardware(int id, int assemblyId)
         {
+            var computerAssembly = _assemblyService.GetComputerAssembly(assemblyId);
+            if(computerAssembly == null)
+            {
+                return NotFound();
+            }
+            var userId = _userService.GetApplicationUserManager().GetUserId(this.User);
+            if (computerAssembly.OwnerId != userId)
+            {
+                return Forbid();
+            }
             var result = _assemblyService.SetMotherBoard(id, assemblyId);
+            return Json(result);
+        }
+
+        public ActionResult RemoveHardware(int assemblyId)
+        {
+            var computerAssembly = _assemblyService.GetComputerAssembly(assemblyId);
+            if (computerAssembly == null)
+            {
+                return NotFound();
+            }
+            var userId = _userService.GetApplicationUserManager().GetUserId(this.User);
+            if (computerAssembly.OwnerId != userId)
+            {
+                return Forbid();
+            }
+            var result = _assemblyService.RemoveMotherBoard(computerAssembly);
             return Json(result);
         }
 
@@ -272,6 +301,7 @@ namespace FerumChecker.Web.Controllers
                 Name = motherBoard.Name,
                 MaxMemory = motherBoard.MaxMemory,
                 CPUSocket = motherBoard.CPUSocket.Name,
+                CPUSocketId = motherBoard.CPUSocketId,
                 MotherBoardNothernBridge = motherBoard.MotherBoardNothernBridge.Name,
                 MotherBoardFormFactor = motherBoard.MotherBoardFormFactor.Name,
                 Manufacturer = motherBoard.Manufacturer.Name,

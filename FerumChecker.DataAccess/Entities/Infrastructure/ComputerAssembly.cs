@@ -51,6 +51,8 @@ namespace FerumChecker.DataAccess.Entities.Infrastructure
 
         public UserProfile Owner { get; set; }
 
+        public bool Public { get; set; }
+
         public ICollection<ComputerAssemblyRAM> ComputerAssemblyRAMs { get; set; }
         public ICollection<ComputerAssemblySSD> SSDs { get; set; } 
         public ICollection<ComputerAssemblyHDD> HDDs { get; set; }

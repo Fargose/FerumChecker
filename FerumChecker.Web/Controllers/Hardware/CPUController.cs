@@ -7,6 +7,7 @@ using FerumChecker.DataAccess.Entities.Infrastructure;
 using FerumChecker.DataAccess.Entities.Specification;
 using FerumChecker.Service.Interfaces.Hardware;
 using FerumChecker.Service.Interfaces.Infrastructure;
+using FerumChecker.Service.Interfaces.User;
 using FerumChecker.Web.Code;
 using FerumChecker.Web.ViewModel.Hardware;
 using Microsoft.AspNetCore.Hosting;
@@ -25,20 +26,49 @@ namespace FerumChecker.Web.Controllers
         private readonly IManufacturerService _manufacturerService;
         private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly IComputerAssemblyService _assemblyService;
-        public CPUController(ICPUService cpuService, IWebHostEnvironment hostEnvironment, ICPUSocketService cpuSocketService, IManufacturerService manufacturerService, IComputerAssemblyService assemblyService)
+        private readonly IUserService _userService; 
+        public CPUController(ICPUService cpuService, IWebHostEnvironment hostEnvironment, ICPUSocketService cpuSocketService, IManufacturerService manufacturerService, IComputerAssemblyService assemblyService, IUserService userService)
         {
             _cpuService = cpuService;
             _webHostEnvironment = hostEnvironment;
             _cpuSocketService = cpuSocketService;
             _manufacturerService = manufacturerService;
             _assemblyService = assemblyService;
+            _userService = userService;
         }
 
         public ActionResult SetHardware(int id, int assemblyId)
         {
+            var computerAssembly = _assemblyService.GetComputerAssembly(assemblyId);
+            if (computerAssembly == null)
+            {
+                return NotFound();
+            }
+            var userId = _userService.GetApplicationUserManager().GetUserId(this.User);
+            if (computerAssembly.OwnerId != userId)
+            {
+                return Forbid();
+            }
             var result = _assemblyService.SetCPU(id, assemblyId);
             return Json(result);
         }
+
+        public ActionResult RemoveHardware(int assemblyId)
+        {
+            var computerAssembly = _assemblyService.GetComputerAssembly(assemblyId);
+            if (computerAssembly == null)
+            {
+                return NotFound();
+            }
+            var userId = _userService.GetApplicationUserManager().GetUserId(this.User);
+            if (computerAssembly.OwnerId != userId)
+            {
+                return Forbid();
+            }
+            var result = _assemblyService.RemoveCPU(computerAssembly);
+            return Json(result);
+        }
+
         // GET: CPU
         public ActionResult Index()
         {

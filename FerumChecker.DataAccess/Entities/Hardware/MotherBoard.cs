@@ -65,5 +65,7 @@ namespace FerumChecker.DataAccess.Entities.Hardware
         public ICollection<MotherBoardVideoCardSlot> MotherBoardVideoCardSlots { get; set; } = new List<MotherBoardVideoCardSlot>();
 
         public ICollection<ComputerAssembly> ComputerAssemblies { get; set; } = new List<ComputerAssembly>();
+
+        public int? Year { get; set; }
     }
 }

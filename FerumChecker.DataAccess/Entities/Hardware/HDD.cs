@@ -54,5 +54,7 @@ namespace FerumChecker.DataAccess.Entities.Hardware
         [Required]
         public int BufferSize { get; set; }
 
+        public int? Year { get; set; }
+
     }
 }

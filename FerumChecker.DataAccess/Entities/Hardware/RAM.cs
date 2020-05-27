@@ -43,5 +43,7 @@ namespace FerumChecker.DataAccess.Entities.Hardware
         public int ManufacturerId { get; set; }
         public Manufacturer Manufacturer { get; set; }
 
+        public int? Year { get; set; }
+
     }
 }

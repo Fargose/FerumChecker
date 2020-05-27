@@ -7,6 +7,8 @@ using FerumChecker.DataAccess.Entities.Infrastructure;
 using FerumChecker.DataAccess.Entities.Joins;
 using FerumChecker.DataAccess.Entities.Specification;
 using FerumChecker.Service.Interfaces.Hardware;
+using FerumChecker.Service.Interfaces.Infrastructure;
+using FerumChecker.Service.Interfaces.User;
 using FerumChecker.Web.Code;
 using FerumChecker.Web.ViewModel.Hardware;
 using FerumChecker.Web.ViewModel.Specification;
@@ -26,17 +28,54 @@ namespace FerumChecker.Web.Controllers
         private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly IMotherBoardFormFactorService _motherBoardFormFactorService;
         private readonly IOuterMemoryFormFactorService _outerMemoryFormFactorService;
+        private readonly IComputerAssemblyService _computerAssemblyService;
+        private readonly IUserService _userService;
 
-        public PCCaseController(IPCCaseService pcCaseService, IWebHostEnvironment hostEnvironment, IManufacturerService manufacturerService, IMotherBoardFormFactorService motherBoardFormFactorService, IOuterMemoryFormFactorService outerMemoryFormFactorService)
+        public PCCaseController(IPCCaseService pcCaseService, IWebHostEnvironment hostEnvironment, IManufacturerService manufacturerService, IMotherBoardFormFactorService motherBoardFormFactorService, IOuterMemoryFormFactorService outerMemoryFormFactorService, IComputerAssemblyService computerAssemblyService, IUserService userService)
         {
             _pcCaseService = pcCaseService;
             _webHostEnvironment = hostEnvironment;
             _manufacturerService = manufacturerService;
             _motherBoardFormFactorService = motherBoardFormFactorService;
             _outerMemoryFormFactorService = outerMemoryFormFactorService;
+            _computerAssemblyService = computerAssemblyService;
+            _userService = userService;
         }
         // GET: PCCase
 
+
+        public ActionResult SetHardware(int id, int assemblyId)
+        {
+            var computerAssembly = _computerAssemblyService.GetComputerAssembly(assemblyId);
+            if (computerAssembly == null)
+            {
+                return NotFound();
+            }
+            var userId = _userService.GetApplicationUserManager().GetUserId(this.User);
+            if (computerAssembly.OwnerId != userId)
+            {
+                return Forbid();
+            }
+            var result = _computerAssemblyService.SetPCCase(id, assemblyId);
+            return Json(result);
+        }
+
+
+        public ActionResult RemoveHardware(int assemblyId)
+        {
+            var computerAssembly = _computerAssemblyService.GetComputerAssembly(assemblyId);
+            if (computerAssembly == null)
+            {
+                return NotFound();
+            }
+            var userId = _userService.GetApplicationUserManager().GetUserId(this.User);
+            if (computerAssembly.OwnerId != userId)
+            {
+                return Forbid();
+            }
+            var result = _computerAssemblyService.RemovePCCase(computerAssembly);
+            return Json(result);
+        }
         public IActionResult SmallList()
         {
             var cpus = _pcCaseService.GetPCCases().OrderBy(m => m.Name);

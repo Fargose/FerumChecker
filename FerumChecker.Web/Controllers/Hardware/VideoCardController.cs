@@ -7,6 +7,7 @@ using FerumChecker.DataAccess.Entities.Infrastructure;
 using FerumChecker.DataAccess.Entities.Specification;
 using FerumChecker.Service.Interfaces.Hardware;
 using FerumChecker.Service.Interfaces.Infrastructure;
+using FerumChecker.Service.Interfaces.User;
 using FerumChecker.Web.Code;
 using FerumChecker.Web.ViewModel.Hardware;
 using FerumChecker.Web.ViewModel.Specification;
@@ -28,8 +29,9 @@ namespace FerumChecker.Web.Controllers
         private readonly IVideoCardInterfaceService _videoCardInterfaceService;
         private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly IComputerAssemblyService _assemblyService;
+        private readonly IUserService _userService;
 
-        public VideoCardController(IVideoCardService videoCardService, IWebHostEnvironment hostEnvironment, IManufacturerService manufacturerService, IVideoCardInterfaceService videoCardInterfaceService, IGraphicMemoryTypeService graphicMemoryTypeService, IGPUService gpuService, IComputerAssemblyService assemblyService)
+        public VideoCardController(IVideoCardService videoCardService, IWebHostEnvironment hostEnvironment, IManufacturerService manufacturerService, IVideoCardInterfaceService videoCardInterfaceService, IGraphicMemoryTypeService graphicMemoryTypeService, IGPUService gpuService, IComputerAssemblyService assemblyService, IUserService userService)
         {
             _videoCardService = videoCardService;
             _webHostEnvironment = hostEnvironment;
@@ -38,12 +40,39 @@ namespace FerumChecker.Web.Controllers
             _graphicMemoryTypeService = graphicMemoryTypeService;
             _manufacturerService = manufacturerService;
             _assemblyService = assemblyService;
+            _userService = userService;
         }
 
 
         public ActionResult SetHardware(int id, int assemblyId)
         {
+            var computerAssembly = _assemblyService.GetComputerAssembly(assemblyId);
+            if (computerAssembly == null)
+            {
+                return NotFound();
+            }
+            var userId = _userService.GetApplicationUserManager().GetUserId(this.User);
+            if (computerAssembly.OwnerId != userId)
+            {
+                return Forbid();
+            }
             var result = _assemblyService.SetVideoCard(id, assemblyId);
+            return Json(result);
+        }
+
+        public ActionResult RemoveHardware(int assemblyId)
+        {
+            var computerAssembly = _assemblyService.GetComputerAssembly(assemblyId);
+            if (computerAssembly == null)
+            {
+                return NotFound();
+            }
+            var userId = _userService.GetApplicationUserManager().GetUserId(this.User);
+            if (computerAssembly.OwnerId != userId)
+            {
+                return Forbid();
+            }
+            var result = _assemblyService.RemoveVideoCard(computerAssembly);
             return Json(result);
         }
         public IActionResult SmallList()

@@ -1,5 +1,6 @@
 ﻿using FerumChecker.DataAccess.Entities;
 using FerumChecker.DataAccess.Entities.Infrastructure;
+using FerumChecker.Service.DTO.Hardware;
 using FerumChecker.Service.Infrastructure;
 using System;
 using System.Collections.Generic;
@@ -33,6 +34,29 @@ namespace FerumChecker.Service.Interfaces.Infrastructure
         OperationDetails SetVideoCard(int videoCardId, int assemblyId);
 
         OperationDetails SetRAM(int ramId, int assemblyId);
+
+
+        OperationDetails RemoveCPU(ComputerAssembly computerAssembly);
+
+        OperationDetails RemoveMotherBoard(ComputerAssembly computerAssembly);
+
+        OperationDetails RemoveSSD(ComputerAssembly computerAssembly, int id);
+
+        OperationDetails RemoveHDD(ComputerAssembly computerAssembly, int id);
+
+        OperationDetails RemovePCCase(ComputerAssembly computerAssembly);
+
+        OperationDetails RemovePowerSupply(ComputerAssembly computerAssembly);
+
+        OperationDetails RemoveVideoCard(ComputerAssembly computerAssembly);
+
+        OperationDetails RemoveRam(ComputerAssembly computerAssembly, int id);
+
+        public int CalculateFreeRAMSlot(ComputerAssembly computerAssembly);
+
+        public int CalculateFreeOuterMemorySlot(ComputerAssembly computerAssembly);
+
+        public IEnumerable<RecomendationDTO> CreateRecomendations(ComputerAssembly computerAssembly);
         void Dispose();
     }
 }

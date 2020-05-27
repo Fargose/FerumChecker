@@ -10,7 +10,7 @@
     <tbody>
         @foreach (var item in Model)
         {
-            <tr data-id="@item.Id" data-image="@(Model != null && item.ImagePath !=null ? item.ImagePath : "/Images//not-found.png" )">
+            <tr data-id="@item.Id" class = "multiple" data-image="@(Model != null && item.ImagePath !=null ? item.ImagePath : "/Images//not-found.png" )">
                 <td style="width: 100%">
                     <div class="catalog-item">
                         <div class="catalog-item-block" style="width: 30%; float: left">

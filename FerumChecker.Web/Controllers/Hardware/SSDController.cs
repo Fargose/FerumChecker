@@ -6,6 +6,8 @@ using FerumChecker.DataAccess.Entities.Hardware;
 using FerumChecker.DataAccess.Entities.Infrastructure;
 using FerumChecker.DataAccess.Entities.Specification;
 using FerumChecker.Service.Interfaces.Hardware;
+using FerumChecker.Service.Interfaces.Infrastructure;
+using FerumChecker.Service.Interfaces.User;
 using FerumChecker.Web.Code;
 using FerumChecker.Web.ViewModel.Hardware;
 using Microsoft.AspNetCore.Hosting;
@@ -24,13 +26,17 @@ namespace FerumChecker.Web.Controllers
         private readonly IOuterMemoryInterfaceService _outerMemoryInterfaceService;
         private readonly IManufacturerService _manufacturerService;
         private readonly IWebHostEnvironment _webHostEnvironment;
-        public SSDController(ISSDService ssdService, IWebHostEnvironment hostEnvironment, IManufacturerService manufacturerService, IOuterMemoryInterfaceService outerMemoryInterfaceService, IOuterMemoryFormFactorService outerMemoryFormFactorService)
+        private readonly IComputerAssemblyService _assemblyService;
+        private readonly IUserService _userService;
+        public SSDController(ISSDService ssdService, IWebHostEnvironment hostEnvironment, IManufacturerService manufacturerService, IOuterMemoryInterfaceService outerMemoryInterfaceService, IOuterMemoryFormFactorService outerMemoryFormFactorService, IComputerAssemblyService assemblyService, IUserService userService)
         {
             _ssdService = ssdService;
             _webHostEnvironment = hostEnvironment;
             _outerMemoryInterfaceService = outerMemoryInterfaceService;
             _outerMemoryFormFactorService = outerMemoryFormFactorService;
             _manufacturerService = manufacturerService;
+            _assemblyService = assemblyService;
+            _userService = userService;
         }
 
         public IActionResult SmallList()
@@ -47,6 +53,37 @@ namespace FerumChecker.Web.Controllers
             return PartialView(model);
         }
 
+        public ActionResult SetHardware(int id, int assemblyId)
+        {
+            var computerAssembly = _assemblyService.GetComputerAssembly(assemblyId);
+            if (computerAssembly == null)
+            {
+                return NotFound();
+            }
+            var userId = _userService.GetApplicationUserManager().GetUserId(this.User);
+            if (computerAssembly.OwnerId != userId)
+            {
+                return Forbid();
+            }
+            var result = _assemblyService.SetSSD(id, assemblyId);
+            return Json(result);
+        }
+
+        public ActionResult RemoveHardware(int assemblyId, int hardwareId)
+        {
+            var computerAssembly = _assemblyService.GetComputerAssembly(assemblyId);
+            if (computerAssembly == null)
+            {
+                return NotFound();
+            }
+            var userId = _userService.GetApplicationUserManager().GetUserId(this.User);
+            if (computerAssembly.OwnerId != userId)
+            {
+                return Forbid();
+            }
+            var result = _assemblyService.RemoveSSD(computerAssembly, hardwareId);
+            return Json(result);
+        }
 
         // GET: SSD
         public ActionResult Index()
