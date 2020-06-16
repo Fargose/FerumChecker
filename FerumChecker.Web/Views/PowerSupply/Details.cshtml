@@ -18,7 +18,7 @@
         <div class="item-prop"><span class="item-prop-name">@Html.DisplayNameFor(Model => Model.SATAInputNumber)</span> : <span class="item-prop-value">@Model.SATAInputNumber</span></div>
         <div class="item-prop"><span class="item-prop-name">@Html.DisplayNameFor(Model => Model.GPUInputNumber)</span> : <span class="item-prop-value">@Model.GPUInputNumber</span></div>
         <div class="item-prop"><span class="item-prop-name">@Html.DisplayNameFor(Model => Model.PowerSupplyMotherBoardInterface)</span> : <span class="item-prop-value">@Model.PowerSupplyMotherBoardInterface</span></div>
-        <div class="item-prop"><span class="item-prop-name">@Html.DisplayNameFor(Model => Model.Price)</span> : <span class="item-prop-value">@Model.Price</span></div>
+        <div class="item-prop"><span class="item-prop-name">@Html.DisplayNameFor(Model => Model.Price)</span> : <span class="item-prop-value">@Html.DisplayFor(Model => Model.Price)</span></div>
         @*<div class="item-prop">
                 <span class="item-prop-name">@Html.DisplayNameFor(Model => Model.PowerSupplyCPUInterfaces)</span> :
                 <ul class="item-prop-value">
@@ -28,7 +28,6 @@
                     }
                 </ul>
             </div>*@
-        <div class="item-prop"><span class="item-prop-name">@Html.DisplayNameFor(Model => Model.Price)</span> : <span class="item-prop-value">@Model.Price</span></div>
         <img src="@(Model != null && Model.ImagePath !=null ? Model.ImagePath : "/Images//not-found.png" )" style="max-width:300px;margin-top: 20px; margin-bottom: 20px;" id="country-image" />
     </div>
 

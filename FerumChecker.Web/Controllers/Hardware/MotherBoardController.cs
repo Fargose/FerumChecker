@@ -11,7 +11,9 @@ using FerumChecker.Service.Interfaces.Infrastructure;
 using FerumChecker.Service.Interfaces.User;
 using FerumChecker.Web.Code;
 using FerumChecker.Web.ViewModel.Hardware;
+using FerumChecker.Web.ViewModel.Search;
 using FerumChecker.Web.ViewModel.Specification;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -19,7 +21,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace FerumChecker.Web.Controllers
 {
-
+    [Authorize]
     public class MotherBoardController : Controller
     {
 
@@ -113,7 +115,7 @@ namespace FerumChecker.Web.Controllers
         }
 
         // GET: MotherBoard
-        public ActionResult PartialIndex(string search = "")
+        public ActionResult PartialIndex(MotherBoardSearchModel searchDetails)
         {
             var motherBoards = _motherBoardService.GetMotherBoards().OrderBy(m => m.Name);
             var model = motherBoards.Select(m => new MotherBoardViewModel
@@ -126,8 +128,24 @@ namespace FerumChecker.Web.Controllers
                 CPUSocket = m.CPUSocket.Name,
                 ImagePath = "/Images/MotherBoard/" + m.Image,
                 //ThreadsNumber = m.ThreadsNumber,
+                CPUSocketId = m.CPUSocketId,
                 Price = m.Price
-            }).Where(m => string.IsNullOrEmpty(search) || m.Name.Contains(search));
+            });
+            if (searchDetails != null)
+            {
+                model = model.Where(m => string.IsNullOrEmpty(searchDetails.Name) || m.Name.Contains(searchDetails.Name));
+                model = model.Where(m => m.CPUSocketId == searchDetails.CPUSocketId || searchDetails.CPUSocketId == null);
+                model = model.Where(m => m.MotherBoardFormFactorId == searchDetails.FormFactorId || searchDetails.FormFactorId == null);
+                model = model.Where(m => m.ManufacturerId == searchDetails.ManufacturerId || searchDetails.ManufacturerId == null);
+                if (searchDetails.MinPrice.HasValue)
+                {
+                    model = model.Where(m => m.Price >= searchDetails.MinPrice);
+                }
+                if (searchDetails.MaxPrice.HasValue)
+                {
+                    model = model.Where(m => m.Price <= searchDetails.MaxPrice);
+                }
+            }
 
             return PartialView("Index", model);
         }
@@ -190,6 +208,7 @@ namespace FerumChecker.Web.Controllers
             return PartialView("PartialDetails", model);
         }
 
+        [Authorize(Roles = "Administrator")]
         // GET: MotherBoard/Create
         public ActionResult Create()
         {
@@ -215,6 +234,7 @@ namespace FerumChecker.Web.Controllers
         // POST: MotherBoard/Create
         [HttpPost]
         //[ValidateAntiForgeryToken]
+        [Authorize(Roles = "Administrator")]
         public IActionResult Create(MotherBoardViewModel model)
         {
             if (ModelState.IsValid)
@@ -287,6 +307,7 @@ namespace FerumChecker.Web.Controllers
 
         // GET: MotherBoard/Create
         [HttpGet]
+        [Authorize(Roles = "Administrator")]
         public ActionResult Edit(int id)
         {
             var motherBoard = _motherBoardService.GetMotherBoard(id);
@@ -304,6 +325,7 @@ namespace FerumChecker.Web.Controllers
                 CPUSocketId = motherBoard.CPUSocketId,
                 MotherBoardNothernBridge = motherBoard.MotherBoardNothernBridge.Name,
                 MotherBoardFormFactor = motherBoard.MotherBoardFormFactor.Name,
+                MotherBoardFormFactorId = motherBoard.MotherBoardFormFactorId,
                 Manufacturer = motherBoard.Manufacturer.Name,
                 VideoCardInterfaces = motherBoard.MotherBoardVideoCardSlots.Select(m => new VideoCardInterfaceViewModel { Id = m.VideoCardInterface.Id, Name = m.VideoCardInterface.Name, Multiplier = m.VideoCardInterface.Multiplier, Version = m.VideoCardInterface.Version }).ToList(),
                 MotherBoardRAMSlots = motherBoard.MotherBoardRAMSlots.Select(m => new RAMTypeViewModel { Id = m.RAMType.Id, Name = m.RAMType.Name }).ToList(),
@@ -336,6 +358,7 @@ namespace FerumChecker.Web.Controllers
         // POST: MotherBoard/Edit/5
         [HttpPost]
         //[ValidateAntiForgeryToken]
+        [Authorize(Roles = "Administrator")]
         public ActionResult Edit(MotherBoardViewModel model)
         {
             var motherBoard = _motherBoardService.GetMotherBoard(model.Id);
@@ -417,6 +440,7 @@ namespace FerumChecker.Web.Controllers
         // POST: MotherBoard/Delete/5
         [HttpPost]
         //[ValidateAntiForgeryToken]
+        [Authorize(Roles = "Administrator")]
         public IActionResult Delete(int id)
         {
             try
@@ -440,6 +464,27 @@ namespace FerumChecker.Web.Controllers
         {
             var sentences = description.Split('.');
             return (sentences != null && sentences[0] != null) ? sentences[0] + "..."  : "";
+        }
+
+        public IActionResult Search()
+        {
+            var sockets = _cpuSocketService.GetCPUSockets();
+            ViewBag.Sockets = new SelectList(sockets, "Id", "Name");
+            var manufacturers = _manufacturerService.GetManufacturers();
+            ViewBag.Manufacturers = new SelectList(manufacturers, "Id", "Name");
+            var motherBoardFormFactors = _motherBoardFormFactorService.GetMotherBoardFormFactors();
+            ViewBag.MotherBoardFormFactors = new SelectList(motherBoardFormFactors, "Id", "Name");
+            var motherBoardNothernBridges = _northBridgeService.GetMotherBoardNorthBridges();
+            ViewBag.MotherBoardNothernBridges = new SelectList(motherBoardNothernBridges, "Id", "Name");
+            var outerMemoryInterfaces = _outerMemoryInterfaceService.GetOuterMemoryInterfaces();
+            ViewBag.OuterMemoryInterfaces = new SelectList(outerMemoryInterfaces, "Id", "Name");
+            var videoCardInterfaces = _videoCardInterfaceService.GetVideoCardInterfaces().Select(m => new VideoCardInterfaceViewModel() { Id = m.Id, Name = m.Name, Multiplier = m.Multiplier, Version = m.Version });
+            ViewBag.VideoCardInterfaces = new SelectList(videoCardInterfaces, "Id", "FullName");
+            var powerSupplyMotherBoardInterfaces = _powerSupplyMotherBoardInterfaceService.GetPowerSupplyMotherBoardInterfaces();
+            ViewBag.PowerSupplyMotherBoardInterface = new SelectList(powerSupplyMotherBoardInterfaces, "Id", "Name");
+            var ramTypes = _ramTypeService.GetRAMTypes();
+            ViewBag.RamTypes = new SelectList(ramTypes, "Id", "Name");
+            return PartialView();
         }
     }
 }

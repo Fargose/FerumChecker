@@ -35,6 +35,9 @@ namespace FerumChecker.Service.Services.Hardware
             
             Database.RAMs.Update(ram);
             Database.Save();
+            ram = GetRAM(ram.Id);
+            _computerAssemblyService.OnRAMChange(ram);
+            Database.Save();
             return new OperationDetails(true, "Ok", "");
         }
 
@@ -47,6 +50,7 @@ namespace FerumChecker.Service.Services.Hardware
 
         public OperationDetails DeleteRAM(int? id)
         {
+            _computerAssemblyService.OnRAMDelete(id.Value);
             Database.RAMs.Delete(id.Value);
             Database.Save();
             return new OperationDetails(true, "Ok", "");

@@ -10,6 +10,8 @@ using FerumChecker.Service.Interfaces.Infrastructure;
 using FerumChecker.Service.Interfaces.User;
 using FerumChecker.Web.Code;
 using FerumChecker.Web.ViewModel.Hardware;
+using FerumChecker.Web.ViewModel.Search;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -17,7 +19,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace FerumChecker.Web.Controllers
 {
-
+    [Authorize]
     public class HDDController : Controller
     {
 
@@ -99,7 +101,7 @@ namespace FerumChecker.Web.Controllers
         }
 
         // GET: HDD
-        public ActionResult PartialIndex(string search = "")
+        public ActionResult PartialIndex(OuterMemorySearchModel searchDetails)
         {
             var hdds = _hddService.GetHDDs().OrderBy(m => m.Name);
             var model = hdds.Select(m => new HDDViewModel
@@ -122,7 +124,30 @@ namespace FerumChecker.Web.Controllers
                 Manufacturer = m.Manufacturer.Name,
                 ImagePath = "/Images/HDD/" + m.Image,
                 Price = m.Price
-            }).Where(m => string.IsNullOrEmpty(search) || m.Name.Contains(search));
+            });
+
+            if (searchDetails != null)
+            {
+                model = model.Where(m => string.IsNullOrEmpty(searchDetails.Name) || m.Name.Contains(searchDetails.Name));
+                model = model.Where(m => m.ManufacturerId == searchDetails.ManufacturerId || searchDetails.ManufacturerId == null);
+                if (searchDetails.MinPrice.HasValue)
+                {
+                    model = model.Where(m => m.Price >= searchDetails.MinPrice);
+                }
+                if (searchDetails.MaxPrice.HasValue)
+                {
+                    model = model.Where(m => m.Price <= searchDetails.MaxPrice);
+                }
+                if (searchDetails.MinVolume.HasValue)
+                {
+                    model = model.Where(m => m.MemorySize >= searchDetails.MinVolume);
+                }
+                if (searchDetails.MaxVolume.HasValue)
+                {
+                    model = model.Where(m => m.MemorySize <= searchDetails.MaxVolume);
+                }
+
+            }
 
             return PartialView("Index", model);
         }
@@ -194,6 +219,7 @@ namespace FerumChecker.Web.Controllers
             return PartialView("PartialDetails", model);
         }
 
+        [Authorize(Roles = "Administrator")]
         // GET: HDD/Create
         public ActionResult Create()
         {
@@ -209,6 +235,7 @@ namespace FerumChecker.Web.Controllers
         // POST: HDD/Create
         [HttpPost]
         //[ValidateAntiForgeryToken]
+        [Authorize(Roles = "Administrator")]
         public IActionResult Create(HDDViewModel model)
         {
             if (ModelState.IsValid)
@@ -253,6 +280,7 @@ namespace FerumChecker.Web.Controllers
 
         // GET: HDD/Create
         [HttpGet]
+        [Authorize(Roles = "Administrator")]
         public ActionResult Edit(int id)
         {
             var hdd = _hddService.GetHDD(id);
@@ -288,6 +316,7 @@ namespace FerumChecker.Web.Controllers
         // POST: HDD/Edit/5
         [HttpPost]
         //[ValidateAntiForgeryToken]
+        [Authorize(Roles = "Administrator")]
         public ActionResult Edit(HDDViewModel model)
         {
             var hdd = _hddService.GetHDD(model.Id);
@@ -339,6 +368,7 @@ namespace FerumChecker.Web.Controllers
 
         // POST: HDD/Delete/5
         [HttpPost]
+        [Authorize(Roles = "Administrator")]
         //[ValidateAntiForgeryToken]
         public IActionResult Delete(int id)
         {
@@ -372,6 +402,14 @@ namespace FerumChecker.Web.Controllers
                 return memory / 1024 + "TБ";
             }
             return memory + " ГБ";
+        }
+
+        public IActionResult Search()
+        {
+            var manufacturers = _manufacturerService.GetManufacturers();
+            ViewBag.Manufacturers = new SelectList(manufacturers, "Id", "Name");
+
+            return PartialView();
         }
     }
 }

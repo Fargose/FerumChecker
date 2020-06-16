@@ -11,7 +11,9 @@ using FerumChecker.Service.Interfaces.Infrastructure;
 using FerumChecker.Service.Interfaces.User;
 using FerumChecker.Web.Code;
 using FerumChecker.Web.ViewModel.Hardware;
+using FerumChecker.Web.ViewModel.Search;
 using FerumChecker.Web.ViewModel.Specification;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -19,7 +21,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace FerumChecker.Web.Controllers
 {
-
+    [Authorize]
     public class PCCaseController : Controller
     {
 
@@ -103,7 +105,7 @@ namespace FerumChecker.Web.Controllers
         }
 
         // GET: PCCase
-        public ActionResult PartialIndex(string search = "")
+        public ActionResult PartialIndex(PCCaseSearchModel searchDetails)
         {
             var pcCases = _pcCaseService.GetPCCases().OrderBy(m => m.Name);
             var model = pcCases.Select(m => new PCCaseViewModel
@@ -112,10 +114,25 @@ namespace FerumChecker.Web.Controllers
                 Name = m.Name,
                 ShortDescription = string.IsNullOrEmpty(m.Description) ? "" : CreateShortDescription(m.Description),
                 Manufacturer = m.Manufacturer.Name,
-                WeightDisplay   = CreateWeightDescription(m.Weight),
+                ManufacturerId = m.ManufacturerId,
+                WeightDisplay = CreateWeightDescription(m.Weight),
                 ImagePath = "/Images/PCCase/" + m.Image,
                 Price = m.Price
-            }).Where(m => string.IsNullOrEmpty(search) || m.Name.Contains(search));
+            });
+
+            if (searchDetails != null)
+            {
+                model = model.Where(m => string.IsNullOrEmpty(searchDetails.Name) || m.Name.Contains(searchDetails.Name));
+                model = model.Where(m => m.ManufacturerId == searchDetails.ManufacturerId || searchDetails.ManufacturerId == null);
+                if (searchDetails.MinPrice.HasValue)
+                {
+                    model = model.Where(m => m.Price >= searchDetails.MinPrice);
+                }
+                if (searchDetails.MaxPrice.HasValue)
+                {
+                    model = model.Where(m => m.Price <= searchDetails.MaxPrice);
+                }
+            }
 
             return PartialView("Index", model);
         }
@@ -168,6 +185,7 @@ namespace FerumChecker.Web.Controllers
             return PartialView("PartialDetails", model);
         }
 
+        [Authorize(Roles = "Administrator")]
         // GET: PCCase/Create
         public ActionResult Create()
         {
@@ -182,6 +200,7 @@ namespace FerumChecker.Web.Controllers
 
         // POST: PCCase/Create
         [HttpPost]
+        [Authorize(Roles = "Administrator")]
         //[ValidateAntiForgeryToken]
         public IActionResult Create(PCCaseViewModel model)
         {
@@ -230,6 +249,7 @@ namespace FerumChecker.Web.Controllers
 
         // GET: PCCase/Create
         [HttpGet]
+        [Authorize(Roles = "Administrator")]
         public ActionResult Edit(int id)
         {
             var pcCase = _pcCaseService.GetPCCase(id);
@@ -262,6 +282,7 @@ namespace FerumChecker.Web.Controllers
 
         // POST: PCCase/Edit/5
         [HttpPost]
+        [Authorize(Roles = "Administrator")]
         //[ValidateAntiForgeryToken]
         public ActionResult Edit(PCCaseViewModel model)
         {
@@ -320,6 +341,7 @@ namespace FerumChecker.Web.Controllers
 
         // POST: PCCase/Delete/5
         [HttpPost]
+        [Authorize(Roles = "Administrator")]
         //[ValidateAntiForgeryToken]
         public IActionResult Delete(int id)
         {
@@ -354,6 +376,16 @@ namespace FerumChecker.Web.Controllers
                 return (double)(weight) / 1000 + "Кг";
             }
             return weight + " г";
+        }
+
+        public IActionResult Search()
+        {
+            var manufacturers = _manufacturerService.GetManufacturers();
+            ViewBag.Manufacturers = new SelectList(manufacturers, "Id", "Name");
+            var motherBoardFormFactors = _motherBoardFormFactorService.GetMotherBoardFormFactors();
+            ViewBag.MotherBoardFormFactors = new SelectList(motherBoardFormFactors, "Id", "Name");
+
+            return PartialView();
         }
     }
 }

@@ -6,9 +6,9 @@
 <script src="~/js/AssemblyEditor.js"></script>
 <h1>Редактор збірок</h1>
 
-<div class="container editor-page">
+<div class="container editor-page" style="max-width: 2000px; width: 1800px">
     <div class="row">
-        <div class="col-lg-3 please-scroll category-scroller">
+        <div class="col-lg-2 please-scroll category-scroller">
             <div class="sidenav">
                 <div class="category-container">
                     <a href="#" class="category-link" data-link="CPU">Процесори</a>
@@ -58,8 +58,12 @@
                 </div>
             </div>
         </div>
-        <div class="col-lg-9 please-scroll">
-            <div><h2 class="сategory-name">@Model.Name</h2> <a class="btn btn-success button-evaluate"><span>Оцінити сумісність з ПЗ</span></a></div>
+        <div class="col-lg-10 please-scroll">
+            <div class="row">
+            <div class="col-9">
+            <div>
+                <h2 class="сategory-name">@Model.Name</h2><a class="btn btn-success  custom-button button-evaluate"><span>Оцінити сумісність з ПЗ</span></a>&nbsp;	&nbsp;<a class="btn btn-success  custom-button button-public" data-public="@Model.Public"><span>@(Model.Public ? "Зробити збіку приватною" : "Зробити збірку публічною")</span></a>
+            </div>
             <div class="editor-container main">
                 <div class="pc-image">
                     <img src="/Images//PC.png" style="width: 310px;" />
@@ -112,6 +116,12 @@
                         <div class="hardware-slot ram-slot multiple" data-toggle="tooltip" title="Пусто" data-type="RAM" data-id=""><img class="hardware-img" /></div>
                     }
                 </div>
+            </div>
+            </div>
+            <div class="col-3 stat-container">
+                <h2>Загальні характеристики: </h2>
+                <div class="content"></div>
+             </div>
             </div>
             <div class="recomendation-container">
             </div>

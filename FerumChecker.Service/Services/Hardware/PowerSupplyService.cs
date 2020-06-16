@@ -42,6 +42,9 @@ namespace FerumChecker.Service.Services.Hardware
             Database.PowerSupplies.Update(powerSupply);
             //SetPowerSupplyCPUInterfaces(powerSupply, (List<PowerSupplyPowerSupplyCPUInterface>)powerSupply.PowerSupplyPowerSupplyCPUInterfaces);
             Database.Save();
+            powerSupply = GetPowerSupply(powerSupply.Id);
+            _computerAssemblyService.OnPowerSupplyChange(powerSupply);
+            Database.Save();
 
             return new OperationDetails(true, "Ok", "");
         }
@@ -57,6 +60,7 @@ namespace FerumChecker.Service.Services.Hardware
 
         public OperationDetails DeletePowerSupply(int? id)
         {
+            _computerAssemblyService.OnPowerSupplyDelete(id.Value);
             Database.PowerSupplies.Delete(id.Value);
             Database.Save();
 

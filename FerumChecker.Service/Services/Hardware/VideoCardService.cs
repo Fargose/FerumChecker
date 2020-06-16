@@ -35,6 +35,9 @@ namespace FerumChecker.Service.Services.Hardware
             
             Database.VideoCards.Update(videoCard);
             Database.Save();
+            videoCard = GetVideoCard(videoCard.Id);
+            _computerAssemblyService.OnVideoCardChange(videoCard);
+            Database.Save();
 
             return new OperationDetails(true, "Ok", "");
         }
@@ -49,6 +52,7 @@ namespace FerumChecker.Service.Services.Hardware
 
         public OperationDetails DeleteVideoCard(int? id)
         {
+            _computerAssemblyService.OnVideoCardDelete(id.Value);
             Database.VideoCards.Delete(id.Value);
             Database.Save();
 

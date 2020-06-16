@@ -1,0 +1,13 @@
+﻿@model ComputerAssemblyStatModel
+
+    <div class="details-container">
+        <div class="item-prop"><span class="item-prop-name">@Html.DisplayNameFor(Model => Model.CPUFrequency)</span> : <span class="item-prop-value">@Model.CPUFrequency</span></div>
+        <div class="item-prop"><span class="item-prop-name">@Html.DisplayNameFor(Model => Model.CPUCores)</span> : <span class="item-prop-value">@Model.CPUCores</span></div>
+        <div class="item-prop"><span class="item-prop-name">@Html.DisplayNameFor(Model => Model.CPUThreads)</span> : <span class="item-prop-value">@Model.CPUThreads</span></div>
+        <div class="item-prop"><span class="item-prop-name">@Html.DisplayNameFor(Model => Model.VideoMemory)</span> : <span class="item-prop-value">@Model.VideoMemory</span></div>
+        <div class="item-prop"><span class="item-prop-name">@Html.DisplayNameFor(Model => Model.VideoFrequency)</span> : <span class="item-prop-value">@Model.VideoFrequency</span></div>
+        <div class="item-prop"><span class="item-prop-name">@Html.DisplayNameFor(Model => Model.VideoMemoryFrequency)</span> : <span class="item-prop-value">@Model.VideoMemoryFrequency</span></div>
+        <div class="item-prop"><span class="item-prop-name">@Html.DisplayNameFor(Model => Model.TotalRam)</span> : <span class="item-prop-value">@Model.TotalRam</span></div>
+        <div class="item-prop"><span class="item-prop-name">@Html.DisplayNameFor(Model => Model.TotalMemory)</span> : <span class="item-prop-value">@Html.DisplayFor(Model => Model.TotalMemory)</span></div>
+        <div class="item-prop"><span class="item-prop-name">@Html.DisplayNameFor(Model => Model.TotalPrice)</span> : <span class="item-prop-value">@Html.DisplayFor(Model => Model.TotalPrice)</span></div>
+    </div>

@@ -10,6 +10,8 @@ using FerumChecker.Service.Interfaces.Infrastructure;
 using FerumChecker.Service.Interfaces.User;
 using FerumChecker.Web.Code;
 using FerumChecker.Web.ViewModel.Hardware;
+using FerumChecker.Web.ViewModel.Search;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -17,7 +19,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace FerumChecker.Web.Controllers
 {
-
+    [Authorize]
     public class CPUController : Controller
     {
 
@@ -84,7 +86,7 @@ namespace FerumChecker.Web.Controllers
         }
 
         // GET: CPU
-        public ActionResult PartialIndex(string search = "")
+        public ActionResult PartialIndex(CPUSearchModel searchDetails = null)
         {
             var cpus = _cpuService.GetCPUs().OrderBy(m => m.Name);
             var model = cpus.Select(m => new CPUViewModel
@@ -96,7 +98,7 @@ namespace FerumChecker.Web.Controllers
                 Description = m.Description,
                 ShortDescription = string.IsNullOrEmpty(m.Description) ? "" : CreateShortDescription(m.Description),
                 Frequency = m.Frequency,
-                FrequencyDisplay = ((double)m.Frequency/1000) + " GHz",
+                FrequencyDisplay = ((double)m.Frequency / 1000) + " GHz",
                 MaxFrequency = m.MaxFrequency,
                 MaxFrequencyDisplay = ((double)m.MaxFrequency / 1000) + " GHz",
                 CPUSocket = m.CPUSocket.Name,
@@ -106,7 +108,37 @@ namespace FerumChecker.Web.Controllers
                 ImagePath = "/Images/CPU/" + m.Image,
                 ThreadsNumber = m.ThreadsNumber,
                 Price = m.Price
-            }).Where(m => string.IsNullOrEmpty(search) || m.Name.Contains(search));
+            });
+            if(searchDetails != null){
+                model = model.Where(m => string.IsNullOrEmpty(searchDetails.Name) || m.Name.Contains(searchDetails.Name));
+                model = model.Where(m => m.CPUSocketId == searchDetails.CPUSocketId || searchDetails.CPUSocketId == null);
+                model = model.Where(m => m.ManufacturerId == searchDetails.ManufacturerId || searchDetails.ManufacturerId == null);
+                if (searchDetails.MinPrice.HasValue)
+                {
+                    model = model.Where(m => m.Price >= searchDetails.MinPrice);
+                }
+                if (searchDetails.MaxPrice.HasValue)
+                {
+                    model = model.Where(m => m.Price <= searchDetails.MaxPrice);
+                }
+                if (searchDetails.MinFrequency.HasValue)
+                {
+                    model = model.Where(m => m.Frequency >= searchDetails.MinFrequency);
+                }
+                if (searchDetails.MaxFrequency.HasValue)
+                {
+                    model = model.Where(m => m.Frequency <= searchDetails.MaxFrequency);
+                }
+                if (searchDetails.MinCores.HasValue)
+                {
+                    model = model.Where(m => m.CoresNumber >= searchDetails.MinCores);
+                }
+                if (searchDetails.MaxCores.HasValue)
+                {
+                    model = model.Where(m => m.CoresNumber <= searchDetails.MaxCores);
+                }
+
+            }
 
             return PartialView("Index", model);
         }
@@ -187,6 +219,7 @@ namespace FerumChecker.Web.Controllers
         }
 
         // GET: CPU/Create
+        [Authorize(Roles = "Administrator")]
         public ActionResult Create()
         {
             var sockets = _cpuSocketService.GetCPUSockets();
@@ -199,6 +232,7 @@ namespace FerumChecker.Web.Controllers
         // POST: CPU/Create
         [HttpPost]
         //[ValidateAntiForgeryToken]
+        [Authorize(Roles = "Administrator")]
         public IActionResult Create(CPUViewModel model)
         {
             if (ModelState.IsValid)
@@ -242,6 +276,7 @@ namespace FerumChecker.Web.Controllers
 
         // GET: CPU/Create
         [HttpGet]
+        [Authorize(Roles = "Administrator")]
         public ActionResult Edit(int id)
         {
             var cpu = _cpuService.GetCPU(id);
@@ -276,6 +311,7 @@ namespace FerumChecker.Web.Controllers
         // POST: CPU/Edit/5
         [HttpPost]
         //[ValidateAntiForgeryToken]
+        [Authorize(Roles = "Administrator")]
         public ActionResult Edit(CPUViewModel model)
         {
             var cpu = _cpuService.GetCPU(model.Id);
@@ -326,6 +362,7 @@ namespace FerumChecker.Web.Controllers
 
         // POST: CPU/Delete/5
         [HttpPost]
+        [Authorize(Roles = "Administrator")]
         //[ValidateAntiForgeryToken]
         public IActionResult Delete(int id)
         {
@@ -350,6 +387,15 @@ namespace FerumChecker.Web.Controllers
         {
             var sentences = description.Split('.');
             return (sentences != null && sentences[0] != null) ? sentences[0] + "..."  : "";
+        }
+
+        public IActionResult Search()
+        {
+            var sockets = _cpuSocketService.GetCPUSockets();
+            ViewBag.Sockets = new SelectList(sockets, "Id", "Name");
+            var manufacturers = _manufacturerService.GetManufacturers();
+            ViewBag.Manufacturers = new SelectList(manufacturers, "Id", "Name");
+            return PartialView();
         }
     }
 }

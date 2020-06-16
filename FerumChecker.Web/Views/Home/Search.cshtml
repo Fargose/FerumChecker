@@ -1,0 +1,80 @@
+﻿
+@*
+    For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@model FerumChecker.Web.ViewModel.Search.AssemblySearchModel
+<div class="CPU-search-container">
+    <div>
+        <form>
+            <h3>Пошук</h3>
+            <div class="form-group" hidden>
+                <label asp-for="Name" class="control-label"></label>
+                <input asp-for="Name" class="form-control" id="Name" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="MinPrice" class="control-label"></label>
+                <input asp-for="MinPrice" class="form-control" />
+                <span asp-validation-for="MinPrice" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="MaxPrice" class="control-label"></label>
+                <input asp-for="MaxPrice" class="form-control" />
+                <span asp-validation-for="MaxPrice" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="MinCores" class="control-label"></label>
+                <input asp-for="MinCores" class="form-control" />
+                <span asp-validation-for="MinCores" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="MaxCores" class="control-label"></label>
+                <input asp-for="MaxCores" class="form-control" />
+                <span asp-validation-for="MaxCores" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="MinFrequency" class="control-label"></label>
+                <input asp-for="MinFrequency" class="form-control" />
+                <span asp-validation-for="MinFrequency" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="MaxFrequency" class="control-label"></label>
+                <input asp-for="MaxFrequency" class="form-control" />
+                <span asp-validation-for="MaxFrequency" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="MinRAM" class="control-label"></label>
+                <input asp-for="MinRAM" class="form-control" />
+                <span asp-validation-for="MinRAM" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="MaxRAM" class="control-label"></label>
+                <input asp-for="MaxRAM" class="form-control" />
+                <span asp-validation-for="MaxRAM" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="MinVolume" class="control-label"></label>
+                <input asp-for="MinVolume" class="form-control" />
+                <span asp-validation-for="MinVolume" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="MaxVolume" class="control-label"></label>
+                <input asp-for="MaxVolume" class="form-control" />
+                <span asp-validation-for="MaxVolume" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="MinVideoMemory" class="control-label"></label>
+                <input asp-for="MinVideoMemory" class="form-control" />
+                <span asp-validation-for="MinVideoMemory" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="MaxVideoMemory" class="control-label"></label>
+                <input asp-for="MaxVideoMemory" class="form-control" />
+                <span asp-validation-for="MaxVideoMemory" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Фільтрувати" class="btn btn-primary search-assembly" />
+            </div>
+        </form>
+    </div>
+</div>

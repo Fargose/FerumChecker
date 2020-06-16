@@ -35,6 +35,9 @@ namespace FerumChecker.Service.Services.Hardware
             
             Database.CPUs.Update(cpu);
             Database.Save();
+            cpu = GetCPU(cpu.Id);
+            _computerAssemblyService.OnCPUChange(cpu);
+            Database.Save();
             return new OperationDetails(true, "Ok", "");
         }
 
@@ -47,6 +50,7 @@ namespace FerumChecker.Service.Services.Hardware
 
         public OperationDetails DeleteCPU(int? id)
         {
+            _computerAssemblyService.OnCPUDelete(id.Value);
             Database.CPUs.Delete(id.Value);
             Database.Save();
             return new OperationDetails(true, "Ok", "");

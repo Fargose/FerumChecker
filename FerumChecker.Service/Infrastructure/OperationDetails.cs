@@ -28,7 +28,7 @@ namespace FerumChecker.Service.Infrastructure
         public string Property { get; private set; }
         public object Data { get; private set; }
 
-        public int RamFree { get; set; }
+        public int?  RamFree { get; set; }
 
         public int? MemoryFree { get; set; }
     }

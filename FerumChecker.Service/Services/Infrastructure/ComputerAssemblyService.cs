@@ -91,14 +91,16 @@ namespace FerumChecker.Service.Services.Infrastructure
         {
             var result = true;
             var resultMessages = new List<string>();
-
             if (computerAssembly.MotherBoard != null)
             {
                 computerAssembly.MotherBoard = Database.MotherBoards.Get(computerAssembly.MotherBoardId.Value);
                 if (computerAssembly.MotherBoard.CPUSocketId != cpu.CPUSocketId)
                 {
                     result = false;
-                    resultMessages.Add("Сокети на процесорі (" + cpu.CPUSocket.Name + ") та материнській платі (" + computerAssembly.MotherBoard.CPUSocket.Name + ") не співпадають");
+                    if (cpu.CPUSocket != null)
+                    {
+                        resultMessages.Add("Сокети на процесорі (" + cpu.CPUSocket.Name + ") та материнській платі (" + computerAssembly.MotherBoard.CPUSocket.Name + ") не співпадають");
+                    }
                 }
             }
             return new OperationDetails(result, resultMessages, "");
@@ -143,7 +145,10 @@ namespace FerumChecker.Service.Services.Infrastructure
                 if (computerAssembly.CPU.CPUSocketId != motherBoard.CPUSocketId)
                 {
                     result = false;
-                    resultMessages.Add("Сокети на процесорі (" + computerAssembly.CPU.CPUSocket.Name + ") та материнській платі (" + motherBoard.CPUSocket.Name + ") не співпадають");
+                    //if (motherBoard.CPUSocket != null)
+                    {
+                        resultMessages.Add("Сокети на процесорі (" + computerAssembly.CPU.CPUSocket.Name + ") та материнській платі (" + motherBoard.CPUSocket.Name + ") не співпадають");
+                    }
                 }
             }
             if (computerAssembly.PCCase != null)
@@ -165,10 +170,10 @@ namespace FerumChecker.Service.Services.Infrastructure
                 }
             }
             var bufferResult = CheckMotherBoardOnRAM(motherBoard, computerAssembly);
-            result = bufferResult.Succedeed;
+            result = result && bufferResult.Succedeed;
             resultMessages = resultMessages.Concat(bufferResult.Messages).ToList();
             bufferResult = CheckMotherBoardOnOuterMemory(motherBoard, computerAssembly);
-            result = bufferResult.Succedeed;
+            result = result && bufferResult.Succedeed;
             resultMessages = resultMessages.Concat(bufferResult.Messages).ToList();
             return new OperationDetails(result, resultMessages, ""); ;
         }
@@ -229,65 +234,65 @@ namespace FerumChecker.Service.Services.Infrastructure
             }
             return new OperationDetails(result, resultMessages, "");
         }
-        private OperationDetails CheckMotherBoardOnRAM(MotherBoard motherBoard, ComputerAssembly computerAssembly)
-        {
-            var result = true;
-            var resultMessages = new List<string>();
-            var bufferList = new List<ComputerAssemblyRAM>(computerAssembly.ComputerAssemblyRAMs);
-            if(GetTotalRAM(computerAssembly) > motherBoard.MaxMemory)
+            private OperationDetails CheckMotherBoardOnRAM(MotherBoard motherBoard, ComputerAssembly computerAssembly)
             {
-                result = false;
-                resultMessages.Add("Материнська плата не підтримує таки обсяг ОЗП");
-            }
-            foreach (var slot in motherBoard.MotherBoardRAMSlots)
-            {
-                var usedRAM = bufferList.FirstOrDefault(m => m.RAM.RAMTypeId == slot.RAMTypeId);
-                if (usedRAM != null)
+                var result = true;
+                var resultMessages = new List<string>();
+                var bufferList = new List<ComputerAssemblyRAM>(computerAssembly.ComputerAssemblyRAMs);
+                if(GetTotalRAM(computerAssembly) > motherBoard.MaxMemory)
                 {
-                    bufferList.Remove(usedRAM);
+                    result = false;
+                    resultMessages.Add("Материнська плата не підтримує таки обсяг ОЗП");
                 }
-            }
-            if (bufferList.Any())
-            {
-                result = false;
-                resultMessages.Add("Материнська плата не має підходячих інтерфейсів для ОЗП");
-            }
-            return new OperationDetails(result, resultMessages, "");
-        }
-        private OperationDetails CheckMotherBoardOnOuterMemory(MotherBoard motherBoard, ComputerAssembly computerAssembly)
-        {
-            var result = true;
-            var resultMessages = new List<string>();
-            var bufferList2 = new List<ComputerAssemblyHDD>(computerAssembly.HDDs);
-            foreach (var slot in motherBoard.MotherBoardOuterMemorySlots)
-            {
-                var usedRAM = bufferList2.FirstOrDefault(m => m.HDD.OuterMemoryInterfaceId == slot.OuterMemoryInterfaceId);
-                if (usedRAM != null)
+                foreach (var slot in motherBoard.MotherBoardRAMSlots)
                 {
-                    bufferList2.Remove(usedRAM);
+                    var usedRAM = bufferList.FirstOrDefault(m => m.RAM.RAMTypeId == slot.RAMTypeId);
+                    if (usedRAM != null)
+                    {
+                        bufferList.Remove(usedRAM);
+                    }
                 }
-            }
-            if (bufferList2.Any())
-            {
-                result = false;
-                resultMessages.Add("Материнська плата не має підходячих інтерфейсів для HHD диска");
-            }
-            var bufferList3 = new List<ComputerAssemblySSD>(computerAssembly.SSDs);
-            foreach (var slot in motherBoard.MotherBoardOuterMemorySlots)
-            {
-                var usedRAM = bufferList3.FirstOrDefault(m => m.SSD.OuterMemoryInterfaceId == slot.OuterMemoryInterfaceId);
-                if (usedRAM != null)
+                if (bufferList.Any())
                 {
-                    bufferList3.Remove(usedRAM);
+                    result = false;
+                    resultMessages.Add("Материнська плата не має підходячих інтерфейсів для ОЗП");
                 }
+                return new OperationDetails(result, resultMessages, "");
             }
-            if (bufferList3.Any())
+            private OperationDetails CheckMotherBoardOnOuterMemory(MotherBoard motherBoard, ComputerAssembly computerAssembly)
             {
-                result = false;
-                resultMessages.Add("Материнська плата не має підходячих інтерфейсів для SSD диска");
+                var result = true;
+                var resultMessages = new List<string>();
+                var bufferList2 = new List<ComputerAssemblyHDD>(computerAssembly.HDDs);
+                foreach (var slot in motherBoard.MotherBoardOuterMemorySlots)
+                {
+                    var usedRAM = bufferList2.FirstOrDefault(m => m.HDD.OuterMemoryInterfaceId == slot.OuterMemoryInterfaceId);
+                    if (usedRAM != null)
+                    {
+                        bufferList2.Remove(usedRAM);
+                    }
+                }
+                if (bufferList2.Any())
+                {
+                    result = false;
+                    resultMessages.Add("Материнська плата не має підходячих інтерфейсів для HHD диска");
+                }
+                var bufferList3 = new List<ComputerAssemblySSD>(computerAssembly.SSDs);
+                foreach (var slot in motherBoard.MotherBoardOuterMemorySlots)
+                {
+                    var usedRAM = bufferList3.FirstOrDefault(m => m.SSD.OuterMemoryInterfaceId == slot.OuterMemoryInterfaceId);
+                    if (usedRAM != null)
+                    {
+                        bufferList3.Remove(usedRAM);
+                    }
+                }
+                if (bufferList3.Any())
+                {
+                    result = false;
+                    resultMessages.Add("Материнська плата не має підходячих інтерфейсів для SSD диска");
+                }
+                return new OperationDetails(result, resultMessages, "");
             }
-            return new OperationDetails(result, resultMessages, "");
-        }
 
         public OperationDetails SetHDD(int hddId, int assemblyId)
         {
@@ -366,12 +371,7 @@ namespace FerumChecker.Service.Services.Infrastructure
                 Database.Save();
             }
             var details = result;
-            details.MemoryFree = pcCase.PCCaseOuterMemoryFormFactors.Count();
-            if (computerAssembly.MotherBoard != null)
-            {
-                computerAssembly.MotherBoard = Database.MotherBoards.Get(computerAssembly.MotherBoardId.Value);
-                details.MemoryFree = Math.Min(computerAssembly.MotherBoard.MotherBoardOuterMemorySlots.Count(), details.MemoryFree.Value);
-            }
+            details.MemoryFree = CalculateFreeOuterMemorySlot(computerAssembly);
             return details;
         }
         private OperationDetails CheckPCCase(PCCase pcCase, ComputerAssembly computerAssembly)
@@ -388,7 +388,7 @@ namespace FerumChecker.Service.Services.Infrastructure
                 }
             }
             var bufferResult = CheckPCCaseOnOuterMemory(pcCase, computerAssembly);
-            result = bufferResult.Succedeed;
+            result = result && bufferResult.Succedeed;
             resultMessages = resultMessages.Concat(bufferResult.Messages).ToList();
             return new OperationDetails(result, resultMessages, "");
         }
@@ -445,6 +445,7 @@ namespace FerumChecker.Service.Services.Infrastructure
                 UpdateComputerAssembly(computerAssembly);
                 Database.Save();
             }
+            result.MemoryFree = CalculateFreeOuterMemorySlot(computerAssembly);
             return result;
         }
         private OperationDetails CheckPowerSupply (PowerSupply powerSupply, ComputerAssembly computerAssembly)
@@ -550,7 +551,7 @@ namespace FerumChecker.Service.Services.Infrastructure
                 if (GetTotalRAM(computerAssembly) + ram.MemorySize > computerAssembly.MotherBoard.MaxMemory)
                 {
                     result = false;
-                    resultMessages.Add("Материнська плата не підтримує таки обсяг ОЗП");
+                    resultMessages.Add("Материнська плата не підтримує такий обсяг ОЗП");
                 }
                 var freeSlots = GetFreeRamSlots(computerAssembly);
                 if (!freeSlots.Any(m => m.RAMTypeId == ram.RAMTypeId))
@@ -635,7 +636,6 @@ namespace FerumChecker.Service.Services.Infrastructure
             Database.ComputerAssemblies.Update(assembly);
             Database.Save();
             var result = new OperationDetails(true, "Ok", "");
-            result.MemoryFree = 1;
             result.MemoryFree = CalculateFreeOuterMemorySlot(assembly);
             return result;
         }
@@ -674,7 +674,9 @@ namespace FerumChecker.Service.Services.Infrastructure
                 Database.ComputerAssemblySSDs.Delete(ssd.Id);
                 Database.Save();
             }
-            return new OperationDetails(true, "Ok", "");
+            var result = new OperationDetails(true, "Ok", "");
+            result.MemoryFree = CalculateFreeOuterMemorySlot(computerAssembly);
+            return result;
         }
 
         public OperationDetails RemoveHDD(ComputerAssembly computerAssembly, int id)
@@ -689,7 +691,9 @@ namespace FerumChecker.Service.Services.Infrastructure
                 Database.ComputerAssemblyHDDs.Delete(hdd.Id);
                 Database.Save();
             }
-            return new OperationDetails(true, "Ok", "");
+            var result = new OperationDetails(true, "Ok", "");
+            result.MemoryFree = CalculateFreeOuterMemorySlot(computerAssembly);
+            return result;
         }
 
         public OperationDetails RemoveRam(ComputerAssembly computerAssembly, int id)
@@ -704,7 +708,9 @@ namespace FerumChecker.Service.Services.Infrastructure
                 Database.ComputerAssemblyRAMs.Delete(ram.Id);
                 Database.Save();
             }
-            return new OperationDetails(true, "Ok", "");
+            var result = new OperationDetails(true, "Ok", "");
+            result.RamFree = CalculateFreeRAMSlot(computerAssembly);
+            return result;
         }
 
         public int CalculateFreeRAMSlot(ComputerAssembly computerAssembly)
@@ -1135,82 +1141,252 @@ namespace FerumChecker.Service.Services.Infrastructure
 
         public OperationDetails OnRAMDelete(int id)
         {
-            throw new NotImplementedException();
+            var assemblies = GetComputerAssemblies().ToList();
+            foreach (var asseb in assemblies)
+            {
+                foreach (var ssd in asseb.ComputerAssemblyRAMs)
+                {
+                    if (ssd.RAMId == id)
+                    {
+                        RemoveRam(asseb, id);
+                    }
+                }
+            }
+
+            return new OperationDetails(true, "", "");
         }
 
         public OperationDetails OnCPUDelete(int id)
         {
-            throw new NotImplementedException();
+            var assemblies = GetComputerAssemblies().ToList();
+            foreach (var asseb in assemblies)
+            {
+                if(asseb.CPUId == id)
+                {
+                    RemoveCPU(asseb);
+                }
+            }
+
+            return new OperationDetails(true, "", "");
         }
 
         public OperationDetails OnMotherBoardDelete(int id)
         {
-            throw new NotImplementedException();
+            var assemblies = GetComputerAssemblies().ToList();
+            foreach (var asseb in assemblies)
+            {
+                if (asseb.MotherBoardId == id)
+                {
+                    RemoveMotherBoard(asseb);
+                }
+            }
+
+            return new OperationDetails(true, "", "");
         }
 
         public OperationDetails OnSSDDelete(int id)
         {
-            throw new NotImplementedException();
+            var assemblies = GetComputerAssemblies().ToList();
+            foreach (var asseb in assemblies)
+            {
+                foreach(var ssd in asseb.SSDs)
+                {
+                    if (ssd.SSDId == id)
+                    {
+                        RemoveSSD(asseb, id);
+                    }
+                }
+            }
+
+            return new OperationDetails(true, "", "");
         }
 
         public OperationDetails OnHDDDelete(int id)
         {
-            throw new NotImplementedException();
+            var assemblies = GetComputerAssemblies().ToList();
+            foreach (var asseb in assemblies)
+            {
+                foreach (var ssd in asseb.HDDs)
+                {
+                    if (ssd.HDDId == id)
+                    {
+                        RemoveHDD(asseb, id);
+                    }
+                }
+            }
+
+            return new OperationDetails(true, "", "");
         }
 
         public OperationDetails OnPCCaseDelete(int id)
         {
-            throw new NotImplementedException();
+            var assemblies = GetComputerAssemblies().ToList();
+            foreach (var asseb in assemblies)
+            {
+                if (asseb.PCCaseId == id)
+                {
+                    RemovePCCase(asseb);
+                }
+            }
+
+            return new OperationDetails(true, "", "");
         }
 
         public OperationDetails OnPowerSupplyDelete(int id)
         {
-            throw new NotImplementedException();
+            var assemblies = GetComputerAssemblies().ToList();
+            foreach (var asseb in assemblies)
+            {
+                if (asseb.PowerSupplyId == id)
+                {
+                    RemovePowerSupply(asseb);
+                }
+            }
+
+            return new OperationDetails(true, "", "");
         }
 
         public OperationDetails OnVideoCardDelete(int id)
         {
-            throw new NotImplementedException();
+            var assemblies = GetComputerAssemblies().ToList();
+            foreach (var asseb in assemblies)
+            {
+                foreach (var ssd in asseb.VideoCards)
+                {
+                    if (ssd.VideoCardId == id)
+                    {
+                        RemoveVideoCard(asseb);
+                    }
+                }
+            }
+
+            return new OperationDetails(true, "", "");
         }
 
-        public OperationDetails OnRAMChange(int id)
+        public OperationDetails OnRAMChange(RAM ram)
         {
-            throw new NotImplementedException();
+            var assemblies = GetComputerAssemblies().ToList();
+            foreach (var asseb in assemblies)
+            {
+                foreach (var ssd in asseb.ComputerAssemblyRAMs)
+                {
+                    if (ssd.RAMId == ram.Id && !CheckRAM(ram, asseb).Succedeed)
+                    {
+                        RemoveRam(asseb, ram.Id);
+                    }
+                }
+            }
+
+            return new OperationDetails(true, "", "");
         }
 
-        public OperationDetails OnCPUChange(int id)
+        public OperationDetails OnCPUChange(CPU cpu)
         {
-            throw new NotImplementedException();
+            var assemblies = GetComputerAssemblies().ToList();
+            foreach (var asseb in assemblies)
+            {
+                if (asseb.CPUId == cpu.Id && !CheckCPU(cpu, asseb).Succedeed)
+                {
+                    RemoveCPU(asseb);
+                }
+            }
+
+            return new OperationDetails(true, "", "");
         }
 
-        public OperationDetails OnMotherBoardChange(int id)
+        public OperationDetails OnMotherBoardChange(MotherBoard motherBoard)
         {
-            throw new NotImplementedException();
+            var assemblies = GetComputerAssemblies().ToList();
+            foreach (var asseb in assemblies)
+            {
+                if (asseb.MotherBoardId == motherBoard.Id && !CheckMotherBoard(motherBoard, asseb).Succedeed)
+                {
+                    RemoveMotherBoard(asseb);
+                }
+            }
+
+            return new OperationDetails(true, "", "");
         }
 
-        public OperationDetails OnSSDChange(int id)
+        public OperationDetails OnSSDChange(SSD ssdd)
         {
-            throw new NotImplementedException();
+                var assemblies = GetComputerAssemblies().ToList();
+            foreach (var asseb in assemblies)
+                {
+                    foreach (var ssd in asseb.SSDs)
+                    {
+                        if (ssd.SSDId == ssdd.Id && !CheckSSD(ssdd, asseb).Succedeed)
+                        {
+                            RemoveSSD(asseb, ssdd.Id);
+                        }
+                    }
+                }
+
+                return new OperationDetails(true, "", "");
+            
         }
 
-        public OperationDetails OnHDDChange(int id)
+        public OperationDetails OnHDDChange(HDD hdd)
+        { 
+                var assemblies = GetComputerAssemblies().ToList();
+                foreach (var asseb in assemblies)
+                {
+                    foreach (var ssd in asseb.HDDs)
+                    {
+                        if (ssd.HDDId == hdd.Id && !CheckHDD(hdd, asseb).Succedeed)
+                        {
+                            RemoveHDD(asseb, hdd.Id);
+                        }
+                    }
+                }
+
+                return new OperationDetails(true, "", "");
+            }
+        
+
+        public OperationDetails OnPCCaseChange(PCCase pcaCase)
         {
-            throw new NotImplementedException();
+            var assemblies = GetComputerAssemblies().ToList();
+            foreach (var asseb in assemblies)
+            {
+                if (asseb.PCCaseId == pcaCase.Id && !CheckPCCase(pcaCase, asseb).Succedeed)
+                {
+                    RemovePCCase(asseb);
+                }
+            }
+
+            return new OperationDetails(true, "", "");
         }
 
-        public OperationDetails OnPCCaseChange(int id)
+        public OperationDetails OnPowerSupplyChange(PowerSupply powerSupply)
         {
-            throw new NotImplementedException();
+            var assemblies = GetComputerAssemblies().ToList();
+            foreach (var asseb in assemblies)
+            {
+                if (asseb.PowerSupplyId == powerSupply.Id && !CheckPowerSupply(powerSupply, asseb).Succedeed)
+                {
+                    RemovePowerSupply(asseb);
+                }
+            }
+
+            return new OperationDetails(true, "", "");
         }
 
-        public OperationDetails OnPowerSupplyChange(int id)
+        public OperationDetails OnVideoCardChange(VideoCard videoCard)
         {
-            throw new NotImplementedException();
-        }
+            var assemblies = GetComputerAssemblies().ToList();
+            foreach (var asseb in assemblies)
+            {
+                foreach (var ssd in asseb.VideoCards)
+                {
+                    if (ssd.VideoCardId == videoCard.Id && !CheckVideoCard(videoCard, asseb).Succedeed)
+                    {
+                        RemoveVideoCard(asseb);
+                    }
+                }
+            }
 
-        public OperationDetails OnVideoCardChange(int id)
-        {
-            throw new NotImplementedException();
+            return new OperationDetails(true, "", "");
         }
 
         public OperationDetails SoftwareSyncEvaluate(int id, ComputerAssembly computerAssembly)
@@ -1404,6 +1580,57 @@ namespace FerumChecker.Service.Services.Infrastructure
             }
 
             return sum;
+        }
+
+        public decimal CalculatePrice(ComputerAssembly computerAssembly)
+        {
+            decimal price = 0;
+            if(computerAssembly.CPU != null)
+            {
+                price += computerAssembly.CPU.Price;
+            }
+            if (computerAssembly.MotherBoard != null)
+            {
+                price += computerAssembly.MotherBoard.Price;
+            }
+            if(computerAssembly.PowerSupply != null)
+            {
+                price += computerAssembly.PowerSupply.Price;
+            }
+            if(computerAssembly.PCCase != null)
+            {
+                price += computerAssembly.PCCase.Price;
+            }
+            if(computerAssembly.VideoCards.Count() > 0)
+            {
+                foreach(var videoCard in computerAssembly.VideoCards)
+                {
+                    price += videoCard.VideoCard.Price;
+                }
+            }
+            if (computerAssembly.ComputerAssemblyRAMs.Count() > 0)
+            {
+                foreach (var ram in computerAssembly.ComputerAssemblyRAMs)
+                {
+                    price += ram.RAM.Price;
+                }
+            }
+            if (computerAssembly.SSDs.Count() > 0)
+            {
+                foreach (var ssd in computerAssembly.SSDs)
+                {
+                    price += ssd.SSD.Price;
+                }
+            }
+            if (computerAssembly.HDDs.Count() > 0)
+            {
+                foreach (var hdd in computerAssembly.HDDs)
+                {
+                    price += hdd.HDD.Price;
+                }
+            }
+
+            return price;
         }
     }
 }

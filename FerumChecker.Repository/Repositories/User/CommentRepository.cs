@@ -20,12 +20,12 @@ namespace FerumChecker.Repository.Repositories.User
 
         public IEnumerable<Comment> GetAll()
         {
-            return db.Comments;
+            return db.Comments.Include(m => m.Owner);
         }
 
         public Comment Get(int id)
         {
-            return db.Comments.Find(id);
+            return db.Comments.Include(m => m.Owner).FirstOrDefault(m => m.Id == id);
         }
 
         public void Create(Comment comment)

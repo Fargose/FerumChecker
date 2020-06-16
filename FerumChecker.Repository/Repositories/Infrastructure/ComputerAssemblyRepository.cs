@@ -21,21 +21,7 @@ namespace FerumChecker.Repository.Repositories.Infrastructure
 
         public IEnumerable<ComputerAssembly> GetAll()
         {
-            return db.ComputerAssemblies.Include(m => m.CPU)
-                .Include(m => m.MotherBoard)
-                .Include(m => m.PowerSupply)
-                .Include(m => m.PCCase)
-                .Include(m => m.VideoCards).ThenInclude(m => m.VideoCard)
-                .Include(m => m.ComputerAssemblyRAMs).ThenInclude(m => m.RAM)
-                .Include(m => m.HDDs).ThenInclude(m => m.HDD)
-                .Include(m => m.SSDs).ThenInclude(m => m.SSD)
-                .Include(m => m.Owner);
-        }
-
-        public ComputerAssembly Get(int id)
-        {
-            return db.ComputerAssemblies
-                .Include(m => m.CPU)
+            return db.ComputerAssemblies.Include(m => m.CPU).ThenInclude(m => m.CPUSocket)
                 .Include(m => m.MotherBoard)
                 .Include(m => m.PowerSupply)
                 .Include(m => m.PCCase)
@@ -44,6 +30,22 @@ namespace FerumChecker.Repository.Repositories.Infrastructure
                 .Include(m => m.HDDs).ThenInclude(m => m.HDD)
                 .Include(m => m.SSDs).ThenInclude(m => m.SSD)
                 .Include(m => m.Owner)
+                .Include(m => m.Comments).ThenInclude(m => m.Owner);
+        }
+
+        public ComputerAssembly Get(int id)
+        {
+            return db.ComputerAssemblies
+                .Include(m => m.CPU).ThenInclude(m => m.CPUSocket)
+                .Include(m => m.MotherBoard).ThenInclude(m => m.CPUSocket)
+                .Include(m => m.PowerSupply)
+                .Include(m => m.PCCase)
+                .Include(m => m.VideoCards).ThenInclude(m => m.VideoCard)
+                .Include(m => m.ComputerAssemblyRAMs).ThenInclude(m => m.RAM)
+                .Include(m => m.HDDs).ThenInclude(m => m.HDD)
+                .Include(m => m.SSDs).ThenInclude(m => m.SSD)
+                .Include(m => m.Owner)
+                .Include(m => m.Comments).ThenInclude(m => m.Owner)
                 .FirstOrDefault(m => m.Id == id);
         }
 

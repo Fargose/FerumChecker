@@ -57,7 +57,7 @@ namespace FerumChecker.Web.Controllers
                 else
                 {
 
-                    ModelState.AddModelError(string.Empty, "");
+                    ModelState.AddModelError("Email", "Користувач з такою електронною адресою вже існує.");
                 }
             }
             return View(model);
@@ -93,7 +93,7 @@ namespace FerumChecker.Web.Controllers
                 }
                 else
                 {
-                    ModelState.AddModelError("", "Bad crederial");
+                    ModelState.AddModelError("", "Неправильний email або пароль, спробуйте ще раз.");
                 }
             }
             return View(model);

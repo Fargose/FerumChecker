@@ -99,7 +99,31 @@ AssemblyEditor.prototype.init = function (id) {
             }
         });
     })
+
+    $(".button-public").click(function (e) {
+        var button = this;
+
+        var value = 'true' == $(this).attr("data-public");
+        BasicWidgets.loading($("body"), true);
+        $.ajax({
+            url: "/Editor/SetPublic/",
+            type: "POST",
+            data: { id: self.ComputerAssemblyId, isPublic: !value },
+            success: function (data) {
+                
+                if (!value) {
+                    $(button).find("span").html("Зробити збіку приватною");
+                }
+                else {
+                    $(button).find("span").html("Зробити збірку публічною");
+                }
+                $(button).attr("data-public", !value);
+                BasicWidgets.loading($("body"), false);
+            }
+        });
+    })
     this.updateRecomendation();
+    this.updateStat();
 }
 
 
@@ -155,6 +179,7 @@ AssemblyEditor.prototype.setHardware = function (id, type, image, name, multiple
                         $(elem[0]).find(".hardware-img").attr("src", image);
                         $(elem[0]).attr("data-original-title", name);
                         $(elem[0]).attr("data-id", id);
+                        $(elem[0]).attr("data-type", type);
                     } else {
                         if (type.toLowerCase() == "ram") {
                             $(".ram-slot-container").append('<div class="hardware-slot ram-slot multiple" data-toggle="tooltip" data-original-title="' + name + '" data-type="' + type + '" data-id="'+id+'"><img class="hardware-img" src = "' + image + '"/></div>')
@@ -169,7 +194,7 @@ AssemblyEditor.prototype.setHardware = function (id, type, image, name, multiple
                     $("." + slot).find(".hardware-img").attr("src", image);
                     $("." + slot).attr("data-id", id);
                     $("." + slot).attr("data-original-title", name);
-                    if (data.ramFree) {
+                    if (data.ramFree || data.ramFree == 0) {
                         var size = $(".ram-slot").length;
                         if (data.ramFree >= size) {
                             for (var i = size; i < data.ramFree; i++) {
@@ -179,14 +204,16 @@ AssemblyEditor.prototype.setHardware = function (id, type, image, name, multiple
                             $(".ram-slot[data-id='']").remove();
                         }
                     }
-                    if (data.memoryFree) {
-                        var size = $(".outer-memory-slot").length;
-                        if (data.memoryFree >= size) {
+                    if (data.memoryFree || data.memoryFree == 0) {
+                        var size = $(".outer-memory-slot[data-id='']").length;
+                        if (data.memoryFree > size) {
                             for (var i = size; i < data.memoryFree; i++) {
                                 $(".outermemory-slot-container").append('<div class="hardware-slot outer-memory-slot multiple" data-toggle="tooltip" title="Пусто" data-type="" data-id=""><img class="hardware-img" src = ""/></div>')
                             }
-                        } else {
-                            $(".outer-memory-slot[data-id='']").remove();
+                        } else if (data.memoryFree < size){
+                            for (var i = size; i >  data.memoryFree; i--) {
+                                $(".outer-memory-slot[data-id='']")[0].remove();
+                            }
                         }
                     }
                 }
@@ -220,6 +247,9 @@ AssemblyEditor.prototype.setHardware = function (id, type, image, name, multiple
                 }
             }
             self.updateRecomendation();
+            self.updateStat();
+            $('[data-toggle="tooltip"]').tooltip();
+
         }
     });
 }
@@ -236,19 +266,29 @@ AssemblyEditor.prototype.removeHardware = function (elem) {
                 elem.find(".hardware-img").attr("src", "");
                 elem.attr("data-original-title", "Пусто");
                 elem.attr("data-id", "");
-                if (data.ramFree) {
+                if (data.ramFree || data.ramFree == 0) {
                     var size = $(".ram-slot").length;
-                    while ($(".ram-slot[data-id='']").length >= data.ramFree) {
-                        $(".ram-slot[data-id='']")[0].remove();
+                    while ($(".ram-slot[data-id='']").length > data.ramFree) {
+                        if ($(".ram-slot[data-id='']")[0]) {
+                            $(".ram-slot[data-id='']")[0].remove();
+                        }
                     }
                     if ($(".ram-slot").length == 0) {
                         $(".ram-slot-container").append('<div class="hardware-slot ram-slot multiple" data-toggle="tooltip" title="Пусто" data-type="RAM" data-id=""><img class="hardware-img" src = ""/></div>')
                     }
                 }
-                if (data.memoryFree) {
-                    var size = $(".ram-slot").length;
-                    while ($(".outer-memory-slot[data-id='']").length >= data.memoryFree) {
-                        $(".outer-memory-slot[data-id='']")[0].remove();
+                if (data.memoryFree || data.memoryFree == 0) {
+                    var size = $(".outer-memory-slot[data-id='']").length;
+                    if (data.memoryFree > size) {
+                        for (var i = size; i < data.memoryFree; i++) {
+                            $(".outermemory-slot-container").append('<div class="hardware-slot outer-memory-slot multiple" data-toggle="tooltip" title="Пусто" data-type="" data-id=""><img class="hardware-img" src = ""/></div>')
+                        }
+                    } else if (data.memoryFree < size) {
+                        for (var i = size; i > data.memoryFree; i--) {
+                            if ($(".outer-memory-slot[data-id='']")[0]) {
+                                $(".outer-memory-slot[data-id='']")[0].remove();
+                            }
+                        }
                     }
                     if ($(".outer-memory-slot").length == 0) {
                         $(".outermemory-slot-container").append('<div class="hardware-slot outer-memory-slot multiple" data-toggle="tooltip" data-original-title="" data-type="" data-id=""><img class="hardware-img" src = ""/></div>')
@@ -259,6 +299,7 @@ AssemblyEditor.prototype.removeHardware = function (elem) {
                 alert("Щось пішло не так");
             }
             self.updateRecomendation();
+            self.updateStat();
         }
     });
 }
@@ -288,6 +329,17 @@ AssemblyEditor.prototype.updateRecomendation = function () {
         data: { assemblyId: self.ComputerAssemblyId },
         success: function (content) {
             $(".recomendation-container").html(content);
+        }
+    })
+}
+
+AssemblyEditor.prototype.updateStat = function () {
+    var self = this;
+    $.ajax({
+        url: "/Editor/AssemblyStat",
+        data: { assemblyId: self.ComputerAssemblyId },
+        success: function (content) {
+            $(".stat-container").find(".content").html(content);
         }
     })
 }

@@ -39,8 +39,9 @@
                                 @if (User.IsInRole("Administrator"))
                                 {
                                     <a class='edit-link' asp-controller="Motherboard" asp-action="edit" asp-route-id="@item.Id"><i class='fas fa-edit'></i></a>
-                                }
+
                                     <a class='delete-link'><i class='fas fa-trash'></i></a>
+                                }
                                 </div>
                         </div>
                     </div>

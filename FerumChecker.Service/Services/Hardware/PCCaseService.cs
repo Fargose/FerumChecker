@@ -37,10 +37,12 @@ namespace FerumChecker.Service.Services.Hardware
         {
             
             Database.PCCases.Update(pcCase);
-
-            Database.Save();
             SetMotherBoardFormFactors(pcCase, (List<PCCaseMotherBoardFormFactor>)pcCase.PCCaseMotherBoardFormFactors);
             SetOuterMemoryFormFactors(pcCase, (List<PCCaseOuterMemoryFormFactor>)pcCase.PCCaseOuterMemoryFormFactors);
+            Database.Save();
+            pcCase = GetPCCase(pcCase.Id);
+            _computerAssemblyService.OnPCCaseChange(pcCase);
+            Database.Save();
             return new OperationDetails(true, "Ok", "");
         }
 
@@ -56,6 +58,8 @@ namespace FerumChecker.Service.Services.Hardware
 
         public OperationDetails DeletePCCase(int? id)
         {
+
+            _computerAssemblyService.OnPCCaseDelete(id.Value);
             Database.PCCases.Delete(id.Value);
             Database.Save();
 

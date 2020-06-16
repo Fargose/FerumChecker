@@ -7,13 +7,14 @@ using FerumChecker.DataAccess.Entities.Specification;
 using FerumChecker.Service.Interfaces.Hardware;
 using FerumChecker.Web.ViewModel.Infrastructure;
 using FerumChecker.Web.ViewModel.Specification;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace FerumChecker.Web.Controllers
 {
-
+    [Authorize(Roles = "Administrator")]
     public class PublisherController : Controller
     {
 

@@ -5,12 +5,13 @@ using System.Threading.Tasks;
 using FerumChecker.DataAccess.Entities.Specification;
 using FerumChecker.Service.Interfaces.Hardware;
 using FerumChecker.Web.ViewModel.Specification;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FerumChecker.Web.Controllers
 {
-
+    [Authorize(Roles = "Administrator")]
     public class PowerSupplyMotherBoardInterfaceController : Controller
     {
 

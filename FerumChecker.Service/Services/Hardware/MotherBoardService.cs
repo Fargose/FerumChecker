@@ -41,6 +41,9 @@ namespace FerumChecker.Service.Services.Hardware
             SetPowerSupplyInterfaces(motherBoard, (List<MotherBoardPowerSupplySlot>)motherBoard.PowerSupplyMotherBoardSlots);
             SetRAMSlots(motherBoard, (List<MotherBoardRAMSlot>)motherBoard.MotherBoardRAMSlots);
             Database.Save();
+            motherBoard = GetMotherBoard(motherBoard.Id);
+            _computerAssemblyService.OnMotherBoardChange(motherBoard);
+            Database.Save();
             return new OperationDetails(true, "Ok", "");
         }
 
@@ -57,6 +60,7 @@ namespace FerumChecker.Service.Services.Hardware
 
         public OperationDetails DeleteMotherBoard(int? id)
         {
+            _computerAssemblyService.OnMotherBoardDelete(id.Value);
             Database.MotherBoards.Delete(id.Value);
             Database.Save();
             return new OperationDetails(true, "Ok", "");

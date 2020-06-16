@@ -13,7 +13,9 @@ using FerumChecker.Service.Interfaces.User;
 using FerumChecker.Web.Code;
 using FerumChecker.Web.ViewModel.Hardware;
 using FerumChecker.Web.ViewModel.Infrastructure;
+using FerumChecker.Web.ViewModel.Search;
 using FerumChecker.Web.ViewModel.Specification;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -21,7 +23,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace FerumChecker.Web.Controllers
 {
-
+    [Authorize]
     public class SoftwareController : Controller
     {
 
@@ -67,7 +69,7 @@ namespace FerumChecker.Web.Controllers
         }
 
         // GET: Software
-        public ActionResult PartialIndex(string search = "")
+        public ActionResult PartialIndex(SoftwareSearchModel searchDetails)
         {
             var powerSupplys = _softwareService.GetSoftwares().OrderBy(m => m.Name);
             var model = powerSupplys.Select(m => new SoftwareViewModel
@@ -85,8 +87,19 @@ namespace FerumChecker.Web.Controllers
                 MinimumCPURequirmentsDisplay = CreateCPuDisplay(m.SoftwareCPURequirements.Where(m => m.RequirementTypeId == 1).ToList()),
                 MinimumVideoCardRequirmentsDisplay = CreateVideoCardDisplay(m.SoftwareVideoCardRequirements.Where(m => m.RequirementTypeId == 1).ToList()),
                 ImagePath = "/Images/Software/" + m.Image,
-                Price = m.Price
-            }).Where(m => string.IsNullOrEmpty(search) || m.Name.Contains(search));
+                Price = m.Price,
+                DeveloperId = m.DeveloperId,
+                PublisherId = m.PublisherId
+            });
+
+            if (searchDetails != null)
+            {
+                model = model.Where(m => string.IsNullOrEmpty(searchDetails.Name) || m.Name.Contains(searchDetails.Name));
+                model = model.Where(m => m.PublisherId == searchDetails.PublisherId || searchDetails.PublisherId == null);
+                model = model.Where(m => m.DeveloperId == searchDetails.DeveloperId || searchDetails.DeveloperId == null);
+
+
+            }
 
             return PartialView("Index", model);
         }
@@ -151,6 +164,7 @@ namespace FerumChecker.Web.Controllers
         }
 
         // GET: Software/Create
+        [Authorize(Roles = "Administrator")]
         public ActionResult Create()
         {
             var cpus = _cpuService.GetCPUs();
@@ -167,6 +181,7 @@ namespace FerumChecker.Web.Controllers
         // POST: Software/Create
         [HttpPost]
         //[ValidateAntiForgeryToken]
+        [Authorize(Roles = "Administrator")]
         public IActionResult Create(SoftwareViewModel model)
         {
             if (model.SoftwareCPURequirements == null)
@@ -237,6 +252,7 @@ namespace FerumChecker.Web.Controllers
 
         // GET: Software/Create
         [HttpGet]
+        [Authorize(Roles = "Administrator")]
         public ActionResult Edit(int id)
         {
             var powerSupply = _softwareService.GetSoftware(id);
@@ -273,6 +289,7 @@ namespace FerumChecker.Web.Controllers
 
         // POST: Software/Edit/5
         [HttpPost]
+        [Authorize(Roles = "Administrator")]
         //[ValidateAntiForgeryToken]
         public ActionResult Edit(SoftwareViewModel model)
         {
@@ -403,6 +420,7 @@ namespace FerumChecker.Web.Controllers
         // POST: Software/Delete/5
         [HttpPost]
         //[ValidateAntiForgeryToken]
+        [Authorize(Roles = "Administrator")]
         public IActionResult Delete(int id)
         {
             try
@@ -462,6 +480,16 @@ namespace FerumChecker.Web.Controllers
 
             return stringBuilder.ToString();
 
+        }
+
+        public IActionResult Search()
+        {
+            var publishers = _publisherService.GetPublishers();
+            ViewBag.Publishers = new SelectList(publishers, "Id", "Name");
+            var developers = _developerService.GetDevelopers();
+            ViewBag.Developers = new SelectList(developers, "Id", "Name");
+
+            return PartialView();
         }
     }
 }

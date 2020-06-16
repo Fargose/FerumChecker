@@ -1,4 +1,5 @@
 ﻿using FerumChecker.DataAccess.Entities;
+using FerumChecker.DataAccess.Entities.Hardware;
 using FerumChecker.DataAccess.Entities.Infrastructure;
 using FerumChecker.Service.DTO.Hardware;
 using FerumChecker.Service.Infrastructure;
@@ -60,14 +61,14 @@ namespace FerumChecker.Service.Interfaces.Infrastructure
         OperationDetails OnPCCaseDelete(int id);
         OperationDetails OnPowerSupplyDelete(int id);
         OperationDetails OnVideoCardDelete(int id);
-        OperationDetails OnRAMChange(int id);
-        OperationDetails OnCPUChange(int id);
-        OperationDetails OnMotherBoardChange(int id);
-        OperationDetails OnSSDChange(int id);
-        OperationDetails OnHDDChange(int id);
-        OperationDetails OnPCCaseChange(int id);
-        OperationDetails OnPowerSupplyChange(int id);
-        OperationDetails OnVideoCardChange(int id);
+        OperationDetails OnRAMChange(RAM ram);
+        OperationDetails OnCPUChange(CPU cpu);
+        OperationDetails OnMotherBoardChange(MotherBoard motherBoard);
+        OperationDetails OnSSDChange(SSD sSD);
+        OperationDetails OnHDDChange(HDD hdd);
+        OperationDetails OnPCCaseChange(PCCase pcCase);
+        OperationDetails OnPowerSupplyChange(PowerSupply powerSupply);
+        OperationDetails OnVideoCardChange(VideoCard videoCard);
 
         OperationDetails SoftwareSyncEvaluate(int id, ComputerAssembly computerAssembly);
 
@@ -79,6 +80,8 @@ namespace FerumChecker.Service.Interfaces.Infrastructure
         public int CalculateFreeOuterMemorySlot(ComputerAssembly computerAssembly);
 
         public IEnumerable<RecomendationDTO> CreateRecomendations(ComputerAssembly computerAssembly);
+
+        public decimal CalculatePrice(ComputerAssembly computerAssembly);
         void Dispose();
     }
 }

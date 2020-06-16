@@ -12,6 +12,8 @@
     <div class="row">
         <div class="col-lg-12 please-scroll">
             <div><h2 class="сategory-name">@Model.Name</h2></div>
+            <div class="row">
+                <div class="col-9">
             <div class="editor-container main">
                 <div class="pc-image">
                     <img src="/Images//PC.png" style="width: 310px;" />
@@ -33,15 +35,15 @@
                     }
                 </div>
                 @*<div class="ssd-slot-container">
-                        @foreach (var item in Model.SSDs)
-                        {
-                            <div class="hardware-slot hdd-slot multiple" data-toggle="tooltip" title="@item.SSDName" data-id="@item.SSDId" data-type="SSD"><img class="hardware-img" src="@item.SSDImage" /></div>
-                        }
-                        @if (!Model.SSDs.Any())
-                        {
-                            <div class="hardware-slot ram-slot multiple" data-toggle="tooltip" title="Пусто" data-type="SSD"><img class="hardware-img" /></div>
-                        }
-                    </div>*@
+                @foreach (var item in Model.SSDs)
+                {
+                    <div class="hardware-slot hdd-slot multiple" data-toggle="tooltip" title="@item.SSDName" data-id="@item.SSDId" data-type="SSD"><img class="hardware-img" src="@item.SSDImage" /></div>
+                }
+                @if (!Model.SSDs.Any())
+                {
+                    <div class="hardware-slot ram-slot multiple" data-toggle="tooltip" title="Пусто" data-type="SSD"><img class="hardware-img" /></div>
+                }
+            </div>*@
                 <div class="videocard-slot-container">
                     @foreach (var item in Model.VideoCards)
                     {
@@ -64,6 +66,25 @@
                         <div class="hardware-slot ram-slot multiple" data-toggle="tooltip" title="Пусто" data-type="RAM" data-id=""><img class="hardware-img" /></div>
                     }
                 </div>
+            </div>
+                    </div>
+            <div class="col-3 stat-container-detail">
+                <h2>Загальні характеристики: </h2>
+                <div class="content"></div>
+            </div>
+                </div>
+            <div><h3>Користувацькі коментарі</h3><a class="btn btn-success custom-button button-add-coment"><span><i class="fas fa-plus"></i>Залишити коментар</span></a></div>
+            <div class="comments-container please-scroll">
+                @foreach (var com in Model.Comments)
+                {
+                    <div class="comment-item" data-id="@com.Id">
+                        <h4>@com.Owner</h4>@if (com.Editable)
+                        {
+                            <a style="float: right" class='delete-link'><i class='fas fa-trash'></i></a>
+                        }
+                        <div class="comment-text">@com.Text</div>
+                    </div>
+                }
             </div>
         </div>
     </div>

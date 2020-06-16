@@ -10,6 +10,8 @@ using FerumChecker.Service.Interfaces.Infrastructure;
 using FerumChecker.Service.Interfaces.User;
 using FerumChecker.Web.Code;
 using FerumChecker.Web.ViewModel.Hardware;
+using FerumChecker.Web.ViewModel.Search;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -17,7 +19,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace FerumChecker.Web.Controllers
 {
-
+    [Authorize]
     public class RAMController : Controller
     {
 
@@ -99,7 +101,7 @@ namespace FerumChecker.Web.Controllers
         }
 
         // GET: RAM
-        public ActionResult PartialIndex(string search = "")
+        public ActionResult PartialIndex(RAMSearchModel searchDetails)
         {
             var rams = _ramService.GetRAMs().OrderBy(m => m.Name);
             var model = rams.Select(m => new RAMViewModel
@@ -117,7 +119,28 @@ namespace FerumChecker.Web.Controllers
                 Manufacturer = m.Manufacturer.Name,
                 ImagePath = "/Images/RAM/" + m.Image,
                 Price = m.Price
-            }).Where(m => string.IsNullOrEmpty(search) || m.Name.Contains(search));
+            });
+            if (searchDetails != null)
+            {
+                model = model.Where(m => string.IsNullOrEmpty(searchDetails.Name) || m.Name.Contains(searchDetails.Name));
+                model = model.Where(m => m.ManufacturerId == searchDetails.ManufacturerId || searchDetails.ManufacturerId == null);
+                if (searchDetails.MinPrice.HasValue)
+                {
+                    model = model.Where(m => m.Price >= searchDetails.MinPrice);
+                }
+                if (searchDetails.MaxPrice.HasValue)
+                {
+                    model = model.Where(m => m.Price <= searchDetails.MaxPrice);
+                }
+                if (searchDetails.MinMemory.HasValue)
+                {
+                    model = model.Where(m => m.MemorySize >= searchDetails.MinMemory);
+                }
+                if (searchDetails.MaxMemory.HasValue)
+                {
+                    model = model.Where(m => m.MemorySize <= searchDetails.MaxMemory);
+                }
+            }
 
             return PartialView("Index", model);
         }
@@ -176,6 +199,7 @@ namespace FerumChecker.Web.Controllers
             return PartialView("PartialDetails", model);
         }
         // GET: RAM/Create
+        [Authorize(Roles = "Administrator")]
         public ActionResult Create()
         {
             var ramTypes = _ramTypeService.GetRAMTypes();
@@ -188,6 +212,7 @@ namespace FerumChecker.Web.Controllers
         // POST: RAM/Create
         [HttpPost]
         //[ValidateAntiForgeryToken]
+        [Authorize(Roles = "Administrator")]
         public IActionResult Create(RAMViewModel model)
         {
             if (ModelState.IsValid)
@@ -228,6 +253,7 @@ namespace FerumChecker.Web.Controllers
 
         // GET: RAM/Create
         [HttpGet]
+        [Authorize(Roles = "Administrator")]
         public ActionResult Edit(int id)
         {
             var ram = _ramService.GetRAM(id);
@@ -260,6 +286,7 @@ namespace FerumChecker.Web.Controllers
         }
 
         // POST: RAM/Edit/5
+        [Authorize(Roles = "Administrator")]
         [HttpPost]
         //[ValidateAntiForgeryToken]
         public ActionResult Edit(RAMViewModel model)
@@ -309,6 +336,7 @@ namespace FerumChecker.Web.Controllers
 
         // POST: RAM/Delete/5
         [HttpPost]
+        [Authorize(Roles = "Administrator")]
         //[ValidateAntiForgeryToken]
         public IActionResult Delete(int id)
         {
@@ -333,6 +361,13 @@ namespace FerumChecker.Web.Controllers
         {
             var sentences = description.Split('.');
             return (sentences != null && sentences[0] != null) ? sentences[0] + "..."  : "";
+        }
+
+        public IActionResult Search()
+        {
+            var manufacturers = _manufacturerService.GetManufacturers();
+            ViewBag.Manufacturers = new SelectList(manufacturers, "Id", "Name");
+            return PartialView();
         }
     }
 }

@@ -7,3 +7,23 @@
     padding: 10px;
     border-radius: 10px;
 }
+
+.fas {
+    color: mediumseagreen;
+}
+
+.custom-button {
+    background-color: mediumseagreen;
+    padding: 5px 15px 5px 5px;
+    cursor: pointer;
+}
+
+    .custom-button span {
+        color: white;
+        font-weight: bold;
+    }
+
+    .custom-button i {
+        color: white;
+        font-weight: bold;
+    }

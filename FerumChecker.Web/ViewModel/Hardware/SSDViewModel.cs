@@ -30,6 +30,7 @@ namespace FerumChecker.Web.ViewModel.Hardware
 
         [Required(ErrorMessage = "Поле обов'язкове")]
         [Display(Name = "Ціна")]
+        [DataType(DataType.Currency)]
         public decimal Price { get; set; }
         [Display(Name = "Зображення")]
         public IFormFile Image { get; set; }

@@ -10,6 +10,8 @@ using FerumChecker.Service.Interfaces.Infrastructure;
 using FerumChecker.Service.Interfaces.User;
 using FerumChecker.Web.Code;
 using FerumChecker.Web.ViewModel.Hardware;
+using FerumChecker.Web.ViewModel.Search;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -17,7 +19,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace FerumChecker.Web.Controllers
 {
-
+    [Authorize]
     public class SSDController : Controller
     {
 
@@ -100,7 +102,7 @@ namespace FerumChecker.Web.Controllers
         }
 
         // GET: SSD
-        public ActionResult PartialIndex(string search = "")
+        public ActionResult PartialIndex(OuterMemorySearchModel searchDetails)
         {
             var ssds = _ssdService.GetSSDs().OrderBy(m => m.Name);
             var model = ssds.Select(m => new SSDViewModel
@@ -123,7 +125,29 @@ namespace FerumChecker.Web.Controllers
                 Manufacturer = m.Manufacturer.Name,
                 ImagePath = "/Images/SSD/" + m.Image,
                 Price = m.Price
-            }).Where(m => string.IsNullOrEmpty(search) || m.Name.Contains(search));
+            });
+            if (searchDetails != null)
+            {
+                model = model.Where(m => string.IsNullOrEmpty(searchDetails.Name) || m.Name.Contains(searchDetails.Name));
+                model = model.Where(m => m.ManufacturerId == searchDetails.ManufacturerId || searchDetails.ManufacturerId == null);
+                if (searchDetails.MinPrice.HasValue)
+                {
+                    model = model.Where(m => m.Price >= searchDetails.MinPrice);
+                }
+                if (searchDetails.MaxPrice.HasValue)
+                {
+                    model = model.Where(m => m.Price <= searchDetails.MaxPrice);
+                }
+                if (searchDetails.MinVolume.HasValue)
+                {
+                    model = model.Where(m => m.MemorySize >= searchDetails.MinVolume);
+                }
+                if (searchDetails.MaxVolume.HasValue)
+                {
+                    model = model.Where(m => m.MemorySize <= searchDetails.MaxVolume);
+                }
+
+            }
 
             return PartialView("Index", model);
         }
@@ -195,6 +219,7 @@ namespace FerumChecker.Web.Controllers
         }
 
         // GET: SSD/Create
+        [Authorize(Roles = "Administrator")]
         public ActionResult Create()
         {
             var outerMemoryInterfaces = _outerMemoryInterfaceService.GetOuterMemoryInterfaces();
@@ -209,6 +234,7 @@ namespace FerumChecker.Web.Controllers
         // POST: SSD/Create
         [HttpPost]
         //[ValidateAntiForgeryToken]
+        [Authorize(Roles = "Administrator")]
         public IActionResult Create(SSDViewModel model)
         {
             if (ModelState.IsValid)
@@ -253,6 +279,7 @@ namespace FerumChecker.Web.Controllers
 
         // GET: SSD/Create
         [HttpGet]
+        [Authorize(Roles = "Administrator")]
         public ActionResult Edit(int id)
         {
             var ssd = _ssdService.GetSSD(id);
@@ -287,6 +314,7 @@ namespace FerumChecker.Web.Controllers
 
         // POST: SSD/Edit/5
         [HttpPost]
+        [Authorize(Roles = "Administrator")]
         //[ValidateAntiForgeryToken]
         public ActionResult Edit(SSDViewModel model)
         {
@@ -339,6 +367,7 @@ namespace FerumChecker.Web.Controllers
 
         // POST: SSD/Delete/5
         [HttpPost]
+        [Authorize(Roles = "Administrator")]
         //[ValidateAntiForgeryToken]
         public IActionResult Delete(int id)
         {
@@ -372,6 +401,14 @@ namespace FerumChecker.Web.Controllers
                 return memory / 1024 + "TБ";
             }
             return memory + " ГБ";
+        }
+
+        public IActionResult Search()
+        {
+            var manufacturers = _manufacturerService.GetManufacturers();
+            ViewBag.Manufacturers = new SelectList(manufacturers, "Id", "Name");
+
+            return PartialView();
         }
     }
 }

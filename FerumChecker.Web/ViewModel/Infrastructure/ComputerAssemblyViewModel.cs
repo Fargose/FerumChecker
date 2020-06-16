@@ -1,6 +1,8 @@
 ﻿using FerumChecker.DataAccess.Entities.Hardware;
+using FerumChecker.DataAccess.Entities.User;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -24,7 +26,7 @@ namespace FerumChecker.Web.ViewModel.Infrastructure
 
         public int? PCCaseId { get; set; }
         public string PCCaseName { get; set; }
-        public string  PCCaseImage {get ;set;}
+        public string PCCaseImage { get; set; }
 
         public int? PowerSupplyId { get; set; }
         public string PowerSupplyName { get; set; }
@@ -42,7 +44,11 @@ namespace FerumChecker.Web.ViewModel.Infrastructure
         public List<HDDShortModel> HDDs { get; set; }
 
         public List<SSDShortModel> SSDs { get; set; }
-        public class VideoCardShortModel 
+
+        public List<CommentViewModel> Comments { get; set; }
+
+        public bool Public { get; set; }
+        public class VideoCardShortModel
         {
             public VideoCardShortModel(VideoCard videoCard)
             {
@@ -94,5 +100,34 @@ namespace FerumChecker.Web.ViewModel.Infrastructure
             public string HDDName { get; set; }
             public string HDDImage { get; set; }
         }
+
+        public class CommentViewModel
+        {
+            public CommentViewModel() { }
+            public CommentViewModel(Comment comment, string userId) 
+            {
+                Id = comment.Id;
+                Text = comment.Text;
+                OwnerId = comment.OwnerId;
+                Owner = comment.Owner.Name + " " + comment.Owner.Surname;
+                Editable = comment.OwnerId == userId;
+               
+            }
+            public int? Id { get; set; }
+
+            [Required(ErrorMessage = "Коментар не може бути порожнім")]
+            [Display(Name = "Текст")]
+            public string Text { get; set; }
+
+            public int? ComputerAssemblyId { get; set; }
+            public string OwnerId { get; set; }
+            public string Owner { get; set; }
+
+            public bool Editable { get; set; }
+
+
+
+        }
+
     }
 }

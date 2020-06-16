@@ -7,7 +7,7 @@
 
     <div class="container" style="margin: 30px;">
         <div class="row">
-            <div class="col-6">
+            <div class="col-12">
                 <h1>@Model.Software.Name</h1>
                 <div class="details-container">
                     <div class="item-description">@Model.Software.ShortDescription</div>
@@ -20,25 +20,19 @@
                     <div class="item-prop"><span class="item-prop-name">@Html.DisplayNameFor(Model => Model.Software.RecommendedRequiredRAMDisplay)</span> : <span class="item-prop-value">@Model.Software.RecommendedRequiredRAMDisplay</span></div>
                     <div class="item-prop"><span class="item-prop-name">@Html.DisplayNameFor(Model => Model.Software.RecomendedVideoCardRequirmentsDisplay)</span> : <span class="item-prop-value">@Model.Software.RecomendedVideoCardRequirmentsDisplay</span></div>
                     <div class="item-prop"><span class="item-prop-name">@Html.DisplayNameFor(Model => Model.Software.DiscVolumeDisplay)</span> : <span class="item-prop-value">@Model.Software.DiscVolumeDisplay</span></div>
-                    <div class="item-prop"><span class="item-prop-name">@Html.DisplayNameFor(Model => Model.Software.Price)</span> : <span class="item-prop-value">@Model.Software.Price</span></div>
+                    <div class="item-prop"><span class="item-prop-name">@Html.DisplayNameFor(Model => Model.Software.Price)</span> : <span class="item-prop-value">@Html.DisplayFor(Model => Model.Software.Price)</span></div>
                     <img src="@(Model != null && Model.Software.ImagePath !=null ? Model.Software.ImagePath : "/Images//not-found.png" )" style="max-width:150px;margin-top: 20px; margin-bottom: 20px;" id="country-image" />
                 </div>
             </div>
-            <div class="col-6">
-            </div>
         </div>
         <div class="row">
-            <div class="col-2">
-            </div>
-            <div class="col-8">
+            <div class="col-12">
                 <ul>
                 @foreach(var item in Model.Result.Messages)
                 {
                     <li>@Html.Raw(@item)</li>
                 }
                 </ul>
-            </div>
-            <div class="col-2">
             </div>
         </div>
         </div>

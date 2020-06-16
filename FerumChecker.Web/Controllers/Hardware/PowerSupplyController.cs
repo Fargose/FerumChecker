@@ -12,7 +12,9 @@ using FerumChecker.Service.Interfaces.User;
 using FerumChecker.Service.Services.Infrastructure;
 using FerumChecker.Web.Code;
 using FerumChecker.Web.ViewModel.Hardware;
+using FerumChecker.Web.ViewModel.Search;
 using FerumChecker.Web.ViewModel.Specification;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -20,7 +22,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace FerumChecker.Web.Controllers
 {
-
+    [Authorize]
     public class PowerSupplyController : Controller
     {
 
@@ -102,7 +104,7 @@ namespace FerumChecker.Web.Controllers
         }
 
         // GET: PowerSupply
-        public ActionResult PartialIndex(string search = "")
+        public ActionResult PartialIndex(PowerSupplySearchModel searchDetails)
         {
             var powerSupplys = _powerSupplyService.GetPowerSupplies().OrderBy(m => m.Name);
             var model = powerSupplys.Select(m => new PowerSupplyViewModel
@@ -113,8 +115,31 @@ namespace FerumChecker.Web.Controllers
                 Manufacturer = m.Manufacturer.Name,
                 PowerDisplay   = m.Power +  " Вт",
                 ImagePath = "/Images/PowerSupply/" + m.Image,
-                Price = m.Price
-            }).Where(m => string.IsNullOrEmpty(search) || m.Name.Contains(search));
+                Price = m.Price,
+                Power = m.Power
+            });
+
+            if (searchDetails != null)
+            {
+                model = model.Where(m => string.IsNullOrEmpty(searchDetails.Name) || m.Name.Contains(searchDetails.Name));
+                model = model.Where(m => m.ManufacturerId == searchDetails.ManufacturerId || searchDetails.ManufacturerId == null);
+                if (searchDetails.MinPrice.HasValue)
+                {
+                    model = model.Where(m => m.Price >= searchDetails.MinPrice);
+                }
+                if (searchDetails.MaxPrice.HasValue)
+                {
+                    model = model.Where(m => m.Price <= searchDetails.MaxPrice);
+                }
+                if (searchDetails.MinPowerty.HasValue)
+                {
+                    model = model.Where(m => m.Power >= searchDetails.MinPowerty);
+                }
+                if (searchDetails.MaxPowerty.HasValue)
+                {
+                    model = model.Where(m => m.Power <= searchDetails.MaxPowerty);
+                }
+            }
 
             return PartialView("Index", model);
         }
@@ -173,6 +198,7 @@ namespace FerumChecker.Web.Controllers
             return PartialView("PartialDetails", model);
         }
 
+        [Authorize(Roles = "Administrator")]
         // GET: PowerSupply/Create
         public ActionResult Create()
         {
@@ -185,6 +211,7 @@ namespace FerumChecker.Web.Controllers
             return View();
         }
 
+        [Authorize(Roles = "Administrator")]
         // POST: PowerSupply/Create
         [HttpPost]
         //[ValidateAntiForgeryToken]
@@ -234,6 +261,7 @@ namespace FerumChecker.Web.Controllers
 
         // GET: PowerSupply/Create
         [HttpGet]
+        [Authorize(Roles = "Administrator")]
         public ActionResult Edit(int id)
         {
             var powerSupply = _powerSupplyService.GetPowerSupply(id);
@@ -269,6 +297,7 @@ namespace FerumChecker.Web.Controllers
         // POST: PowerSupply/Edit/5
         [HttpPost]
         //[ValidateAntiForgeryToken]
+        [Authorize(Roles = "Administrator")]
         public ActionResult Edit(PowerSupplyViewModel model)
         {
             var powerSupply = _powerSupplyService.GetPowerSupply(model.Id);
@@ -324,6 +353,7 @@ namespace FerumChecker.Web.Controllers
 
 
         // POST: PowerSupply/Delete/5
+        [Authorize(Roles = "Administrator")]
         [HttpPost]
         //[ValidateAntiForgeryToken]
         public IActionResult Delete(int id)
@@ -349,6 +379,14 @@ namespace FerumChecker.Web.Controllers
         {
             var sentences = description.Split('.');
             return (sentences != null && sentences[0] != null) ? sentences[0] + "..."  : "";
+        }
+
+        public IActionResult Search()
+        {
+            var manufacturers = _manufacturerService.GetManufacturers();
+            ViewBag.Manufacturers = new SelectList(manufacturers, "Id", "Name");
+
+            return PartialView();
         }
     }
 }

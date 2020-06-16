@@ -109,3 +109,8 @@ form .fas {
     text-align: center;
     vertical-align: middle;
 }
+
+.search-container{
+    display: none;
+    height: 300px;
+}

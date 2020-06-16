@@ -10,7 +10,9 @@ using FerumChecker.Service.Interfaces.Infrastructure;
 using FerumChecker.Service.Interfaces.User;
 using FerumChecker.Web.Code;
 using FerumChecker.Web.ViewModel.Hardware;
+using FerumChecker.Web.ViewModel.Search;
 using FerumChecker.Web.ViewModel.Specification;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -18,6 +20,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace FerumChecker.Web.Controllers
 {
+    [Authorize]
 
     public class VideoCardController : Controller
     {
@@ -104,7 +107,7 @@ namespace FerumChecker.Web.Controllers
         }
 
         // GET: VideoCard
-        public ActionResult PartialIndex(string search = "")
+        public ActionResult PartialIndex(VideoCardSearchModel searchDetails)
         {
             var videoCards = _videoCardService.GetVideoCards().OrderBy(m => m.Name);
             var model = videoCards.Select(m => new VideoCardViewModel
@@ -123,7 +126,38 @@ namespace FerumChecker.Web.Controllers
                 ImagePath = "/Images/VideoCard/" + m.Image,
                 GPU = m.GPU.Name,
                 Price = m.Price
-            }).Where(m => string.IsNullOrEmpty(search) || m.Name.Contains(search));
+            });
+
+            if (searchDetails != null)
+            {
+                model = model.Where(m => string.IsNullOrEmpty(searchDetails.Name) || m.Name.Contains(searchDetails.Name));
+                model = model.Where(m => m.ManufacturerId == searchDetails.ManufacturerId || searchDetails.ManufacturerId == null);
+                if (searchDetails.MinPrice.HasValue)
+                {
+                    model = model.Where(m => m.Price >= searchDetails.MinPrice);
+                }
+                if (searchDetails.MaxPrice.HasValue)
+                {
+                    model = model.Where(m => m.Price <= searchDetails.MaxPrice);
+                }
+                if (searchDetails.MinFrequency.HasValue)
+                {
+                    model = model.Where(m => m.Frequency >= searchDetails.MinFrequency);
+                }
+                if (searchDetails.MaxFrequency.HasValue)
+                {
+                    model = model.Where(m => m.Frequency <= searchDetails.MaxFrequency);
+                }
+                if (searchDetails.MinVideoMemory.HasValue)
+                {
+                    model = model.Where(m => m.MemorySize >= searchDetails.MinVideoMemory);
+                }
+                if (searchDetails.MaxVideoMemory.HasValue)
+                {
+                    model = model.Where(m => m.MemorySize <= searchDetails.MaxVideoMemory);
+                }
+
+            }
 
             return PartialView("Index", model);
         }
@@ -196,6 +230,7 @@ namespace FerumChecker.Web.Controllers
             return PartialView("PartialDetails", model);
         }
 
+        [Authorize(Roles = "Administrator")]
         // GET: VideoCard/Create
         public ActionResult Create()
         {
@@ -212,6 +247,7 @@ namespace FerumChecker.Web.Controllers
 
         // POST: VideoCard/Create
         [HttpPost]
+        [Authorize(Roles = "Administrator")]
         //[ValidateAntiForgeryToken]
         public IActionResult Create(VideoCardViewModel model)
         {
@@ -261,6 +297,7 @@ namespace FerumChecker.Web.Controllers
 
         // GET: VideoCard/Create
         [HttpGet]
+        [Authorize(Roles = "Administrator")]
         public ActionResult Edit(int id)
         {
             var videoCard = _videoCardService.GetVideoCard(id);
@@ -306,6 +343,7 @@ namespace FerumChecker.Web.Controllers
 
         // POST: VideoCard/Edit/5
         [HttpPost]
+        [Authorize(Roles = "Administrator")]
         //[ValidateAntiForgeryToken]
         public ActionResult Edit(VideoCardViewModel model)
         {
@@ -363,6 +401,7 @@ namespace FerumChecker.Web.Controllers
 
         // POST: VideoCard/Delete/5
         [HttpPost]
+        [Authorize(Roles = "Administrator")]
         //[ValidateAntiForgeryToken]
         public IActionResult Delete(int id)
         {
@@ -397,6 +436,13 @@ namespace FerumChecker.Web.Controllers
                 return memory / 1024 + "ГБ";
             }
             return memory + " МБ";
+        }
+
+        public IActionResult Search()
+        {
+            var manufacturers = _manufacturerService.GetManufacturers();
+            ViewBag.Manufacturers = new SelectList(manufacturers, "Id", "Name");
+            return PartialView();
         }
     }
 }

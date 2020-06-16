@@ -37,6 +37,9 @@ namespace FerumChecker.Service.Services.Hardware
             
             Database.HDDs.Update(hdd);
             Database.Save();
+            hdd = GetHDD(hdd.Id);
+            _computerAssemblyService.OnHDDChange(hdd);
+            Database.Save();
 
             return new OperationDetails(true, "Ok", "");
         }
@@ -51,6 +54,7 @@ namespace FerumChecker.Service.Services.Hardware
 
         public OperationDetails DeleteHDD(int? id)
         {
+            _computerAssemblyService.OnHDDDelete(id.Value);
             Database.HDDs.Delete(id.Value);
             Database.Save();
 

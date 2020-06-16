@@ -10,21 +10,62 @@
 
 <div class="container catalog-page">
     <div class="row">
-        Каталог
     </div>
     <div class="row">
         <div class="col-lg-3">
-            Категорія
             <div class="sidenav">
-                <a href="#" class="category-link" data-link="CPU">Процесори</a>
-                <a href="#" class="category-link" data-link="MotherBoard">Материнські плати</a>
-                <a href="#" class="category-link" data-link="RAM">ОЗП</a>
-                <a href="#" class="category-link" data-link="HDD">HDD</a>
-                <a href="#" class="category-link" data-link="SSD">SSD</a>
-                <a href="#" class="category-link" data-link="VideoCard">Відео-карти</a>
-                <a href="#" class="category-link" data-link="PowerSupply">Блоки живлення</a>
-                <a href="#" class="category-link" data-link="PCCase">Корпуси</a>
-                <a href="#" class="category-link" data-link="Software">ПЗ</a>
+                <div class="category-container">
+                    <a href="#" class="category-link" data-link="CPU">Процесори</a>
+                    <div class="search-container please-scroll CPU-search"></div>
+                </div>
+            </div>
+            <div class="sidenav">
+                <div class="category-container">
+                    <a href="#" class="category-link" data-link="MotherBoard">Материнські плати</a>
+                    <div class="search-container please-scroll MotherBoard-search"></div>
+                </div>
+            </div>
+            <div class="sidenav">
+                <div class="category-container">
+                    <a href="#" class="category-link" data-link="RAM">ОЗП</a>
+                    <div class="search-container please-scroll RAM-search"></div>
+                </div>
+            </div>
+            <div class="sidenav">
+                <div class="category-container">
+                    <a href="#" class="category-link" data-link="HDD">HDD</a>
+                    <div class="search-container please-scroll HDD-search"></div>
+                </div>
+            </div>
+            <div class="sidenav">
+                <div class="category-container">
+                    <a href="#" class="category-link" data-link="SSD">SSD</a>
+                    <div class="search-container please-scroll SSD-search"></div>
+                </div>
+            </div>
+            <div class="sidenav">
+                <div class="category-container">
+                    <a href="#" class="category-link" data-link="VideoCard">Відео-карти</a>
+                    <div class="search-container please-scroll VideoCard-search"></div>
+                </div>
+            </div>
+            <div class="sidenav">
+                <div class="category-container">
+                    <a href="#" class="category-link" data-link="PowerSupply">Блоки живлення</a>
+                    <div class="search-container please-scroll PowerSupply-search"></div>
+                </div>
+            </div>
+            <div class="sidenav">
+                <div class="category-container">
+                    <a href="#" class="category-link" data-link="PCCase">Корпуси</a>
+                    <div class="search-container please-scroll PCCase-search"></div>
+                </div>
+            </div>
+            <div class="sidenav">
+                <div class="category-container">
+                    <a href="#" class="category-link" data-link="Software">ПЗ</a>
+                    <div class="search-container please-scroll Software-search"></div>
+                </div>
             </div>
         </div>
         <div class="col-lg-9 please-scroll ">
@@ -33,7 +74,8 @@
                 <input id="search-input" class="form-control" type="text" placeholder="Search..." aria-label="Search" />
             </div>
             <div class="catalog-list-container main">
-                <h1>Оберіть категорію</h1>
+                <h1 style="text-align:center">Оберіть категорію</h1>
+                <img src="~/Images/main-page-pc.png" style="max-width:250px;margin-left:270px;margin-top:75px" />
             </div>
         </div>
     </div>
@@ -41,7 +83,7 @@
 
 <script>
     $(document).ready(function () {
-        var page = new CatalogPage();
+        var page = new CatalogPageWithSearch();
         page.init("@ViewBag.StartView");
     })
 </script>

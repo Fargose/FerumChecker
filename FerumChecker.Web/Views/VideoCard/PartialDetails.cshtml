@@ -15,6 +15,6 @@
     <div class="item-prop"><span class="item-prop-name">@Html.DisplayNameFor(Model => Model.GPU)</span> : <span class="item-prop-value">@Model.GPU</span></div>
     <div class="item-prop"><span class="item-prop-name">@Html.DisplayNameFor(Model => Model.VideoCardInterface)</span> : <span class="item-prop-value">@Model.VideoCardInterface</span></div>
     <div class="item-prop"><span class="item-prop-name">@Html.DisplayNameFor(Model => Model.GraphicMemoryType)</span> : <span class="item-prop-value">@Model.GraphicMemoryType</span></div>
-    <div class="item-prop"><span class="item-prop-name">@Html.DisplayNameFor(Model => Model.Price)</span> : <span class="item-prop-value">@Model.Price</span></div>
+    <div class="item-prop"><span class="item-prop-name">@Html.DisplayNameFor(Model => Model.Price)</span> : <span class="item-prop-value">@Html.DisplayFor(Model => Model.Price)</span></div>
     <img src="@(Model != null && Model.ImagePath !=null ? Model.ImagePath : "/Images//not-found.png" )" style="max-width:300px;margin-top: 20px; margin-bottom: 20px;" id="country-image" />
 </div>
